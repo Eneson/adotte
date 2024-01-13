@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "androidNavigationBar": {
+      "backgroundColor": "#3ab6ff",
+      "barStyle": "light-content"
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "hidden": true,
+      "translucent": false
+    },
+    "primaryColor": "#febd59",
+    "name": "adote",
+    "slug": "adote",
+    "description": "your app desc",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#3ab6ff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/5030dcfa-5c79-4d5c-8746-aaa068755c1b"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.adote.adote"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "565b26d3-5563-48f9-97b7-ce01e3be003e"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "owner": "enerson"
+  }
+}
