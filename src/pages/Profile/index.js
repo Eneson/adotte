@@ -184,7 +184,7 @@ export default function Initial(props) {
           <View style={styles.viewAnimal}>
             <Image
               style={styles.animalImage}
-              source={{uri: 'http://adote.store/files/resize_'+item.Foto}}
+              source={{uri: 'https://ik.imagekit.io/adote/resize_'+item.Foto}}
             />
             <View style={styles.animalFooter}>
               <View style={styles.animalButton}>

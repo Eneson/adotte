@@ -202,7 +202,7 @@ export default function Denuncia(props) {
             <Image
               style={{width:80, height:80}}
               source={{
-                uri: 'http://adote.store/files/resize_'+Foto,
+                uri: 'https://ik.imagekit.io/adote/resize_'+Foto,
               }}
             />
           </View>
