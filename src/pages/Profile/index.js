@@ -50,14 +50,18 @@ export default function Initial(props) {
   }
 
   async function loadAnimais() {  
-    if(animais){
+    if(animais){      
+      console.log('aaa')
       return
     }
-    const response = await api.get('animal', {
+    await api.get('animal', {
       params: { telefone: telefone }
+    }).then((response) => {
+      setAnimais(response.data)    
+      console.log(animais)
+    }).catch(() => {
+      console.log('erro')
     })
-    setAnimais(response.data)    
-
         
   }
 

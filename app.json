@@ -15,9 +15,9 @@
     "description": "your app desc",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon2.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash4.png",
       "resizeMode": "contain",
       "backgroundColor": "#3ab6ff"
     },
@@ -33,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.adote.adote"
