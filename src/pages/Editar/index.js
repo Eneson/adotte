@@ -94,7 +94,6 @@ export default function Editar(props) {
         headers: {
           Authorization: telefone,
         }}).then(async (res) => {
-          console.log(res.data)
           const dados = JSON.stringify(res.data)
           await AsyncStorage.setItem('@Profile:token', dados);  
           navigation.dispatch(

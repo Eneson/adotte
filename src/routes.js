@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Text, TouchableOpacity, View, StyleSheet, StatusBar } from 'react-native';
-import { AntDesign } from '@expo/vector-icons'
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, CommonActions } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import Login from './pages/Login'
+//import Login from './pages/Login'
+import Welcome from './pages/Welcome'
+import login from './pages/Welcome/login'
+import register from './pages/Welcome/register'
 import Cadastrar from './pages/Cadastrar'
 import NewPet from './pages/NewPet'
 import Denuncia from './pages/Denuncia'
@@ -18,8 +20,8 @@ import Editar from './pages/Editar'
 
 import Initial from './pages/Initial'
 import CustomDrawer from './components/CustomDrawer'
-import IsLogin from './components/IsLogin';
-import Navegar from './components/Navegar'
+import { IsLogin } from './components/IsLogin';
+import { onSignOut } from './components/IsLogin';
 
 const Drawer = createDrawerNavigator()
 const AppStack = createStackNavigator()
@@ -48,70 +50,21 @@ const styles = StyleSheet.create({
 })
 
 
-const Routes = () => {  
 
+export default function Routes () {  
+  
+  
 function Button(props) {  
-  const {telefone}= IsLogin()
-    
-  if(telefone){
-    return(
-        <View style={styles.headerIcons}>
-            <TouchableOpacity onPress={()=>{Navegar(props, 'Profile')}}>
-                <AntDesign name="user" size={25} color="#2555b7" />
-            </TouchableOpacity>
-        </View>
-    )
-  }else{
-    return(
-      <View >
-          <TouchableOpacity style={styles.headerIcons2} onPress={()=>{Navegar(props, 'Login')}}>
-              <Text style={{color: '#fff'}}>Entrar</Text>
-          </TouchableOpacity>
-      </View>
+  return (
+    <View >
+      <TouchableOpacity style={styles.headerIcons2} onPress={()=>{onSignOut(props.navigation, CommonActions)}}>
+          <Text style={{color: '#fff'}}>Sair</Text>
+      </TouchableOpacity>
+    </View>
   )
-  }
 }
 
-function InicioScreen(props) {
-  return (
-    <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer {...props} />}      
-      screenOptions={{ 
-        headerStyle: { 
-          backgroundColor: '#3ab6ff',
-        },        
-        headerTintColor: '#fff',
-        headerRight: () => (Button(props))
-      }}      
-    >   
-      <AppStack.Screen name="Inicio2" component={Initial} 
-        options={{
-            headerTitle: 'Inicio',
-        }} />
-      
-    </Drawer.Navigator>
-  )
-}
-function LoginScreen(props) {
-      return (
-        <Drawer.Navigator 
-          drawerContent={props => <CustomDrawer {...props} />}      
-          screenOptions={{ 
-            headerStyle: { 
-              backgroundColor: '#3ab6ff',
-            },        
-            headerTintColor: '#fff',
-            headerRight: () => (Button(props))
-          }}      
-        >   
-          <AppStack.Screen name="Login2" component={Login} 
-            options={{
-                headerTitle: 'Entrar',
-            }} />
-          
-        </Drawer.Navigator>
-      )
-}
+
 function ProfileScreen(props) {
   return (
     <Drawer.Navigator 
@@ -251,26 +204,73 @@ function DenunciaScreen() {
             }} />
     </AppStack.Navigator>
   )
-} 
+}
+function WelcomeScreen(){  
+    return (
+      <AppStack.Navigator   
+      >   
+        <AppStack.Screen name="Welcome2" component={Welcome} options={{ 
+          headerShown: false,
+        }}  />      
+        
+        <AppStack.Screen name="login" component={login} options={{ 
+          headerTitle: 'Entrar',
+        }}  />   
+        <AppStack.Screen name="register" component={register} options={{ 
+          headerTitle: 'Registrar',
+        }}  />     
+      </AppStack.Navigator>
+    )
   
+  
+}
+function InicioScreen(props){
+    return (
+      <Drawer.Navigator 
+          drawerContent={props => <CustomDrawer {...props} />}      
+          screenOptions={{ 
+            headerStyle: { 
+              backgroundColor: '#3ab6ff',
+            },        
+            headerTintColor: '#fff',
+            headerRight: () => (Button(props))
+          }}      
+        >   
+          <AppStack.Screen name="Inicio2" component={Initial} 
+            options={{
+                headerTitle: 'Inicio',
+            }} />
+          
+        </Drawer.Navigator>
+      
+    )
+}
+
+
+const [signed, setSigned] = useState(false)
+useEffect(() => {
+  IsLogin()
+    .then(res => (setSigned(res)))
+    .catch(err => (setSigned(false)));
+}, [])  
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
       <NavigationContainer>
-        <AppStack.Navigator initialRouteName="Inicio" screenOptions={{ headerShown: false,}} >
-          <AppStack.Screen name="Inicio" component={InicioScreen} /> 
-          <AppStack.Screen name="Login" component={LoginScreen} /> 
-          <AppStack.Screen name="Profile" component={ProfileScreen} /> 
-          <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
-          <AppStack.Screen name="NewPet" component={NewPetScreen} />         
-          <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
-          <AppStack.Screen name="Cadastrar" component={CadastrarScreen} />
-          <AppStack.Screen name="Adotar" component={AdotarScreen} />
-          <AppStack.Screen name="Editar" component={EditarScreen} />
+        <AppStack.Navigator initialRouteName={signed ? 'Inicio':'Welcome'} screenOptions={{ headerShown: false,}} >
+            <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
+            <AppStack.Screen name="Inicio" component={InicioScreen} /> 
+            <AppStack.Screen name="Profile" component={ProfileScreen} /> 
+            <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
+            <AppStack.Screen name="NewPet" component={NewPetScreen} />         
+            <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
+            <AppStack.Screen name="Cadastrar" component={CadastrarScreen} />
+            <AppStack.Screen name="Adotar" component={AdotarScreen} />
+            <AppStack.Screen name="Editar" component={EditarScreen} />
         </AppStack.Navigator> 
     </NavigationContainer>
     </SafeAreaProvider>
     
   )
 }
-export default Routes

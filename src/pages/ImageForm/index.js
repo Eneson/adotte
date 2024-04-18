@@ -45,7 +45,6 @@ export default function NewPet(props) {
     formData.append('id_doador', id_doador)
     formData.append('Vermifugado', Vermifugado)
 
-    console.log(id_doador)
     
     await api.post('/animal', formData, {
         headers: { 'Content-Type': 'multipart/form-data', 'authorization':  telefone},

@@ -140,7 +140,7 @@ export default function Initial(props) {
                 color: '#000',
               }}
               selectedValue={props.route.params? props.route.params.tipo: 'Filtrar'}
-              onValueChange={itemValue => props.navigation.replace('Inicio', { screen: 'Inicio2', params: { tipo: itemValue}, })}
+              //onValueChange={itemValue => props.navigation.replace('Inicio', { screen: 'Inicio2', params: { tipo: itemValue}, })}
               >
               <Picker.Item label="Filtro" value={false} />
               <Picker.Item label="Cão" value="dog" />

@@ -6,12 +6,14 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import Footer from '../../components/Footer';
 import styles from './styles'
-import IsLogin from '../../components/IsLogin'
+import {IsLogin} from '../../components/IsLogin'
 import api from '../../services/api'
-import Logout from '../../components/Logout';
+
+import { onSignOut } from '../../components/IsLogin'
 
 export default function Initial(props) {
-  const {telefone, nome, id_doador}= IsLogin()
+  const { telefone, nome, id_doador } = IsLogin().then(res => (res))
+    
   
   const [animais, setAnimais] = useState()
   const [index, setIndex] = useState(0);  
@@ -51,16 +53,13 @@ export default function Initial(props) {
 
   async function loadAnimais() {  
     if(animais){      
-      console.log('aaa')
       return
     }
     await api.get('animal', {
       params: { telefone: telefone }
     }).then((response) => {
       setAnimais(response.data)    
-      console.log(animais)
     }).catch(() => {
-      console.log('erro')
     })
         
   }
@@ -92,22 +91,6 @@ export default function Initial(props) {
     }
   }
 
-  // async function logOut(){
-  //   try{
-  //     await AsyncStorage.removeItem('@Profile:token');
-  //     navigation.dispatch(
-  //       CommonActions.reset({
-  //         index: 0,
-  //         routes: [
-  //           { name: 'Inicio' },
-  //         ],
-  //       })
-  //     );
-  //   }catch {
-
-  //   }
-  // }
-
   const createTwoButtonAlert = () =>
     Alert.alert('CUIDADO', 'Tem certeza que deseja apagar todos os seus dados?', [
       {
@@ -125,7 +108,7 @@ export default function Initial(props) {
           Authorization: telefone,
         }
       }).then(() => {
-        logOut()
+        onSignOut(navigation)
       })
       
     } catch (err) {
@@ -146,7 +129,7 @@ export default function Initial(props) {
         <AntDesign name="deleteuser" size={20} color="black" />
         <Text style={styles.buttonText}>Excluir Conta</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => {Logout(navigation)}} style={styles.button}>
+      <TouchableOpacity onPress={() => {onSignOut(navigation)}} style={styles.button}>
         <AntDesign name="logout" size={20} color="black" />
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>

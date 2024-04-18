@@ -2,41 +2,40 @@ import React, { useState, useEffect }from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Ionicons, MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import IsLogin from './IsLogin'
+import { useRoute, useNavigation,CommonActions } from '@react-navigation/native';
+import { IsLogin } from './IsLogin'
+import { onSignOut } from './IsLogin';
+import { dataLogin } from './IsLogin'
 
-import Logout from './Logout';
 import LoginIcon from '../assets/LoginIcon.png'
 
 export default function CustomDrawer (props) {    
-    const {telefone, nome}= IsLogin()
+    const [data, setData] = useState(false)
     const navigation = useNavigation()
+    useEffect(() => {
+        IsLogin()
+            .then(res => (setData(res)))
+            .catch(err => (setSigned(false)));
+    })
     const screen = useRoute().name;
 
+    function sairFunction() {
+        onSignOut(navigation,CommonActions)
+    }
     return (
         <View style={{flex: 1}}>
+
             <View style={{backgroundColor: '#3ab6ff', flex: 1, paddingBottom: 20}}>
-                {telefone? 
+                
                     <View style={styles.profileHeader}>
                         <Image
                             style={styles.image}
                             source={LoginIcon}
                             resizeMode='center'
                         />                         
-                        <Text style={styles.headerName}>{nome}</Text>
-                        <Text style={styles.headerNumber}>{telefone}</Text> 
+                        <Text style={styles.headerName}>{data.nome}</Text>
+                        <Text style={styles.headerNumber}>{data.telefone}</Text> 
                     </View>
-                :
-                <View style={styles.profileHeader}>
-                    <Image
-                        style={styles.image2}
-                        source={LoginIcon}
-                        resizeMode='contain'
-                    />    
-                    <Text style={styles.headerName}>Seja bem vindo</Text>             
-                </View>
-
-                 }
                 
             </View>
             <View style={{flex: 5}}>
@@ -55,8 +54,7 @@ export default function CustomDrawer (props) {
                         focused={screen.includes('Favoritos')?true:false}
                     />
 
-                    {/* Depende de login */}
-                    {telefone?
+                    
                     <View>
                         
                         <DrawerItem
@@ -73,20 +71,11 @@ export default function CustomDrawer (props) {
                         />
                         <DrawerItem
                             label="Sair"
-                            onPress={() => {Logout(navigation)}} 
+                            onPress={() => {sairFunction()}} 
                             icon={({ focused, color, size }) => <AntDesign name="logout" size={size} color={color} /> }
                         />
                     </View>
-                    :
-                    <View>
-                        <DrawerItem
-                            label="Entrar na conta"
-                            onPress={() => {navigation.navigate('Login')}} 
-                            icon={({ focused, color, size }) => <AntDesign name="login" size={size} color={color} /> }
-                            focused={screen.includes('Login'||'Cadastrar')?true:false}
-                        />
-                    </View>
-                    }
+                    
                     <DrawerItem
                         label="Sobre"
                         onPress={() => {navigation.navigate('sobre')}} 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons'; 
-import Navegar from './Navegar'
+
 const styles = StyleSheet.create({
       footer:{
         bottom: 0,
@@ -30,15 +30,15 @@ const styles = StyleSheet.create({
 const Footer = (props) => {
     return (
       <View style={styles.footer}> 
-          <TouchableOpacity style={styles.action} onPress={() =>{ Navegar(props.Navigation,'Login')}}>
+          <TouchableOpacity style={styles.action} onPress={() =>{props.Navigation.navigation.navigate('NewPet')}}>
             <Feather name="sun" size={30} color="#fff" />
             <Text style={styles.actionText}> Doar </Text>
           </TouchableOpacity>        
-          <TouchableOpacity style={styles.action} onPress={() => {Navegar(props.Navigation,'Inicio')}}>
+          <TouchableOpacity style={styles.action} onPress={() => {props.Navigation.navigation.navigate('Inicio')}}>
             <Ionicons name="md-paw-outline" size={30} color="#fff" />
             <Text style={styles.actionText}> Adotar </Text>
           </TouchableOpacity>     
-          <TouchableOpacity style={styles.action} onPress={() => {Navegar(props.Navigation,'Favoritos')}}>
+          <TouchableOpacity style={styles.action} onPress={() => {props.Navigation.navigation.navigate('Favoritos')}}>
             <MaterialIcons name="favorite-outline" size={30} color="#fff" />
             <Text style={styles.actionText}> Favoritos </Text>
           </TouchableOpacity>

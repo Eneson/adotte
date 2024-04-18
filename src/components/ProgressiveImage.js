@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#939393',
     paddingLeft: 10,
     paddingTop: 5,
-    
   },
   descText: {
     color: '#cecece',

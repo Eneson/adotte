@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native'
 import Constants from 'expo-constants'
 
+
 export default StyleSheet.create({
   container: {
     backgroundColor: '#fff',
@@ -29,9 +30,9 @@ export default StyleSheet.create({
   },  
 
   title: {
-    fontSize: 28,
+    fontSize: 18,
     marginBottom: 0,
-    marginTop: 20,
+    marginTop: 10,
     color: '#13131a',
     fontWeight: 'bold'
   },
@@ -82,14 +83,22 @@ export default StyleSheet.create({
   date:{
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20
   },
   dateText: {
+    color: '#000',
+    fontSize: 15,
+    fontWeight: 'bold',
+    letterSpacing: 1,
     textAlign: 'center',
     borderWidth: 1,
     marginStart: 5,
-    padding: 5,
+    padding: 10,
+    flex: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#3ab6ff',
+    borderWidth: 2
   },
   formLabel: {
     color: '#000',
@@ -97,16 +106,12 @@ export default StyleSheet.create({
     marginBottom: 5,
     fontSize: 15,
   },
-  containerTextField:{
-    marginBottom: 20
-  },
   input:{
     borderColor: '#414757',
-    borderBottomWidth: 1,
-    marginBottom: 20,
+    borderWidth: 1,
     padding: 10,
-    borderRadius: 5,
-    paddingStart: 15
+    borderRadius: 2,
+    paddingStart: 15  
   },
   viewFoto:{
     flexDirection: 'column',
@@ -149,14 +154,13 @@ export default StyleSheet.create({
   actionText:{
     fontSize: 15,
     color: "#fff",
-    padding: 10
+    padding: 10,
   },
   action: {
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 8,
     height: 45,
     width: '100%',
-    marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,

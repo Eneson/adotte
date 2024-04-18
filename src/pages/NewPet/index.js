@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Feather, FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
-import { View, TextInput, Text, TouchableOpacity, Alert, Platform, TouchableHighlight, ToastAndroid, KeyboardAvoidingView } from 'react-native'
+import { View, TextInput, Text, TouchableOpacity, Alert, Platform, TouchableHighlight, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import {
+  useFonts,
+  Roboto_100Thin,
+} from '@expo-google-fonts/roboto';
+
 
 import styles from './styles'
 import Footer from '../../components/Footer'
@@ -87,115 +92,134 @@ export default function NewPet(props) {
     ToastAndroid.show(text, ToastAndroid.LONG);
   };  
 
+  let [fontsLoaded] = useFonts({
+    Roboto_100Thin,
+  });
+  
+  
+  if (!fontsLoaded) {
+    console.log('teste')
+  } else {
+    console.log('teste23')
+  }
  
   return (
-    <View style={styles.container}> 
-      <KeyboardAvoidingView style={styles.content} behavior={'padding'}>     
-              <Controller
-              rules={{required: 'true'}}
-              render={({ field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error } }) => {
-                return <TextInput
-                  style={[styles.input, {borderColor: invalid? 'red':'#000',marginTop:20}]}
-                  placeholder={'Nome do pet'}
-                  placeholderTextColor= {invalid && 'red'}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              }}
-              name="nome"
-              control={control}
-              defaultValue=""
-              />               
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop:20}}>
-                <View style={{flexDirection: 'row', flex: 3, lignItems: 'center', justifyContent: 'center'}}>
-                  <View style={{marginHorizontal: 20}}>
-                    <TouchableOpacity onPress={() => setTipo('dog')}>
-                      <Text>Cão</Text>
-                      <FontAwesome5 name="dog" size={30} color={tipo=='dog'? '#3ab6ff':'black'} />
-                    </TouchableOpacity>                    
-                  </View>
-                  <View>
-                    <TouchableOpacity onPress={() => setTipo('cat')}>
-                      <Text>Gato</Text>
-                      <FontAwesome5 name="cat" size={30} color={tipo=='cat'? '#3ab6ff':'black'} />
-                    </TouchableOpacity>                    
-                  </View>
-                  <View style={{flex: 3, marginLeft: 50,flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <View>
-                      <Text style={{textAlign: 'center'}}>Antirrábica</Text>
-                      <View style={{alignItems: 'center'}}>
-                        <TouchableOpacity onPress={() => setVacine(!vacine)}>
-                          <FontAwesome5 name="syringe" size={30} color={vacine? '#3ab6ff': '#000'} />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View>
-                    <Text style={{textAlign: 'center'}}>Vermifugado</Text>
-                      <View style={{alignItems: 'center'}}>
-                        <TouchableOpacity onPress={() => setVermifugado(!Vermifugado)}>
-                          <FontAwesome5 name="tablets" size={30} color={Vermifugado? '#3ab6ff': '#000'} />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between',marginVertical: 20}}>
-                <View style={{flex: 0.5}}>
-                  <View>
-                    <TouchableOpacity style={styles.date} onPress={() => showMode()} >
-                      <Feather name="calendar" size={25} color="red" />
-                      <Text style={styles.dateText}>{textDate}</Text>
-                    </TouchableOpacity> 
-                  </View>
-                </View>
-                <View style={{flexDirection: 'column', justifyContent: 'center', flex: 0.4}}>
-                  <Picker
-                    style={{
-                      marginTop: -15,
-                      marginStart: -8,
-                      color: '#737380'
-                    }}
-                    selectedValue={sexo}
-                    onValueChange={itemValue => setSexo(itemValue)}            
-                    >
-                    <Picker.Item label="SEXO DO PET" value="" />
-                    <Picker.Item label="MACHO" value="Macho" />
-                    <Picker.Item label="FÊMEA" value="Femea" />
-                  </Picker> 
-                </View>                
-              </View>
-              <Controller
-                rules={{required: 'true'}}
-                render={({ field: { onChange, onBlur, value, name, ref },
-                  fieldState: { invalid, isTouched, isDirty, error } }) => {
-                  return <TextInput
-                    style={[styles.input, {borderColor: invalid? 'red':'#000', marginTop:0}]}
-                    placeholder={'Descrição'}
-                    placeholderTextColor= {invalid && 'red'}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    editable
-                  />
-                }}
-              name="desc"
-              control={control}
-              defaultValue=""
-              />  
-              <TouchableHighlight 
-                activeOpacity={1} 
-                onShowUnderlay={() => setPressButton(true)}  
-                onHideUnderlay={() => setPressButton(false)} 
-                underlayColor="#3ab6ff" 
-                style={styles.action} 
-                onPress={handleSubmit(takePhotoAndUpload)}
-              >
-                <Text style={pressButton?styles.pressText: styles.actionText}>CONTINUAR</Text>
-              </TouchableHighlight>         
-      </KeyboardAvoidingView>   
+    <SafeAreaView style={styles.container}> 
+      <ScrollView style={styles.content} behavior={'padding'}> 
+        <View style={styles.containerTextField}>    
+          <Controller
+          rules={{required: 'true'}}
+          render={({ field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error } }) => {
+            return <View>
+              <Text style={[styles.title, {fontFamily: 'Roboto_100Thin'}]}>Nome</Text>
+              <TextInput
+                style={[styles.input, {borderColor: invalid? 'red':'#3ab6ff',}]}
+                placeholder='Nome'
+                keyboardType='default'
+                autoComplete='name'
+                placeholderTextColor= {invalid && 'red'}
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={value}
+              />
+              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+            </View>
+          }}
+          name="nome" 
+          control={control}
+          defaultValue=""
+          />  
+        </View>             
+        <View>
+          <Text style={styles.title}>Espécie</Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='dog'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('dog')}>
+              <Text style={[styles.actionText,{color: tipo=='dog'? '#fff':'#000'}]}>Cachorro</Text>
+            </TouchableOpacity> 
+              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='cat'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('cat')}>
+              <Text style={[styles.actionText,{color: tipo=='cat'? '#fff':'#000'}]}>Cachorro</Text>
+            </TouchableOpacity> 
+          </View>
+        </View>
+        <View>     
+        <Text style={styles.title}>Data de nascimento</Text> 
+          <TouchableOpacity style={styles.date} onPress={() => showMode()} >
+            <Feather name="calendar" size={30} color="#3ab6ff" />
+            <Text style={styles.dateText}>{textDate}</Text>
+          </TouchableOpacity>                    
+        </View>
+        {/* SEXO */}
+        <View>
+          <Text style={styles.title}>Sexo</Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Femea'? '#3ab6ff':'#fff', }]} onPress={() => setSexo('Femea')}>
+              <Text style={[styles.actionText,{color: sexo=='Femea'? '#fff':'#000'}]}>Fêmea</Text>
+            </TouchableOpacity>  
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', }]} onPress={() => setSexo('Macho')}>
+              <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
+            </TouchableOpacity>  
+          { console.log(sexo)}
+          </View>
+        </View>
+        <View style={{flexGrow: 1}}>
+          <Text style={styles.title}>Outras informações:</Text>
+            <View style={{flex: 1}}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: vacine? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVacine(!vacine)}>
+                <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Castrado</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{flex: 1}}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: vacine? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVacine(!vacine)}>
+                <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Antirrábica</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{flex: 1}}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVermifugado(!Vermifugado)}>
+                <FontAwesome5 name="tablets" size={30} color={Vermifugado? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vermifugado? '#fff': '#000'}]}>Vermifugado</Text>
+              </TouchableOpacity>
+            </View>
+        </View>
+        <Controller
+          rules={{required: 'true'}}
+          render={({ field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error } }) => {
+            return <View>
+            <Text style={styles.title}>Descrição</Text>
+            <TextInput
+              style={[styles.input, {borderColor: invalid? 'red':'#3ab6ff',}]}
+              multiline
+              numberOfLines={4}
+              textAlignVertical='top'
+              maxLength={40}
+              placeholder='Conte mais um pouco sobre o pet'
+              keyboardType='default'
+              placeholderTextColor= {invalid && 'red'}
+              onBlur={onBlur}
+              onChangeText={value => onChange(value)}
+              value={value}
+            />
+            <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+          </View>
+          }}
+        name="desc"
+        control={control}
+        defaultValue=""
+        />  
+        <TouchableHighlight 
+          activeOpacity={1} 
+          onShowUnderlay={() => setPressButton(true)}  
+          onHideUnderlay={() => setPressButton(false)} 
+          underlayColor="#3ab6ff" 
+          style={styles.action} 
+          onPress={handleSubmit(takePhotoAndUpload)}
+        >
+          <Text style={pressButton?styles.pressText: styles.actionText}>CONTINUAR</Text>
+        </TouchableHighlight>         
+      </ScrollView>   
       {/* Mostrar DatePicker */}
       {show &&(
           <DateTimePicker
@@ -207,6 +231,6 @@ export default function NewPet(props) {
             onChange={onChangeDate}
       />)} 
       <Footer Navigation={{...props}}/>
-    </View>
+    </SafeAreaView>
   )
 }
