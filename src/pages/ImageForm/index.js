@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, Text, TouchableOpacity, ToastAndroid, TouchableHighlight,ActivityIndicator, Modal } from 'react-native'
+import { View, Text, TouchableOpacity, ToastAndroid, ImageBackground, } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import ProgressiveImage from '../../components/ProgressiveImage';
 
@@ -10,19 +10,21 @@ import api from '../../services/api'
 import styles from './styles'
 import Footer from '../../components/Footer'
 
-export default function NewPet(props) {
+export default function ImageForm(props) {
   const [image, setImage] = useState(null);
   const [ pressButton, setPressButton ] = useState(false)
   const [modalVisible, setmodalVisible] = useState(false)
   const navigation = useNavigation()
+
   const uploadNewPet = async () => {
     const { DataNasc, Descricao, Nome, Porte, Sexo, Tipo, Vacina, Vermifugado } = props.route.params.user
     const { telefone, id_doador } = props.route.params.profile
     let localUri = image;    
     
-    if(!image){      
+    if(!image){
       return Toast('Adicione uma imagem')
     }
+    
     setmodalVisible(true)
     let filename = localUri.split('/').pop()    
    
@@ -83,37 +85,18 @@ export default function NewPet(props) {
   };  
  
   return (
-    <View style={styles.container}>
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-      >
-        <View style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: 'center'
-        }}>
-          <View style={{backgroundColor:'#fff',padding:10, borderRadius:5}}>
-            <ActivityIndicator  size="large" />
-          </View>
-        
-        </View>
-      </Modal> 
-      <View style={styles.content}>  
-        <View>
-          {image&&(
-                  <View style={{height: 400}}>
-                    <ProgressiveImage
-                      source={image}
-                      item={ props.route.params.user}
-                    />
+        <View style={[styles.content, {borderWidth: !image?1:0}]}>
+          {image?<TouchableOpacity onPress={() => pickImage()}>
+                  <View style={{height: 300, borderWidth: 1}}>
+                    <ImageBackground
+                      source={{uri: image}}
+                      style={styles.childrenAnimais}
+                      resizeMode="cover"
+                      >                              
+                    </ImageBackground>                   
+                    
                   </View>
-          )
-          }
-
-        </View> 
-        <View style={{flex: 1,justifyContent: 'center', alignItems: 'center', alignContent: 'center'}}> 
-          <TouchableOpacity onPress={() => pickImage()}>
+                  </TouchableOpacity>:<TouchableOpacity onPress={() => pickImage()}>
             <View style={styles.viewFoto}>
               <Ionicons name="add-circle-outline" size={100} color="black" />
               <Text style={{fontSize: 20}}>
@@ -121,13 +104,8 @@ export default function NewPet(props) {
               </Text>
             </View>
           </TouchableOpacity>
-        </View>     
-        <TouchableHighlight activeOpacity={1} onShowUnderlay={() => setPressButton(true)}  onHideUnderlay={() => setPressButton(false)} underlayColor="#3ab6ff" style={styles.action} onPress={() => uploadNewPet()} >
-          <Text style={pressButton?styles.pressText:styles.actionText}>FINALIZAR</Text>
-        </TouchableHighlight>                 
-      </View>  
-      <Footer Navigation={{...props}}/>
-      
-    </View>
+          
+          }
+        </View>    
   )
 }

@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native'
-import Constants from 'expo-constants'
 
 export default StyleSheet.create({
   container: {
@@ -62,14 +61,18 @@ export default StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 40
   },
-  
+  loginHeaderText:{    
+    fontFamily: 'OpenSans_400Regular',
+    fontSize: 15,
+    textAlign: 'justify'
+  },
   loginText:{
     fontSize: 25,
-    color: '#2a1e49',
-    letterSpacing: 3,
-    fontWeight: 'bold',
+    color: '#000',
     textAlign: 'left',
-    marginBottom: 10
+    marginBottom: 10,
+    fontFamily: 'Montserrat_600SemiBold'
+
   },
 
   loginForm:{

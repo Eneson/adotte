@@ -1,19 +1,18 @@
 import { StyleSheet } from 'react-native'
-import Constants from 'expo-constants'
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-
+  
   content:{
-    flex: 1,
-    paddingHorizontal: 20,
-    marginBottom: 50,
-    paddingVertical: 10,
+    marginVertical: 20,
+    width: '100%', 
+    height: 300, 
+    justifyContent: 'center'
   },
-
+  childrenAnimais: {
+    flex: 1,    
+    justifyContent: 'center',
+   
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -62,24 +61,7 @@ export default StyleSheet.create({
     fontWeight: 'bold'
   },
 
-  incidentValue: {
-    marginTop: 8,
-    fontSize: 15,
-    marginBottom: 24,
-    color: '#737380'
-  },
-
-  detailsButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-
-  detailsButtonText: {
-    color: '#e02041',
-    fontSize: 15,
-    fontWeight: 'bold'
-  },
+ 
 
   date:{
     flexDirection: 'row',
@@ -109,7 +91,9 @@ export default StyleSheet.create({
   },
   viewFoto:{
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center'
   },
   action: {
     backgroundColor: '#fff',

@@ -19,14 +19,13 @@ export default function Initial(props) {
   const [page, setPage] = useState(1)
   const [error, setError] = useState('')
   const [favorite, setFavorite] = useState([])
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadAnimais()
   }, [])  
 
-  React.useEffect(
-    () => props.navigation.addListener('focus', () => loadFavorites()),
+  useEffect(() => props.navigation.addListener('focus', () => loadFavorites()),
     []
   );
 

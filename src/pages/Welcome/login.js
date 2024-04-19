@@ -3,17 +3,17 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, ScrollView, SafeAreaView  } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onSignIn } from '../../components/IsLogin';
-
+import { useFonts, Roboto_400Regular, Roboto_500Medium } from '@expo-google-fonts/roboto';
+import { Montserrat_300Light, Montserrat_700Bold, Montserrat_600SemiBold, Montserrat_800ExtraBold } from '@expo-google-fonts/montserrat';
+import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
+import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
 
 import api from '../../services/api'
 import styles from './loginStyles'
 
-
-
 export default function Login(props) {
-  const { register, setValue, handleSubmit, getValues, control, formState:{ errors } } = useForm()
+  const { register, handleSubmit, control, formState:{ errors } } = useForm()
   const [modalVisible, setmodalVisible] = useState(false)
   const navigation = useNavigation()
   
@@ -41,9 +41,7 @@ export default function Login(props) {
       await api.post('/login', dados)
       .then(async (data) => {
         const doador = JSON.stringify(data.data.token)
-        onSignIn(navigation,CommonActions,doador)
-        //await AsyncStorage.setItem('@Profile:token', doador);        
-            
+        onSignIn(navigation,CommonActions,doador)            
       })
 
     } catch (err) {
@@ -111,7 +109,21 @@ export default function Login(props) {
     }
   }
   
+  let [fontsLoaded] = useFonts({
+    Montserrat_300Light,
+    Roboto_400Regular,
+    OpenSans_400Regular,
+    Montserrat_700Bold,
+    Montserrat_800ExtraBold,
+    Montserrat_600SemiBold,
+    Pacifico_400Regular,
+    Roboto_500Medium
+  });
 
+  if (!fontsLoaded) {
+    console.log('aaaa')
+    return null
+  }
   
   return (
     
@@ -130,7 +142,7 @@ export default function Login(props) {
       <ScrollView style={styles.scrollView}>
         <View style={styles.loginHeader}>
           <Text style={styles.loginText}>Login</Text>
-          <Text>Entre com e-mail e senha cadastrados e continue fazendo a diferença!</Text>
+          <Text style={styles.loginHeaderText}>Entre com e-mail e senha cadastrados e continue fazendo a diferença!</Text>
         </View>
         <View  style={styles.loginForm}>
         
@@ -217,7 +229,7 @@ export default function Login(props) {
             </TouchableOpacity>
            <View style={styles.cadastroButton}>
             <Text>Não possui um cadastro? </Text>
-            <TouchableOpacity  onPress={() => navigateTo('Cadastrar')}>
+            <TouchableOpacity  onPress={() => navigateTo('register')}>
               <Text style={styles.actionText2}> Cadastrar </Text>
             </TouchableOpacity>
                    

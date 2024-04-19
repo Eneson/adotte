@@ -31,24 +31,23 @@ export default StyleSheet.create({
   loginText:{
     fontSize: 25,
     color: '#000',
-    letterSpacing: 3,
-    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom:10
+    marginBottom:10,
+    fontFamily: 'Montserrat_700Bold'
   },
   
   textDescription:{
     marginTop:5,
-    fontSize: 18,
+    fontSize: 17,
     color: '#000',
     textAlign: 'center',
-    lineHeight: 25
+    fontFamily: 'OpenSans_400Regular'
   },
   textDescriptionBold:{
-    fontSize: 18,
-    color: '#525252',
+    fontSize: 17,
+    color: '#000',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontFamily: 'OpenSans_400Regular'
   },
 
   actions: {
@@ -69,12 +68,12 @@ export default StyleSheet.create({
   actionText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
     letterSpacing: 2,
+    fontFamily: 'Roboto_500Medium'
   },
   actionText2: {
-    fontSize: 15,
-    fontWeight: 'bold'
+    fontSize: 14,
+    fontFamily: 'Roboto_500Medium'
   },
   cadastroButton:{
     flexDirection: 'row',    

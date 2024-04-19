@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
 
 import api from '../../services/api'
-import styles from './registerStyles'
+import styles from './loginStyles'
 
 export default function Cadastrar(props) {
   const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm()
@@ -134,8 +134,8 @@ export default function Cadastrar(props) {
       </Modal> 
       <ScrollView style={styles.scrollView}>
         <View style={styles.loginHeader}>
-          <Text style={styles.loginText}>Cadastrar</Text>
-          <Text>Faça a diferença na vida de um animal. Registre-se agora e descubra seu próximo melhor amigo.</Text>
+          <Text style={styles.loginText}>Novo Usuario</Text>
+          <Text style={styles.loginHeaderText}>Faça a diferença na vida de um animal. Registre-se agora e descubra seu próximo melhor amigo.</Text>
         </View>
         <View  style={styles.loginForm}>
         <View style={styles.containerTextField}>
@@ -277,7 +277,7 @@ export default function Cadastrar(props) {
           
           <View style={styles.actions}>
             <TouchableOpacity style={styles.action} onPress={handleSubmit(handleNewDoador)} >
-              <Text style={styles.actionText}>ENTRAR</Text>
+              <Text style={styles.actionText}>CADASTRAR</Text>
             </TouchableOpacity>
            <View style={styles.cadastroButton}>
             <Text>já possui cadastro? </Text>

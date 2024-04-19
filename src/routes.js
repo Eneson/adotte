@@ -207,17 +207,32 @@ function DenunciaScreen() {
 }
 function WelcomeScreen(){  
     return (
-      <AppStack.Navigator   
+      <AppStack.Navigator 
+      screenOptions={{ 
+        headerShown: true,
+        headerStyle: { 
+          backgroundColor: '#3ab6ff',
+        },        
+        headerTintColor: '#fff',
+      }}   
       >   
         <AppStack.Screen name="Welcome2" component={Welcome} options={{ 
           headerShown: false,
         }}  />      
         
         <AppStack.Screen name="login" component={login} options={{ 
-          headerTitle: 'Entrar',
+          headerStyle: { 
+            backgroundColor: '#fff',
+          },        
+          headerTintColor: '#000',
+          headerTitle: '',
         }}  />   
         <AppStack.Screen name="register" component={register} options={{ 
-          headerTitle: 'Registrar',
+          headerStyle: { 
+            backgroundColor: '#fff',
+          },        
+          headerTintColor: '#000',
+          headerTitle: '',
         }}  />     
       </AppStack.Navigator>
     )
