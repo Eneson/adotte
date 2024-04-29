@@ -40,22 +40,19 @@ export default StyleSheet.create({
   },
   
   actionText:{
-    fontSize: 15,
-    color: "#fff",
-    padding: 10
+    color: '#fff',
+    fontSize: 15,       
+    fontFamily: 'Roboto_500Medium'
   },
   action: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    height: 45,
-    width: '100%',
+    backgroundColor: '#3ab6ff',
+    borderRadius: 3,
+    height: 55,
+    width: '100%', 
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-    borderColor: '#3ab6ff',
-    borderWidth: 2,
-    marginTop:30
+    marginTop: 20
   },
   pressText: {
     color: '#fff',
@@ -63,10 +60,4 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 2,
   },
-  actionText: {
-    color: '#000',
-    fontSize: 15,
-    fontWeight: 'bold',
-    letterSpacing: 2,
-  }
 })

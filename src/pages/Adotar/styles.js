@@ -4,32 +4,17 @@ import Constants from 'expo-constants'
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
 
   content:{
     flex: 1,
-    marginBottom: 50
+    backgroundColor: '#fff',
   },
 
   incident: {
-    backgroundColor: '#fff',
     flex: 1,
-    padding: 10,
-    borderRadius: 10
-  },
-
-  incidentProperty: {
-    fontSize: 14,
-    color: '#41414d',
-    fontWeight: 'bold',
-    marginTop: 24,
-  },
-
-  incidentValue: {
-    marginTop: 8,
-    fontSize: 15,
-    color: '#737380'
+    height: 500
   },
 
   contactBox: {
@@ -38,13 +23,6 @@ export default StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
     marginBottom: 16,
-  },
-
-  heroTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#13131a',
-    lineHeight: 30,
   },
 
   heroDescription: {
@@ -65,34 +43,37 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginBottom: 10
   },
 
   actionText: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
-    marginHorizontal: 10
+    marginHorizontal: 10,    
+    fontFamily: 'Roboto_500Medium',
   },
   childrenAnimais: {
     flex: 1,    
     justifyContent: 'center',
+    minHeight: 20,    
+    maxHeight: '100%'
   },
   animaisDesc: {
-    bottom: 0,
-    height: '25%',
-    width: '100%',
-    position: 'absolute',
-    opacity: 0.7,
-    backgroundColor: '#939393',
-    paddingHorizontal: 10,
-    paddingTop: 5
+    paddingHorizontal: 20,
   },
   descText: {
     color: '#000',
     fontSize: 15,
+    fontFamily: 'OpenSans_400Regular',
+    marginTop:5
   },
   textBold:{
-    fontWeight: 'bold'
+    fontFamily: 'OpenSans_700Bold',
+  },
+  textNome:{
+    fontSize: 30,    
+    fontFamily: 'Montserrat_500Medium'
+
   },
   descTitle: {
     color: '#000',

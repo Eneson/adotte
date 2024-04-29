@@ -42,10 +42,30 @@ export default StyleSheet.create({
     marginStart: 5
   },
   viewAnimal: {
-    marginVertical: 40,
+    marginVertical: 10,
     flexDirection: 'row',
-    marginHorizontal:5,
-    height: 200
+    marginHorizontal:10,
+    height: 180,    
+    borderColor: '#000',
+    borderWidth: 1, 
+    borderRadius: 10
+  }, 
+  action: {
+    backgroundColor: '#34af23',
+    borderRadius: 8,
+    height: 30,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 10
+  },
+
+  actionText: {
+    color: '#fff',
+    fontSize: 15,
+    marginHorizontal: 10,    
+    fontFamily: 'Roboto_500Medium',
   },
   animalImage: {
     width: '50%',
@@ -55,25 +75,21 @@ export default StyleSheet.create({
   },
   animalFooter: {    
     width: '50%',
-    height: '100%',
-    backgroundColor: '#fff',  
-    borderColor: '#000',
-    borderWidth: 0.5,
-    borderLeftWidth: 0,
-    borderTopRightRadius: 10,  
-    borderBottomRightRadius: 10,  
+    height: '100%',  
+    justifyContent: 'space-between'
   },
   animalDesc: {
-    paddingStart: 20,
+    marginTop: 10
   },
   animalButton: {
     alignItems: 'flex-end',
-    margin: 5
+    margin: 5,
   },
   animalName: {
     letterSpacing: 3,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 20,    
+    fontFamily: 'Montserrat_500Medium',
   },
   animalTextDesc: {
     marginTop:10

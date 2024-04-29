@@ -4,70 +4,125 @@ import Constants from 'expo-constants'
 export default StyleSheet.create({
   container: {
     backgroundColor: '#fff',
+    justifyContent: 'flex-start',
+    alignItems: 'center', 
     flex: 1,
   },
   content: {
-    flex: 5,
-    paddingHorizontal: 40,
-  },
-  header: {
     flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    marginTop: 50
+  },
+  
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 20
   },
-  image: {
-    width: 80,
-    height: 80
+
+  incident: {
+    padding: 24,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 16,
+    marginTop: 48,
   },
-  textName: {
-    fontSize: 20,
+
+  incidentProperty: {
+    fontSize: 14,
+    color: '#41414d',
     fontWeight: 'bold',
-    letterSpacing: 2,
-  },  
- 
+    marginTop: 24,
+  },
+
+  incidentValue: {
+    marginTop: 8,
+    fontSize: 15,
+    color: '#737380'
+  },
   input:{
     borderColor: '#414757',
+    padding: 10, 
+  },
+  containerTextField:{
+    marginTop: 0,
+  },
+
+  contactBox: {
+    padding: 24,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 16,
+  },
+  loginHeader:{
+    justifyContent: 'flex-end',
+    paddingBottom: 40
+  },
+  scrollView:{
+    marginTop: 20,
+    flex:1,
+    width: '80%'
+  },
+  TextInputEditable:{
+    justifyContent:'space-between',
     borderWidth: 1,
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 5,
-    paddingStart: 15
+    borderRadius: 2, 
+    paddingStart: 15,
+    flexDirection:'row', 
+  },
+  loginText:{
+    fontSize: 25,
+    color: '#2a1e49',
+    letterSpacing: 3,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 10
+  },
+
+  loginForm:{
+    flex: 1,
+  },
+  heroTitle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#13131a',
+    lineHeight: 30,
+  },
+
+  heroDescription: {
+    fontSize: 15,
+    color: '#737380',
+    marginTop: 16,
+  },
+
+  actions: {
+    marginTop: 16,
+    justifyContent: 'flex-start',
   },
 
   action: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    height: 45,
-    width: '100%',
-    marginRight: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    borderColor: '#3ab6ff',
-    borderWidth: 2
-  },
-  actionPress: {
     backgroundColor: '#3ab6ff',
-    borderRadius: 8,
-    height: 45,
+    borderRadius: 3,
+    height: 55,
     width: '100%',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10
   },
-  pressText: {
+
+  actionText: {
     color: '#fff',
     fontSize: 15,
     fontWeight: 'bold',
     letterSpacing: 2,
   },
-  actionText: {
-    color: '#000',
+  actionText2: {
     fontSize: 15,
-    fontWeight: 'bold',
-    letterSpacing: 2,
+    fontWeight: 'bold'
+  },
+  cadastroButton:{
+    flexDirection: 'row',    
+    justifyContent: 'center',
   }
 })

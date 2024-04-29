@@ -52,12 +52,12 @@ export default StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#3a77ff',
+    borderColor: '#000',
     fontFamily: 'Roboto_400Regular',
     borderWidth: 1
   },
   input:{
-    borderColor: '#3a77ff',
+    borderColor: '#000',
     borderWidth: 1,
     padding: 10,
     borderRadius: 2,
@@ -85,7 +85,7 @@ export default StyleSheet.create({
     backgroundColor: '#3ab6ff',
     alignItems: 'center',
     marginBottom: 10,
-    borderColor: '#3a77ff',
+    borderColor: '#000',
     borderWidth: 1
   },
   pressText: {
@@ -101,5 +101,22 @@ export default StyleSheet.create({
     fontSize: 15,
     letterSpacing: 1.5,    
     fontFamily: 'Roboto_500Medium'
-  }
+  },
+  contentImage:{
+    marginVertical: 20,
+    width: '100%', 
+    height: 300, 
+    justifyContent: 'center'
+  },
+  childrenAnimais: {
+    flex: 1,    
+    justifyContent: 'center',
+   
+  },
+  viewFoto:{
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center'
+  },
 })

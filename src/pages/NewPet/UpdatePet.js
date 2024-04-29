@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Feather, FontAwesome5, Fontisto  } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Text, Modal, TouchableOpacity, Alert, Platform, ImageBackground, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
+import { View, TextInput, Text, TouchableOpacity, Alert, Platform, Modal, ImageBackground, TouchableHighlight, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form'
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,8 +15,8 @@ import styles from './styles'
 import Footer from '../../components/Footer'
 import { IsLogin } from '../../components/IsLogin';
 import api from '../../services/api';
- 
-export default function NewPet(props) {
+
+export default function UpdatePet(props) {
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
     Roboto_500Medium,
@@ -26,23 +26,30 @@ export default function NewPet(props) {
 
   const [show, setShow] = useState(false)
   const [date, setDate] = useState(new Date())
-  const [textDate, setTextDate] = useState('Data de Nascimento')
-  const [sexo, setSexo] = useState('')
-  const [vacine, setVacine] = useState(false)
-  const [Vermifugado, setVermifugado] = useState(false)
-  const [tipo, setTipo] = useState('dog')  
-  const [castrado ,setCastrado] = useState(false)
-  const navigation = useNavigation()
-  const { register, handleSubmit, control, formState:{ errors } } = useForm();
-  const [image, setImage] = useState(null);
+  const [textDate, setTextDate] = useState(props.route.params.item.DataNasc)
+  const [sexo, setSexo] = useState(props.route.params.item.Sexo)
+  const [vacine, setVacine] = useState(props.route.params.item.Vacina)
+  const [Vermifugado, setVermifugado] = useState(props.route.params.item.Vermifugado)
+  const [tipo, setTipo] = useState(props.route.params.item.Tipo)  
+  const [ pressButton, setPressButton ] = useState(false)
+  const [castrado ,setCastrado] = useState(props.route.params.item.Castrado)  
   const [modalVisible, setModalVisible] = useState(false)
-  
+  const [image, setImage] = useState(props.route.params.source);  
   const [dateError, setDateError] = useState(false)
   const [sexoError, setSexoError] = useState(false)
+
+  const navigation = useNavigation()
+  const { register, handleSubmit, control, formState:{ errors } } = useForm({
+    defaultValues: {
+      nome: props.route.params.item.Nome,
+      desc: props.route.params.item.Descricao
+    }
+  });
   
   useEffect(() => {
     register('nome')
     register('desc')
+    register('teste')
   }, [register])
 
   const onChangeDate = (event, selectDate) => {
@@ -56,24 +63,17 @@ export default function NewPet(props) {
     setDateError(false)
    
   }
-  
-  const showMode = (onChange) => {
-    setShow(true);
-  }  
-
-  
-
-  const takePhotoAndUpload = async (e) => {    
+   
+ 
+  const updateNewPet = async (e) => {
     setModalVisible(true)
-    console.log('click')
-
     if(textDate == 'Data de Nascimento'){
       setDateError(true)
     }
     if(sexo == ''){
       setSexoError(true)
     }
-    if(textDate == 'Data de Nascimento'||sexo == ''){  
+    if(textDate == 'Data de Nascimento'||sexo == ''){
       setModalVisible(false)
       return Toast("Preencha todos os dados")
     }
@@ -83,8 +83,7 @@ export default function NewPet(props) {
       const token = await AsyncStorage.getItem('@Profile:token')
       let localUri = image;    
     
-    if(!image){           
-      setModalVisible(false)
+    if(!image){
       return Toast('Adicione uma imagem')
     }
     
@@ -106,14 +105,17 @@ export default function NewPet(props) {
     formData.append('id_user', data.id_user)
     formData.append('Vermifugado', Vermifugado)
     formData.append('Castrado', castrado)
-    formData.append('FotoName', filename);
-    
-    
+    formData.append('FotoName', filename);    
+    formData.append('Image_old', props.route.params.source)
 
-    await api.post('/animal', formData, {
-        headers: { 'Content-Type': 'multipart/form-data', 'authorization':  'Bearer '+token.replace(/"/g, '')},
+    await api.post('/animal/update', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'authorization':  'Bearer '+token.replace(/"/g, ''),
+          'id_user': data.id_user
+        },
     }).then(res => {
-      Toast('Cadastrado com sucesso')  
+      Toast('Atualizado com sucesso')
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -122,21 +124,20 @@ export default function NewPet(props) {
           ],
         })
       );
-    }).catch(err => {
+    }).catch(err => {    
       Alert.alert(
-        "Erro no cadastro",
+        "Erro",
         "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
       )
-      Toast('Erro no cadastro')
-    }).finally(() => {
-      setModalVisible(false)
-    });
+    })
     
     }).catch(() => {
-      Alert.alert(
+      Alert.alert( 
         "Erro no cadastro",
         "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
       )
+    }).finally(() => {
+      setModalVisible(false)
     })
     
     
@@ -146,6 +147,7 @@ export default function NewPet(props) {
     ToastAndroid.show(text, ToastAndroid.LONG);
   };  
 
+  
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -170,10 +172,11 @@ export default function NewPet(props) {
         <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
             <Flow size={50} color="#3ab6ff"/>
         </View>
-      </Modal> 
+      </Modal>
+
       <ScrollView style={styles.content} behavior={'padding'}> 
-        {/* foto */}
-        <View style={[styles.contentImage, {borderWidth: !image?1:0}]}>
+      {/* foto */}
+      <View style={[styles.contentImage, {borderWidth: !image?1:0}]}>
           {image?<TouchableOpacity onPress={() => pickImage()}>
                   <View style={{height: 300, borderWidth: 1}}>
                     <ImageBackground
@@ -210,6 +213,7 @@ export default function NewPet(props) {
                 keyboardType='default'
                 autoComplete='name'
                 placeholderTextColor= {invalid && 'red'}
+                defaultValue={props.route.params.item.Nome}
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}
                 value={value}
@@ -219,7 +223,6 @@ export default function NewPet(props) {
           }}
           name="nome" 
           control={control}
-          defaultValue=""
           />  
         </View>  
         {/* ESPECIE */}
@@ -234,10 +237,10 @@ export default function NewPet(props) {
             </TouchableOpacity> 
           </View>
         </View>
-        {/* Data de nascimento */}
         <View>     
+          {/* Data de nascimento */}
         <Text style={styles.title}>Data de nascimento</Text> 
-          <TouchableOpacity style={styles.date} onPress={() => showMode()} >
+          <TouchableOpacity style={styles.date} onPress={() => setShow(true)} >
             <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />
             <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
           </TouchableOpacity>  
@@ -255,7 +258,6 @@ export default function NewPet(props) {
             </TouchableOpacity>  
           </View>
         </View>
-        {/* CASTRADO VACINADO VERMIFUGADO */}
         <View style={{flexGrow: 1}}>
           <Text style={styles.title}>Outras informações:</Text>
             <View style={{flex: 1}}>
@@ -277,7 +279,6 @@ export default function NewPet(props) {
               </TouchableOpacity>
             </View>
         </View>
-        {/* DETALHES DO PET */}
         <Controller
           rules={{required: 'true'}}
           render={({ field: { onChange, onBlur, value, name, ref },
@@ -302,11 +303,18 @@ export default function NewPet(props) {
           }}
         name="desc"
         control={control}
-        defaultValue=""
+        defaultValue={props.route.params.item.Descricao}
         />  
-        <TouchableOpacity disabled={modalVisible} style={[styles.action, {borderColor: '#000', marginTop: 20}]} onPress={handleSubmit(takePhotoAndUpload)}>
-          <Text style={styles.actionText}>CONTINUAR</Text>
-        </TouchableOpacity>         
+        <TouchableHighlight 
+          activeOpacity={1} 
+          onShowUnderlay={() => setPressButton(true)}  
+          onHideUnderlay={() => setPressButton(false)} 
+          underlayColor="#3a77ff" 
+          style={[styles.action, {borderColor: '#000', marginTop: 20}]} 
+          onPress={handleSubmit(updateNewPet)}
+        >
+          <Text style={pressButton?styles.pressText: styles.actionText}>CONTINUAR</Text>
+        </TouchableHighlight>         
       </ScrollView>   
       {/* Mostrar DatePicker */}
       {show &&(

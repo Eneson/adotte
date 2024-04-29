@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Image, Text, TouchableOpacity, Modal, ActivityIndicator, ScrollView, SafeAreaView, Alert } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, TextInput, Image, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
-
+import { onSignIn } from '../../components/IsLogin';
 import api from '../../services/api'
 import styles from './loginStyles'
+import { Flow  } from 'react-native-animated-spinkit'
 
 export default function Cadastrar(props) {
   const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm()
@@ -25,63 +25,53 @@ export default function Cadastrar(props) {
   }, [register])
   
   async function handleNewDoador(e) {
-    //setmodalVisible(true)
+    setmodalVisible(true)
     var telefone = e.telefone.replace(/[ ]/g, "");
     telefone = telefone.replace(/[()]/g, "");
     telefone = telefone.replace(/[-]/g, "");
-    if(telefone.length<11){
+    if(telefone.length<11){      
+    setmodalVisible(false)
       return Alert.alert('Erro no preenchimento', 'Preencha o numero de telefone corretamente ex: (99) 9 9999-9999', [
         {
           text: 'Ok',
           style: 'cancel',
         },
       ]);
-      
     }
 
-    var nome = e.nome.toLowerCase()
     var email = e.email.toLowerCase()
-    nome = nome.trim()
+    var nome = e.nome
+    var palavras = nome.split(' ');
 
-
+    // Itera sobre cada palavra e capitaliza a primeira letra
+    for (var i = 0; i < palavras.length; i++) {
+        palavras[i] = palavras[i].charAt(0).toUpperCase() + palavras[i].slice(1);
+    }
+    // Junta as palavras de volta em uma única string
+    nome = palavras.join(' ');
     const dados = {
       "nome": nome,
       "telefone": telefone,
       "email": email,
       "senha": e.senha
-    }    
+    }        
     
-    try {
-      await api.post('/doador', dados)
+      await api.post('/user', dados)
       .then(async (data) => {
-        const login = {
-          "email": data.data.email,
-          "senha": data.data.senha
-        }
-        const dados2 = JSON.stringify(login)
-        await AsyncStorage.setItem('@Profile:token', dados2);  
+        const doador = JSON.stringify(data.data.token)
+        onSignIn(navigation,CommonActions,doador)  
+      }).catch(() => {
+        return Alert.alert(
+          "Erro no cadastro",
+          "Não foi possivel comunicar com o servidor.\nTente novamente"
+        )
+      }).finally(() => {
         setmodalVisible(false)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              { name: 'Inicio' },
-            ],
-          })
-        );
-        })        
-      } catch (error) {        
-        const mensagem = error.response.data.error 
-        setmodalVisible(false)  
-        return Alert.alert('Erro no cadastro', mensagem, [
-          {
-            text: 'Ok',
-            style: 'cancel',
-          },
-        ]);   
-      }
+      })
+         
+        
+      
 
-    setmodalVisible(false)
   }
 
   function phoneField(onChange, onBlur, value)  {  
@@ -121,15 +111,10 @@ export default function Cadastrar(props) {
   
   return (
     <SafeAreaView style={styles.container}>      
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-      >
-        <View style={{
-          flex: 1,
-          justifyContent: "center",
-        }}>
-        <ActivityIndicator color="#000" size="large" />
+      {/* MODAL LOADING */}
+      <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
+        <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+            <Flow size={50} color="#3ab6ff"/>
         </View>
       </Modal> 
       <ScrollView style={styles.scrollView}>
@@ -276,7 +261,7 @@ export default function Cadastrar(props) {
           
           
           <View style={styles.actions}>
-            <TouchableOpacity style={styles.action} onPress={handleSubmit(handleNewDoador)} >
+            <TouchableOpacity isabled={modalVisible} style={styles.action} onPress={handleSubmit(handleNewDoador)} >
               <Text style={styles.actionText}>CADASTRAR</Text>
             </TouchableOpacity>
            <View style={styles.cadastroButton}>

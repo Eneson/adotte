@@ -1,75 +1,111 @@
 import React, { useState, useEffect } from 'react'
-import { AntDesign, FontAwesome5, Feather  } from '@expo/vector-icons'
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, Text, TouchableOpacity, FlatList, Image, Alert, Modal, ActivityIndicator  } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Flow  } from 'react-native-animated-spinkit'
 
 import Footer from '../../components/Footer';
 import styles from './styles'
 import {IsLogin} from '../../components/IsLogin'
 import api from '../../services/api'
 
+import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
+import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
+import { OpenSans_400Regular, OpenSans_600SemiBold, OpenSans_700Bold } from '@expo-google-fonts/open-sans';
+
 import { onSignOut } from '../../components/IsLogin'
 
+
+
 export default function Initial(props) {
-  const { telefone, nome, id_doador } = IsLogin().then(res => (res))
-    
+  let [fontsLoaded] = useFonts({
+    Montserrat_300Light,
+    Roboto_500Medium,
+    Roboto_400Regular,
+    OpenSans_400Regular,
+    Montserrat_500Medium,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold
+  });
   
+  const [userEmail, setUserEmail] = useState()
+  const [id_user, setId_User] = useState()
+  const [telefone, setTelefone] = useState()
+  const [nome, setNome] = useState()
   const [animais, setAnimais] = useState()
   const [index, setIndex] = useState(0);  
   const [modalVisible, setmodalVisible] = useState(false)
+  const [error, setError] = useState()
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation()
   const [routes] = useState([
     { key: 'first', title: 'Meus Pets' },
     { key: 'second', title: 'Configuraçoes' },
   ]);
-
-  useEffect(() => {
-    loadAnimais()
-  })
   
-  function maskPhone(telefone){     
-    
-    var value =  new String(telefone)
-    
-    if(value){
-      
-      if(value.length==11){
-        var x = value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-        value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-        
-        return(value)
-      }else{
-        var x = value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,4})(\d{0,4})/);
-        value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-        
-        return(value)
-      }
-    }
-    else{
-      return('err')
-    }
+  function navigateToEditar() {
+    IsLogin()
+    .then(res => {         
+      navigation.navigate('Editar', {screen: 'Editar2', params: { item: res }})
+    })
+    .catch(err => (setSigned(false)));
   }
-
+  
+  useEffect(() => {
+    console.log('teste')
+    loadAnimais()
+    IsLogin()
+    .then(res => {                        
+        setUserEmail(res.email)
+        var palavras = res.nome.split(' ');
+        //Pega os dois primeiros nomes
+        setNome(palavras.slice(0, 2).join(' '))
+        var telefone = res.telefone      
+        setTelefone('(' + telefone.substring(0, 2) + ') ' + telefone.charAt(2) + ' ' + telefone.substring(3, 7) + '-' + telefone.substring(7))
+        setId_User(res.id_user)
+    })
+    .catch(err => {
+      setSigned(false)
+    });
+  }, [])
+  
+  
   async function loadAnimais() {  
-    if(animais){      
-      return
-    }
-    await api.get('animal', {
-      params: { telefone: telefone }
+    setError()
+    setRefreshing(true)
+
+    const token = await AsyncStorage.getItem('@Profile:token')
+
+    await api.get('/animal/myanimals', {
+      headers: {'authorization':  'Bearer '+token.replace(/"/g, '') },
     }).then((response) => {
-      setAnimais(response.data)    
-    }).catch(() => {
+      console.log(1)
+      if(response.data.length === 0){
+        setAnimais(null)   
+      }else{
+        setAnimais(response.data) 
+      }
+      setError(false) 
+    }).catch((err) => {
+      console.log(err)
+      setError('Erro no servidor')
+    }).finally(() => {
+      setRefreshing(false)
     })
         
   }
 
   async function deleteAnimal(id) {
     setmodalVisible(true)
+    const token = await AsyncStorage.getItem('@Profile:token')
+      
     try {
       await api.delete(`animal/${id}`, {
         headers: {
-          Authorization: id_doador,
+          Authorization: 'Bearer '+token.replace(/"/g, ''),
+          Id_user: id_user
         }
       }).then((e) =>{        
         setmodalVisible(false)
@@ -99,6 +135,7 @@ export default function Initial(props) {
       },
       { text: 'Sim', onPress: () => deleteDoador() },
   ]);
+
   async function deleteDoador() {
 
     
@@ -121,7 +158,7 @@ export default function Initial(props) {
     <View style={styles.container}>
       <View>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigateToEditar('Editar')}>
         <FontAwesome5 name="edit" size={20} color="black" />
         <Text style={styles.buttonText}>Editar Perfil</Text>
       </TouchableOpacity >
@@ -139,58 +176,65 @@ export default function Initial(props) {
   //Meus pets
   const SecondRoute = () => (
     <View style={styles.container}>
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-      >
-        <View style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: 'center'
-        }}>
-          <View style={{backgroundColor:'#fff',padding:10, borderRadius:5}}>
-            <ActivityIndicator  size="large" />
-          </View>
-        
+      {/* MODAL LOADING */}
+      <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
+        <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+            <Flow size={50} color="#3ab6ff"/>
         </View>
       </Modal> 
-      
-      
+      {
+        refreshing==true&&
+        <View style={{alignItems: 'center',marginTop: 20}}>
+          <Flow size={50} color="#3ab6ff"/>
+        </View>
+      }
+      {
+        error=='Erro no servidor'&&
+        <View style={{alignItems: 'center',marginTop: 20}}>
+          <Text>Sem conexão com o servidor </Text>
+          <TouchableOpacity style={styles.action} onPress={() => {loadAnimais()}}>
+            <Text style={styles.actionText}>Repetir</Text>
+          </TouchableOpacity>
+        </View>
+      }
+      {
+        error==false&&animais==null&&
+        <View style={{alignItems: 'center', marginTop: 20}}>
+          <Text>
+           Sem pet cadastrado para adoção
+          </Text>
+        </View>
+      }
       <FlatList
-        data={animais}
-        keyExtractor={item => String(item.id)} 
-        refreshing={true}
-        ListEmptyComponent={() => (
-          <View style={{display: 'flex', alignItems: 'center', marginTop: 20}}>
-            <Text>
-              Clique no icone <Feather name="sun" size={30} color="#000" /> Para DOAR um pet
-            </Text>
-          </View> 
-        )}
-        renderItem={({ item: item }) => (          
+      data={animais}
+      keyExtractor={item => String(item.id)} 
+      refreshing={true}
+      renderItem={({ item: item }) => (     
+        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.Foto }})}>
           <View style={styles.viewAnimal}>
             <Image
               style={styles.animalImage}
               source={{uri: 'https://ik.imagekit.io/adote/resize_'+item.Foto}}
             />
-            <View style={styles.animalFooter}>
-              <View style={styles.animalButton}>
-                <TouchableOpacity onPress={() => deleteAnimal(item.id)}>
-                  <AntDesign name="delete" size={20} color="#000" />
-                </TouchableOpacity>
-              </View>
+            <View style={styles.animalFooter}>                
               <View style={styles.animalDesc}>
                 <Text style={styles.animalName}>{item.Nome}</Text>
-                <Text style={styles.animalSexo}>Sexo: {item.Sexo}</Text>
-                <Text style={styles.animalNasc}>Nascimento: {item.DataNasc}</Text>
-                <Text style={styles.animalPorte}>Porte: {item.Porte}</Text>
-                <Text style={styles.animalTextDesc}>{item.Descricao}</Text>
               </View>
-              
+              <View style={styles.animalButton}>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.Foto }})}>
+                <Text style={styles.actionText}> Editar </Text>
+                <AntDesign name="form" size={20} color="#fff" />             
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.action, {backgroundColor: 'red'}]} onPress={() => deleteAnimal(item.id)}>
+                <Text style={styles.actionText}> Excluir </Text>
+                <AntDesign name="delete" size={20} color="#fff" />             
+              </TouchableOpacity>
+              </View>
             </View>    
           </View>
-
-        )} />        
+        </TouchableOpacity>  
+      )} /> 
+          
     </View>
   );
   
@@ -214,7 +258,8 @@ export default function Initial(props) {
         <View style={styles.content}> 
         <View style={styles.profileHeader}>
           <Text style={styles.headerName}>{nome}</Text>
-          <Text style={styles.headerNumber}>{maskPhone(telefone)}</Text>
+          <Text style={styles.headerNumber}>{telefone}</Text>
+          <Text>{userEmail}</Text>
         </View>
           <TabView
             navigationState={{ index, routes }}

@@ -5,18 +5,30 @@ import { Ionicons, MaterialIcons, Feather, AntDesign } from '@expo/vector-icons'
 import { useRoute, useNavigation,CommonActions } from '@react-navigation/native';
 import { IsLogin } from './IsLogin'
 import { onSignOut } from './IsLogin';
-import { dataLogin } from './IsLogin'
 
 import LoginIcon from '../assets/LoginIcon.png'
 
 export default function CustomDrawer (props) {    
-    const [data, setData] = useState(false)
+    const [nome, setNome] = useState(false)
+    const [telefone, setTelefone] = useState(false)
+    const [signed, setSigned] = useState(false)
     const navigation = useNavigation()
-    useEffect(() => {
-        IsLogin()
-            .then(res => (setData(res)))
-            .catch(err => (setSigned(false)));
-    })
+
+    IsLogin()
+        .then(res => {                            
+            var palavras = res.nome.split(' ');
+            //Pega os dois primeiros nomes
+            setNome(palavras.slice(0, 2).join(' '))
+            var telefone = res.telefone
+                
+            setTelefone('(' + telefone.substring(0, 2) + ') ' + telefone.charAt(2) + ' ' + telefone.substring(3, 7) + '-' + telefone.substring(7))
+
+        })
+        .catch(err => (setSigned(false)));
+        
+    
+
+    
     const screen = useRoute().name;
 
     function sairFunction() {
@@ -33,8 +45,8 @@ export default function CustomDrawer (props) {
                             source={LoginIcon}
                             resizeMode='center'
                         />                         
-                        <Text style={styles.headerName}>{data.nome}</Text>
-                        <Text style={styles.headerNumber}>{data.telefone}</Text> 
+                        <Text style={styles.headerName}>{nome}</Text>
+                        <Text style={styles.headerNumber}>{telefone}</Text> 
                     </View>
                 
             </View>

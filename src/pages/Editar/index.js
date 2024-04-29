@@ -1,172 +1,340 @@
-import React, { useEffect, useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, Text, TouchableOpacity, TextInput, Image, Alert  } from 'react-native'
+import { View, TextInput, Switch, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
-
+import { onSignIn } from '../../components/IsLogin';
 import Footer from '../../components/Footer';
 import styles from './styles'
-import IsLogin from '../../components/IsLogin'
 import api from '../../services/api'
-import LoginIcon from '../../assets/LoginIcon.png'
-
+import { Flow  } from 'react-native-animated-spinkit'
 export default function Editar(props) {
-  const { register, setValue, handleSubmit, control, formState:{ errors } } = useForm()
-  const { telefone, nome} = IsLogin()  
+  
+  
   const navigation = useNavigation()
-  const [ pressButton, setPressButton ] = useState(false)
- 
+  const [modalVisible, setModalVisible] = useState(false)
+  const [isEmailEnabled, setIsEmailEnable] = useState(false)
+  const [isNomeEnabled, setIsNomeEnabled] = useState(false);
+  const [isFoneEnabled, setIsFoneEnable] = useState(false)
+  const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
+
+  const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm({
+    defaultValues: {
+      nome: props.route.params.item.nome,
+      email: props.route.params.item.email,
+      telefone: parseInt(props.route.params.item.telefone),
+    }
+  })
+
+
   useEffect(() => {
     register('nome')
-    register('telefone')  
+    register('telefone')
+    register('email')
+    register('senha')
   }, [register])
 
-   
 
-  function phoneField(onChange, onBlur, value)  {
-    if(errors.telefone){
-      return <TextInputMask                  
-        style={[styles.input, {borderColor: errors.telefone.type=== "required"? 'red':''}]}
-        placeholder={'Telefone'}
-        placeholderTextColor= {errors.telefone.type=== "required" && 'red'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }else {
-      return <TextInputMask                  
-        style={[styles.input]}
-        placeholder={'Telefone'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
+  async function handleNewDoador(e) {
+    console.log('click click')
+    setModalVisible(true)
+    var nome = e.nome
+    var email = e.email
+    var telefone = e.telefone
+    if(!isNomeEnabled){
+      nome = props.route.params.item.nome
     }
-  }
-
- function AlertButton (e) {
-  setPressButton(true)
-  return (Alert.alert('CUIDADO', 'Tem certeza que deseja atualizar os seus dados?', [
-    {
-      text: 'Não',
-      style: 'cancel', onPress: () => setPressButton(false)
-    },
-    { text: 'Sim', onPress: () => updateDoador(e) },
-  ]))
- }
-  async function updateDoador(e) {
-    var tel = e.telefone.replace(/[ ]/g, "");
-    tel = tel.replace(/[()]/g, "");
-    tel = tel.replace(/[-]/g, "");
-    if(tel.length<11){
-      return Alert.alert('Erro no preenchimento', 'Preencha o numero de telefone corretamente ex: (99) 99999-9999', [
-        {
-          text: 'Ok',
-          style: 'cancel',
-        },
-      ]);
-      
+    if(!isFoneEnabled){
+      telefone = props.route.params.item.telefone
+    }
+    if(!isEmailEnabled){
+      email = props.route.params.item.email
     }
 
-    var name = e.nome.toLowerCase()
-    name = name.trim()
+    //setmodalVisible(true)
+    telefone = telefone.replace(/[ ]/g, "");
+    telefone = telefone.replace(/[()]/g, "");
+    telefone = telefone.replace(/[-]/g, "");    
+    email = email.toLowerCase()
+    var palavras = nome.split(' ');
+
+    // Itera sobre cada palavra e capitaliza a primeira letra
+    for (var i = 0; i < palavras.length; i++) {
+        palavras[i] = palavras[i].charAt(0).toUpperCase() + palavras[i].slice(1);
+    }
+    // Junta as palavras de volta em uma única string
+    nome = palavras.join(' ');
+    var dados = []
+    if(isSenhaEnabled==true){
+      dados = {
+        "nome": nome,
+        "telefone": telefone,
+        "email": email,
+        "senha": e.senha,
+        "id_user": props.route.params.item.id_user   
+      }  
+    }else{
+      dados = {
+        "nome": nome,
+        "telefone": telefone,
+        "email": email,      
+        "id_user": props.route.params.item.id_user   
+      } 
+    }
+    const token = await AsyncStorage.getItem('@Profile:token')
     
-    const NewDados = {
-      "nome": name,
-      "telefone": tel,
-    }    
+    await api.post('/user/update', dados, {        
+        headers: { 'authorization':  'Bearer '+token.replace(/"/g, '')},
+    })
+    .then(async (data) => {
+      const doador = JSON.stringify(data.data.token)
+      onSignIn(navigation,CommonActions,doador)  
+    })
+    .catch(() => {
+      console.log('aaaaaaaaaaaaaaaaaaa')
+      Alert.alert(
+        "Erro no cadastro",
+        "Não foi realizar alterações.\nVerifique sua conexão e tente novamente"
+      ) 
+    })
+    .finally(() => {
+      console.log('finalyyyyyyyyyyyyyyyyyyyyy')
+      setModalVisible(false)
+    }) 
+         
     
-    try {
-      await api.post('/doador/update', NewDados,{
-        headers: {
-          Authorization: telefone,
-        }}).then(async (res) => {
-          const dados = JSON.stringify(res.data)
-          await AsyncStorage.setItem('@Profile:token', dados);  
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                { name: 'Inicio' },
-              ],
-            })
-          );
-        })
-      
-    } catch (err) {
-      alert('Erro ao atualiziar cadastro, tente novamente.')
-    }
-    setPressButton(false)
+
   }
 
   
   return (
-      <View style={styles.container}>  
-        <View style={styles.header}>
-          <Image
-            style={styles.image}
-            source={LoginIcon}
-            resizeMode='contain'
-          />
-          <Text style={styles.textName}>{nome}</Text>
-        </View>   
-        <View style={styles.content}> 
+    <SafeAreaView style={styles.container}>      
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        statusBarTranslucent={true}
+      >
+        <View style={{
+          flex: 1,
+          justifyContent: "center",
+          alignContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        }}>
+            <Flow size={50} color="#3ab6ff"/>
+        </View>
+      </Modal> 
+      <ScrollView style={styles.scrollView}>
         <View  style={styles.loginForm}>
-          <Controller
-            rules={{required: 'true'}}
-            render={({ 
-              field: { onChange, onBlur, value, name, ref },
-              fieldState: { invalid, isTouched, isDirty, error }
-            }) => {
+        <View style={styles.containerTextField}>
+            <Controller
+              rules={{
+                required: 'true',                
+              }}
+              render={({ 
+                field: { onChange, onBlur, value, name, ref },
+                fieldState: { invalid, isTouched, isDirty, error }
+              }) => {
+                  return <View style={[{marginBottom: 10}]}>
+                  <Text>Nome completo:</Text>
+                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder='Fulano pereira costa'
+                      keyboardType='default'
+                      autoComplete='name'
+                      editable={isNomeEnabled}
+                      placeholderTextColor= {invalid && 'red'}
+                      onBlur={onBlur}
+                      onChangeText={value => onChange(value)}
+                      value={isNomeEnabled ? value : props.route.params.item.nome}
+                    />
+                    <Switch
+                      trackColor={{false: '#767577', true: '#81b0ff'}}
+                      thumbColor={isNomeEnabled ? '#f5dd4b' : '#f4f3f4'}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => setIsNomeEnabled(!isNomeEnabled)}
+                      value={isNomeEnabled}
+                    />
+                  </View>
+                  <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+                </View>
+                }
+              }
+              name="nome"
+              control={control}
+            /> 
               
-                return <TextInput
-                style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
-                placeholder='Nome'
-                placeholderTextColor= {invalid && 'red'}
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
-              />
-              
-            }}
-            name="nome"
-            control={control}
-            defaultValue=''
-          /> 
+          </View>
           <View style={styles.containerTextField}>
             <Controller
-              rules={{required: 'true'}}
-              render={({ field: {onChange, onBlur, value} }) => (
-                phoneField(onChange, onBlur, value)
-              )}
+              rules={{
+                required: 'true',    
+                minLength: {
+                  value: 15,
+                  message: "lowCaractere"
+                }            
+              }}
+              render={({ 
+                field: { onChange, onBlur, value, name, ref },
+                fieldState: { invalid, isTouched, isDirty, error }
+              }) => {
+                
+                  return <View style={[{marginBottom: 10}]}>                    
+                  <Text>Telefone:</Text>
+                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                    <TextInputMask                  
+                      style={[styles.input]}
+                      placeholder={'Telefone'}        
+                      value={isFoneEnabled? value.toString() :props.route.params.item.telefone.toString()}                       
+                      type={'cel-phone'}
+                      editable={isFoneEnabled}
+                      options={{
+                        maskType: 'BRL',
+                        withDDD: true,
+                        dddMask: '(99) ',
+                        
+                      }}                  
+                      onChangeText={onChange}
+                    />             
+                    <Switch
+                      trackColor={{false: '#767577', true: '#81b0ff'}}
+                      thumbColor={isFoneEnabled ? '#f5dd4b' : '#f4f3f4'}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => {
+                        setIsFoneEnable(!isFoneEnabled)
+
+                      }}
+                      value={isFoneEnabled}
+                    />
+                  </View>
+                  <Text style={[{color: 'red'}]}>{errors.telefone?errors.telefone.message=='lowCaractere'?'Telefone deve conter 11 digitos':'':''}
+                    {errors.telefone?errors.telefone.type=='required'?'Campo obrigatorio':'':''}</Text>
+                </View>
+                }
+
+              }
               name="telefone"
               control={control}
-              defaultValue=''
-            />             
+            /> 
           </View>
-        </View>
+          <View style={styles.containerTextField}>
+            <Controller
+              rules={{
+                required: 'true',
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: 'Invalid_email',
+                },
+              }}
+              render={({ 
+                field: { onChange, onBlur, value, name, ref },
+                fieldState: { invalid, isTouched, isDirty, error }
+              }) => {
+                if(!isEmailEnabled){
+                  value = props.route.params.item.email
+                }
+                  return <View style={[{marginBottom: 10}]}>
+                  <Text>Email:</Text>
+                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
+                    
+                    <TextInput
+                      style={[styles.input, {borderColor: invalid? 'red':'#000',}]}                      
+                      value={value}
+                      placeholder='email@gmail.com'
+                      keyboardType='email-address'
+                      autoComplete='email'                  
+                      editable={isEmailEnabled}
+                      placeholderTextColor= {invalid && 'red'}
+                      onBlur={onBlur}
+                      onChangeText={value => onChange(value)}
+                      
+                    />
+                    <Switch
+                      trackColor={{false: '#767577', true: '#81b0ff'}}
+                      thumbColor={isEmailEnabled ? '#f5dd4b' : '#f4f3f4'}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => {setIsEmailEnable(!isEmailEnabled)}}
+                      value={isEmailEnabled}
+                    />
+                    </View>
+                    {errors.email&&errors.email.message=='Invalid_email'?<Text style={[{color: 'red'}]}>Digite um email correto: exemplo@gmail.com</Text>:''}
+                    {errors.email&&errors.email.type=='required'?<Text style={[{color: 'red'}]}>Email obrigatorio</Text>:''}
+                  
+                </View>
+                }
+
+              }
+              name="email"
+              control={control}
+            /> 
+          </View>
+
+          <View style={styles.containerTextField}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text>Alterar senha?</Text>
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={isSenhaEnabled ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => {setIsSenhaEnabled(!isSenhaEnabled)}}
+                value={isSenhaEnabled}
+              />
+            </View>
+            {
+              isSenhaEnabled?<Controller
+              rules={{
+                required: 'true',
+                minLength: {
+                  value: 8,
+                  message: "lowCaractere"
+                }
+              }}
+              render={({ 
+                field: { onChange, onBlur, value, name, ref },
+                fieldState: { invalid, isTouched, isDirty, error }
+              }) => {
+                
+                  return <View>
+                    <Text>Nova senha:</Text>
+                    <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                      <TextInput
+                        style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                        placeholder='********'
+                        secureTextEntry={true}
+                        placeholderTextColor= {invalid && 'red'}
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
+                      />
+                    </View>
+                    <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no minimo 8 caracteres':'':''}
+                    {errors.senha?errors.senha.type=='required'?'Senha obrigatoria':'':''}</Text>
+                </View>
+                
+                }
+
+              }
+              name="senha"
+              control={control}
+              defaultValue=""
+            /> : ''
+            }
+            
+          </View>
+          
           
           <View style={styles.actions}>
-            <TouchableOpacity style={pressButton?styles.actionPress: styles.action} onPress={handleSubmit(AlertButton)} >
-              <Text style={pressButton?styles.pressText: styles.actionText}>CONFIRMAR</Text>
+            <TouchableOpacity style={styles.action} onPress={handleSubmit(handleNewDoador)} >
+              <Text style={styles.actionText}>CONFIRMAR</Text>
             </TouchableOpacity>
           </View>  
         </View>
-        
+             
+      </ScrollView>
+      
       <Footer Navigation={{...props}}/>
-      </View>
+    </SafeAreaView>
   )
 }

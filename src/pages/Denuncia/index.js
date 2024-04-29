@@ -4,65 +4,31 @@ import { View, Text, TextInput, TouchableHighlight, Image, ScrollView, Modal, To
 import { RadioButton } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
-import IsLogin from '../../components/IsLogin'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IsLogin } from '../../components/IsLogin'
 import styles from './styles'
 import Footer from '../../components/Footer'
 import api from '../../services/api'
+import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
+import { Montserrat_300Light } from '@expo-google-fonts/montserrat';
+import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
 export default function Denuncia(props) {
-  const { register, setValue, handleSubmit, getValues, control, formState:{ errors } } = useForm()
-  const [ pressButton, setPressButton ] = useState(false)
   const [message, setMessage] = useState("")  
   const [modalVisible, setmodalVisible] = useState(false)
-  const {telefone, nome}= IsLogin()
+  const [data, setData] = useState(null)
+
   const navigation = useNavigation()
-  const {Foto, Nome, Sexo, DataNasc, DoadorTelefone, id} = props.route.params.tipo
+  const {Foto, Nome, Sexo, DataNasc, DoadorTelefone, id} = props.route.params.item
+  console.log(props.route.params.item)
+  let [fontsLoaded] = useFonts({
+    Montserrat_300Light,
+    Roboto_500Medium,
+    Roboto_400Regular,
+    OpenSans_400Regular
+  });
   
-  
-  useEffect(() => {
-    register('nome')
-    register('telefone')
-  }, [register])
-
-  
-  function phoneField(onChange, onBlur, value)  {
-    
-    
-    if(errors.telefone){
-      return <TextInputMask                  
-        style={[styles.input, {borderColor: errors.telefone.type=== "required"? 'red':''}]}
-        placeholder={'Telefone'}
-        placeholderTextColor= {errors.telefone.type=== "required" && 'red'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }else {
-      return <TextInputMask                  
-        style={[styles.input]}
-        placeholder={'Telefone'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }
-  }
-
-  
-
+ 
   async function sendReport(e){
     var dados = {}
 
@@ -70,29 +36,16 @@ export default function Denuncia(props) {
       return Toast("Selecione uma das opções")
     }
 
-    if(e){
-      dados = {
-        "desc": message,
-        "animal_id": id,
-        "animal_nome": Nome,
-        "doador_tel": DoadorTelefone,
-        "user_nome": e.nome,
-        "user_tel": e.telefone
-      }
+    dados = {
+      "desc": message,
+      "animal_id": id,
+      "animal_nome": Nome,
     }
-    else{
-      
-      dados = {
-        "desc": message,
-        "animal_id": id,
-        "animal_nome": Nome,
-        "doador_tel": DoadorTelefone,
-        "user_nome": nome,
-        "user_tel": telefone
-      }
-    }
+    const token = await AsyncStorage.getItem('@Profile:token')
     try {
-      await api.post('/report', dados)
+      await api.post('/report', dados, {
+        headers: { 'authorization':  'Bearer '+token.replace(/"/g, '')},
+      })
       .then(res => {
         Toast(res.data.mess)
         navigation.dispatch(
@@ -107,14 +60,7 @@ export default function Denuncia(props) {
     } 
     catch {
         Toast('Erro no servidor')
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              { name: 'Inicio' },
-            ],
-          })
-        );
+        
     }
 
     
@@ -127,72 +73,7 @@ export default function Denuncia(props) {
       
     <View style={styles.container}>
       <View>
-        <Modal
-          visible={modalVisible}
-          style={{backgroundColor: '#000'}}
-          transparent={true}
-          onRequestClose={() => {setmodalVisible(false)}}
-          
-        >
-          <View style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: 'center',
-            backgroundColor: 'rgba(52, 52, 52, 0.8)'
-          }}>
-            <View style={{backgroundColor:'#fff',width:'80%', padding: 30, borderRadius:5}}>
-              <Text style={{fontSize: 16}}>
-                Nome completo e telefone para contato 
-              </Text>
-
-              <View style={styles.loginForm}>
-                <Controller
-                  rules={{required: 'true'}}
-                  render={({ 
-                    field: { onChange, onBlur, value, name, ref },
-                    fieldState: { invalid, isTouched, isDirty, error }
-                  }) => {
-                    
-                      return <TextInput
-                      style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
-                      placeholder='Nome'
-                      placeholderTextColor= {invalid && 'red'}
-                      onBlur={onBlur}
-                      onChangeText={value => onChange(value)}
-                      value={value}
-                    />
-                    
-                    }
-
-                  }
-                  name="nome"
-                  control={control}
-                  defaultValue=""
-                /> 
-                <View style={styles.containerTextField}>
-                  <Controller
-                    rules={{required: 'true'}}
-                    render={({ field: {onChange, onBlur, value} }) => (
-                      phoneField(onChange, onBlur, value)
-                    )}
-                    name="telefone"
-                    control={control}
-                    defaultValue=""
-                    /> 
-                  
-                </View>                      
-                <View style={styles.actions}>
-                  <TouchableOpacity style={[styles.action, {marginTop: 15}]} onPress={IsLogin()?handleSubmit(sendReport):()=>setmodalVisible(true)} >
-                    <Text style={styles.actionText}>ENVIAR</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.action, {marginTop: 5}]} onPress={() => setmodalVisible(false)} >
-                    <Text style={styles.actionText}>VOLTAR</Text>
-                  </TouchableOpacity>
-                </View>  
-              </View>
-            </View>          
-          </View>
-        </Modal> 
+        
       </View>
       <ScrollView>
       <View style={styles.content}>
@@ -230,10 +111,9 @@ export default function Denuncia(props) {
               value="O anúncio tem conteúdo ofensivo, obsceno ou discriminatório."
               label="O anúncio tem conteúdo ofensivo, obsceno ou discriminatório."/>
           </RadioButton.Group>
-          <TouchableHighlight activeOpacity={1} onShowUnderlay={() => setPressButton(true)}  onHideUnderlay={() => setPressButton(false)}  underlayColor="#3ab6ff" style={styles.action} 
-            onPress={IsLogin()?()=>sendReport():()=>setmodalVisible(true)}>
-            <Text style={pressButton?styles.pressText: styles.actionText}>CONTINUAR</Text>
-          </TouchableHighlight> 
+          <TouchableOpacity style={styles.action} onPress={()=>sendReport()}>
+            <Text style={styles.actionText}>CONTINUAR</Text>
+          </TouchableOpacity> 
         </View>
       </View>  
                

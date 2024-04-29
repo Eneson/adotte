@@ -29,13 +29,13 @@ export default function Login(props) {
 
   async function handleLogin(e) {
 		
+    setmodalVisible(true)
     const dados = {
       "email": e.email,
       "senha": e.senha
     }
     
 
-    setmodalVisible(true)
     
    try {
       await api.post('/login', dados)
@@ -74,40 +74,6 @@ export default function Login(props) {
   }
  
 
-  function phoneField(onChange, onBlur, value)  {
-    
-    
-    if(errors.telefone){
-      return <TextInputMask                  
-        style={[styles.input, {borderColor: errors.telefone.type=== "required"? 'red':''}]}
-        placeholder={'Telefone'}
-        placeholderTextColor= {errors.telefone.type=== "required" && 'red'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }else {
-      return <TextInputMask                  
-        style={[styles.input]}
-        placeholder={'Telefone'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }
-  }
   
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
@@ -121,22 +87,16 @@ export default function Login(props) {
   });
 
   if (!fontsLoaded) {
-    console.log('aaaa')
     return null
   }
   
   return (
     
     <SafeAreaView style={styles.container}>
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-      >
-        <View style={{
-          flex: 1,
-          justifyContent: "center",
-        }}>
-        <ActivityIndicator color="#000" size="large" />
+       {/* MODAL LOADING */}
+       <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
+        <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+            <Flow size={50} color="#3ab6ff"/>
         </View>
       </Modal> 
       <ScrollView style={styles.scrollView}>
@@ -229,7 +189,7 @@ export default function Login(props) {
             </TouchableOpacity>
            <View style={styles.cadastroButton}>
             <Text>Não possui um cadastro? </Text>
-            <TouchableOpacity  onPress={() => navigateTo('register')}>
+            <TouchableOpacity disabled={modalVisible} onPress={() => navigateTo('register')}>
               <Text style={styles.actionText2}> Cadastrar </Text>
             </TouchableOpacity>
                    

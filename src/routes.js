@@ -4,25 +4,21 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, CommonActions } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-//import Login from './pages/Login'
+import { MaterialIcons, FontAwesome, FontAwesome5  } from '@expo/vector-icons'
 import Welcome from './pages/Welcome'
 import login from './pages/Welcome/login'
 import register from './pages/Welcome/register'
-import Cadastrar from './pages/Cadastrar'
 import NewPet from './pages/NewPet'
 import Denuncia from './pages/Denuncia'
 import Adotar from './pages/Adotar'
 import Favoritos from './pages/Favoritos'
 import Profile from './pages/Profile'
-import ImageForm from './pages/ImageForm'
 import Editar from './pages/Editar'
-
+import UpdatePet from './pages/NewPet/UpdatePet.js';
 import Initial from './pages/Initial'
 import CustomDrawer from './components/CustomDrawer'
 import { IsLogin } from './components/IsLogin';
 import { onSignOut } from './components/IsLogin';
-
 const Drawer = createDrawerNavigator()
 const AppStack = createStackNavigator()
 
@@ -53,7 +49,6 @@ const styles = StyleSheet.create({
 
 export default function Routes () {  
   
-  
 function Button(props) {  
   return (
     <View >
@@ -63,7 +58,6 @@ function Button(props) {
     </View>
   )
 }
-
 
 function ProfileScreen(props) {
   return (
@@ -87,42 +81,17 @@ function ProfileScreen(props) {
 }
 function FavoritosScreen(props) {
   return (
-    <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer {...props} />}      
-      screenOptions={{ 
-        headerStyle: { 
-          backgroundColor: '#3ab6ff',
-        },        
-        headerTintColor: '#fff',
-        headerRight: () => (Button(props))
-      }}      
-    >   
+    <AppStack.Navigator>   
       <AppStack.Screen name="Favoritos2" component={Favoritos} 
         options={{
-            headerTitle: 'Favoritos',
+          headerTitle: 'Meus Favoritos',
+          headerStyle: { 
+            backgroundColor: '#3ab6ff',
+          },    
+          headerTintColor: '#fff',
         }} />
       
-    </Drawer.Navigator>
-  )
-}
-function CadastrarScreen(props) {
-  return (
-    <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer {...props} />}      
-      screenOptions={{ 
-        headerStyle: { 
-          backgroundColor: '#3ab6ff',
-        },        
-        headerTintColor: '#fff',
-        headerRight: () => (Button(props))
-      }}      
-    >   
-      <AppStack.Screen name="Cadastrar2" component={Cadastrar} 
-        options={{
-            headerTitle: 'Nova Conta',
-        }} />
-      
-    </Drawer.Navigator>
+    </AppStack.Navigator>
   )
 }
 function NewPetScreen(props) {
@@ -140,33 +109,65 @@ function NewPetScreen(props) {
       <AppStack.Screen name="NewPet2" component={NewPet} 
         options={{
             headerTitle: 'Cadastrar Pet',
-        }} />
-      <AppStack.Screen name="ImageForm" component={ImageForm} 
-      options={{
-          headerTitle: 'Cadastrar Pet',
-      }} />
-      
+        }} />      
     </Drawer.Navigator>
   )
 }
+function UpdatePetScreen(props) {
+  return (
+    <AppStack.Navigator 
+      screenOptions={{ 
+        headerShown: true,
+        headerStyle: { 
+          backgroundColor: '#3ab6ff',
+        },        
+        headerTintColor: '#fff',
+      }}   
+      >   
+        <AppStack.Screen name="updatePet2" component={UpdatePet} 
+        options={{
+            headerTitle: 'Atualizar Pet',
+        }} />   
+      </AppStack.Navigator>
+  )
+  
+}
 function AdotarScreen(props) {
   return (
-    <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer {...props} />}      
+    <AppStack.Navigator  
       screenOptions={{ 
         headerStyle: { 
           backgroundColor: '#3ab6ff',
         },        
         headerTintColor: '#fff',
-        headerRight: () => (Button(props))
+        headerBackImage: () => (
+          <View style={{margin: 5}}>
+            <FontAwesome5 name="arrow-left" size={35} color="#3ab6ff" />
+          </View>
+        ),
+        
       }}      
     >   
-      <AppStack.Screen name="Adotar2" component={Adotar} 
+      <AppStack.Screen  name="Adotar2" component={Adotar} 
+  
         options={{
-            headerTitle: 'Adotar',
+          headerTransparent: true,
+          headerStyle: { 
+            backgroundColor: '#fff',
+
+          },        
+          cardStyle:{
+            backgroundColor: 'transparent'
+          },
+          headerTintColor: '#fff',
+          headerTitle: '',
+          headerTitleStyle: {
+            height: 100
+          },
+          
         }} />
       
-    </Drawer.Navigator>
+    </AppStack.Navigator>
   )
 }
 function EditarScreen(props) {
@@ -261,7 +262,6 @@ function InicioScreen(props){
     )
 }
 
-
 const [signed, setSigned] = useState(false)
 useEffect(() => {
   IsLogin()
@@ -270,20 +270,20 @@ useEffect(() => {
 }, [])  
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider >
       <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
-      <NavigationContainer>
-        <AppStack.Navigator initialRouteName={signed ? 'Inicio':'Welcome'} screenOptions={{ headerShown: false,}} >
-            <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
-            <AppStack.Screen name="Inicio" component={InicioScreen} /> 
-            <AppStack.Screen name="Profile" component={ProfileScreen} /> 
-            <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
-            <AppStack.Screen name="NewPet" component={NewPetScreen} />         
-            <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
-            <AppStack.Screen name="Cadastrar" component={CadastrarScreen} />
-            <AppStack.Screen name="Adotar" component={AdotarScreen} />
-            <AppStack.Screen name="Editar" component={EditarScreen} />
-        </AppStack.Navigator> 
+      <NavigationContainer >
+        <AppStack.Navigator initialRouteName={signed ? 'Inicio':'Welcome'} screenOptions={{ headerShown: false,}} >            
+              <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
+              <AppStack.Screen name="Inicio" component={InicioScreen} /> 
+              <AppStack.Screen name="Profile" component={ProfileScreen} /> 
+              <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
+              <AppStack.Screen name="NewPet" component={NewPetScreen} />         
+              <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
+              <AppStack.Screen name="Adotar" component={AdotarScreen} />
+              <AppStack.Screen name="Editar" component={EditarScreen} />
+              <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />                     
+        </AppStack.Navigator>  
     </NavigationContainer>
     </SafeAreaProvider>
     
