@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, Text, TextInput, TouchableHighlight, Image, ScrollView, Modal, ToastAndroid, TouchableOpacity} from 'react-native'
+import { View, Text, Image, ScrollView, ToastAndroid, TouchableOpacity} from 'react-native'
 import { RadioButton } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form'
-import { TextInputMask} from 'react-native-masked-text'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IsLogin } from '../../components/IsLogin'
 import styles from './styles'
 import Footer from '../../components/Footer'
 import api from '../../services/api'

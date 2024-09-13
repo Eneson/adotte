@@ -64,10 +64,6 @@ export default StyleSheet.create({
     paddingStart: 15,
     fontFamily: 'OpenSans_400Regular'
   },
-  viewFoto:{
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
   submitButton:{
     width: '100%',
     marginTop: 0,

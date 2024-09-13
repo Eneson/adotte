@@ -7,39 +7,8 @@ export default StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center', 
     flex: 1,
-  },
-  content: {
-    flex: 1,
-    width: '100%',
-    marginTop: 50
-  },
+  },  
   
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  incident: {
-    padding: 24,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    marginBottom: 16,
-    marginTop: 48,
-  },
-
-  incidentProperty: {
-    fontSize: 14,
-    color: '#41414d',
-    fontWeight: 'bold',
-    marginTop: 24,
-  },
-
-  incidentValue: {
-    marginTop: 8,
-    fontSize: 15,
-    color: '#737380'
-  },
   input:{
     borderColor: '#414757',
     padding: 10, 
@@ -48,16 +17,6 @@ export default StyleSheet.create({
     marginTop: 0,
   },
 
-  contactBox: {
-    padding: 24,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    marginBottom: 16,
-  },
-  loginHeader:{
-    justifyContent: 'flex-end',
-    paddingBottom: 40
-  },
   scrollView:{
     marginTop: 20,
     flex:1,
@@ -70,30 +29,11 @@ export default StyleSheet.create({
     paddingStart: 15,
     flexDirection:'row', 
   },
-  loginText:{
-    fontSize: 25,
-    color: '#2a1e49',
-    letterSpacing: 3,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    marginBottom: 10
-  },
 
   loginForm:{
     flex: 1,
   },
-  heroTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#13131a',
-    lineHeight: 30,
-  },
 
-  heroDescription: {
-    fontSize: 15,
-    color: '#737380',
-    marginTop: 16,
-  },
 
   actions: {
     marginTop: 16,
@@ -110,19 +50,10 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10
   },
-
   actionText: {
     color: '#fff',
     fontSize: 15,
     fontWeight: 'bold',
     letterSpacing: 2,
   },
-  actionText2: {
-    fontSize: 15,
-    fontWeight: 'bold'
-  },
-  cadastroButton:{
-    flexDirection: 'row',    
-    justifyContent: 'center',
-  }
 })

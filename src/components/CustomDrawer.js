@@ -15,7 +15,12 @@ export default function CustomDrawer (props) {
     const navigation = useNavigation()
 
     IsLogin()
-        .then(res => {                            
+        .then(res => {   
+            if(res==false){
+                setSigned(false)   
+              }else{
+                setSigned(true)
+              }                         
             var palavras = res.nome.split(' ');
             //Pega os dois primeiros nomes
             setNome(palavras.slice(0, 2).join(' '))
@@ -26,7 +31,7 @@ export default function CustomDrawer (props) {
         })
         .catch(err => (setSigned(false)));
         
-    
+    console.log(signed)
 
     
     const screen = useRoute().name;
@@ -44,64 +49,61 @@ export default function CustomDrawer (props) {
                             style={styles.image}
                             source={LoginIcon}
                             resizeMode='center'
-                        />                         
-                        <Text style={styles.headerName}>{nome}</Text>
-                        <Text style={styles.headerNumber}>{telefone}</Text> 
+                        />                        
+                        {signed? <View>
+                            <Text style={styles.headerName}>{nome}</Text>
+                            <Text style={styles.headerNumber}>{telefone}</Text> 
+                        </View>:<View><Text style={styles.headerName}>Bem vindo!</Text></View>}
+                        
                     </View>
                 
             </View>
             <View style={{flex: 5}}>
                 <DrawerContentScrollView {...props}>
                     <DrawerItem
-                        icon={({ focused, color, size }) => <Ionicons name="md-paw-outline" size={size} color={color} /> }
-                        label="Adotar um Pet"
+                        icon={({ focused, color, size }) => <Ionicons name="paw-outline" size={size} color={color} /> }
+                        label="Início"
                         onPress={() => {navigation.navigate('Inicio')}} 
                         focused={screen.includes('Inicio')?true:false}
                     />
 
                     <DrawerItem
-                        label="Pets Favoritos"
-                        onPress={() => {navigation.navigate('Favoritos')}} 
+                        label="Favoritos"
+                        onPress={() => {{signed? navigation.navigate('Favoritos'): navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}}} 
                         icon={({ focused, color, size }) => <MaterialIcons name="favorite-outline" size={size} color={color}/> }
                         focused={screen.includes('Favoritos')?true:false}
                     />
 
                     
-                    <View>
-                        
+                                          
                         <DrawerItem
-                            label="Doar um pet"
-                            onPress={() => {navigation.navigate('NewPet')}} 
+                            label="Doar"
+                            onPress={() => {{signed? navigation.navigate('NewPet'): navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para doar um pet' }})}}} 
                             icon={({ focused, color, size }) => <Feather name="sun" size={size} color={color} /> }
                             focused={screen.includes('NewPet')?true:false}
                         />
-                        <DrawerItem
-                            label="Meu Perfil"
-                            onPress={() => {navigation.navigate('Profile')}} 
-                            icon={({ focused, color, size }) => <AntDesign name="user" size={size} color={color} /> }
-                            focused={screen.includes('Profile')?true:false}
-                        />
-                        <DrawerItem
-                            label="Sair"
-                            onPress={() => {sairFunction()}} 
-                            icon={({ focused, color, size }) => <AntDesign name="logout" size={size} color={color} /> }
-                        />
-                    </View>
+                        
+                        {signed? <View>  
+                            <DrawerItem
+                                label="Meu Perfil"
+                                onPress={() => {navigation.navigate('Profile')}} 
+                                icon={({ focused, color, size }) => <AntDesign name="user" size={size} color={color} /> }
+                                focused={screen.includes('Profile')?true:false}
+                            />
+                            <DrawerItem
+                                label="Sair"
+                                onPress={() => {sairFunction()}} 
+                                icon={({ focused, color, size }) => <AntDesign name="logout" size={size} color={color} /> }
+                            />
+                        </View>:<View></View>}
+                        
                     
                     <DrawerItem
                         label="Sobre"
                         onPress={() => {navigation.navigate('sobre')}} 
                         icon={({ focused, color, size }) =>  <Ionicons name="information-circle-outline" size={size} color={color} /> }
                         focused={screen.includes('sobre')?true:false}
-                    />
-                    
-
-                    
-                    
-                                       
-                    
-
-
+                    />                  
                 </DrawerContentScrollView>
             </View>            
         </View>

@@ -52,9 +52,12 @@ export default function Routes () {
 function Button(props) {  
   return (
     <View >
-      <TouchableOpacity style={styles.headerIcons2} onPress={()=>{onSignOut(props.navigation, CommonActions)}}>
+      {signed? <TouchableOpacity style={styles.headerIcons2} onPress={()=>{onSignOut(props.navigation, CommonActions)}}>
           <Text style={{color: '#fff'}}>Sair</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>:<TouchableOpacity style={styles.headerIcons2} onPress={()=>{props.navigation.navigate('Welcome')}}>
+          <Text style={{color: '#fff'}}>Entrar</Text>
+      </TouchableOpacity>}
+      
     </View>
   )
 }
@@ -265,15 +268,21 @@ function InicioScreen(props){
 const [signed, setSigned] = useState(false)
 useEffect(() => {
   IsLogin()
-    .then(res => (setSigned(res)))
-    .catch(err => (setSigned(false)));
+        .then(res => {   
+          if(res==false){
+            setSigned(false)   
+          }else{
+            setSigned(true)
+          }
+        })
+        .catch(() => (setSigned(false)));
 }, [])  
 
   return (
     <SafeAreaProvider >
       <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
       <NavigationContainer >
-        <AppStack.Navigator initialRouteName={signed ? 'Inicio':'Welcome'} screenOptions={{ headerShown: false,}} >            
+        <AppStack.Navigator initialRouteName={'Inicio'} screenOptions={{ headerShown: false,}} >            
               <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
               <AppStack.Screen name="Inicio" component={InicioScreen} /> 
               <AppStack.Screen name="Profile" component={ProfileScreen} /> 

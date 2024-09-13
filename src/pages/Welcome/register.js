@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Image, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
+import { View, TextInput, Image,StyleSheet, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
 import { onSignIn } from '../../components/IsLogin';
@@ -259,7 +259,7 @@ export default function Cadastrar(props) {
             /> 
           </View>
           
-          
+           
           <View style={styles.actions}>
             <TouchableOpacity isabled={modalVisible} style={styles.action} onPress={handleSubmit(handleNewDoador)} >
               <Text style={styles.actionText}>CADASTRAR</Text>
@@ -267,7 +267,7 @@ export default function Cadastrar(props) {
            <View style={styles.cadastroButton}>
             <Text>já possui cadastro? </Text>
             <TouchableOpacity  onPress={() => navigateTo('login')}>
-              <Text style={styles.actionText2}> Entrar </Text>
+              <Text style={styles.actionText2}>Entrar</Text>
             </TouchableOpacity>
            </View>
           </View>  

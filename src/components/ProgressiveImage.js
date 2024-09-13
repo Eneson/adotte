@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { AntDesign, MaterialIcons, FontAwesome5  } from '@expo/vector-icons'
+import { IsLogin } from './IsLogin'
 
 
 const styles = StyleSheet.create({
@@ -42,6 +43,20 @@ export default function ProgressiveImage(props) {
   const [menuVisible, setMenuVisible] = useState(false)  
   const [loading, setLoading] = useState(true)
   const [favoritePress, setFavoritePress] = useState(false)
+  const [signed, setSigned] = useState(false)
+
+    IsLogin()
+        .then(res => {   
+          if(res==false){
+            setSigned(false)   
+          }else{
+            setSigned(true)
+          }
+        })
+        .catch(() => (setSigned(false)));
+        
+    console.log(signed)
+
   function navigateToDetail(item) {
     navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: source }})
   }
@@ -146,11 +161,11 @@ export default function ProgressiveImage(props) {
                     <TouchableOpacity onPress={() => sendWhatsApp(item)}>
                       <AntDesign name="sharealt" size={25} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }})}>
+                    <TouchableOpacity onPress={() => {signed?navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
                       <AntDesign name="warning" size={25} color="black" />   
                     </TouchableOpacity>
                     
-                </View>
+            </View>
           </View>
               
             <View style={styles.animaisDesc}>
@@ -161,7 +176,7 @@ export default function ProgressiveImage(props) {
                           {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
                         <MaterialIcons name="favorite" size={25} color={'red'} />}
                         </TouchableOpacity>
-                      ): (<TouchableOpacity style={{paddingTop: 5}} onPressIn={() => setFavoritePress(true)} onPress={() => {favoritar(item)}} >
+                      ): (<TouchableOpacity style={{paddingTop: 5}} onPressIn={() => setFavoritePress(true)} onPress={() => {signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
                         {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
                         <MaterialIcons name="favorite-border" size={25} color={'black'} />}
                     </TouchableOpacity>

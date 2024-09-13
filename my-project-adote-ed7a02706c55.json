@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "my-project-adote",
+  "private_key_id": "ed7a02706c55a3900d8f19a08a4559b9aa4d2696",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDiaPpHgt6V4PEL\nuinuLvOyEQZGnisxDKNRI98nvY9Gl+Jzz/GBvhY0o1j0S69pwwrMnpV/AQh03LqW\nSVhBxqxmkUO0OeqTNlpr0kN6DwHtkZpsfewzOMZbR9H0d620WDryLs7Lhuhpn6lV\n8OL/RV3iIV9besejDDzkF+ehJYDCEvnDTuMNpTB2oGWUctQFAgjdB1n0FzJtIZt8\nCPAWG1f41u0bqxPbkd/CH8HYNTrrfSCiL5noTFp49BGg7PF6lOd+hWQHRh26OACw\ngQlD0FZ2xrSgecgrxp3mqvtqC01/t9NUA7F0mK/RCbgbAhGhCJvVycFvNIuBVBgn\nD+oRZXHvAgMBAAECggEAMfuC5S6a/PN/w1sBzrdGzVS80fIxDs7/bvZAWYGbk7YM\nJA0P/9h7BnvZM3VR8ENCqxGHZ1ZPC51/A5aFiV/Wx33iOHNguccSByOQCe4uOsge\nEz1pW5V5FMWyMAoLqvifar+yn3PU8xxwQazAMCKcK0O6zXM5h2E4QBKW7BhfaHhl\nolbOh6Ei8jDeLzwUINqQklE1Vah6rAskzI6zNTw/ickaIS+BCa//whu++7Z17Z82\nsEtZDxP2eFqI/idIQNxwK+eroVvqexRrGQfbVGWFhPXVZB9I41HQ/7/AEkQ26cCX\nVbxJIUxyht9lZIYikoC8TyWvt2ncjeiK1YIu/UEpIQKBgQD1HqOsw+bXBLwFamQe\nT+V4uQhh99H1heaZxvzZhxKhlhQRSlhNZWSw2wp3tG7023s7n5A3LY5Jh5UvORZe\n+ag5MVZU8atULIZ0dPDdefkjnMc29J8XMcDE9Bq2s109jqUsbqarUsGuiOo2GgRd\njiZLXfOhQBvIAIaCWYoLdJdIpQKBgQDsdbxlPaWIK2bPkLb1LYa0AkZRZY3rgCWw\nG1QkpPwHmgbOVF+L6HZ7hEmTDKz6MDDQbEGnMtUuzhsgiRkzltpm88ugKKbSfTjV\nrGZoA9zTrvokGpuumE2J7syS0MqioJu6P2X2QAifaMm4tz/3cSvNP/VJo8enaKYU\nGnB8dHW4AwKBgQDtiNyJ7mnD0nW2NcyBx2ETZRPnhDU13aWDPd8HmaqHZh1aSBZc\nIja6X/m72OFxbUP1moIxxnbNcJM0aPjx3rOTgOktdehWsLM3JZ/IsIurZCF1cwa8\nfl1VP0yn4hcoMRSFg1EGUzMXxNxaw0mZs8gOXyRaDfseDMxMgyKQSVLVdQKBgDS6\nVFZnFsB0nSpv5LxreHwvfaqs8KaxHrZUgcDiIWk4iYf8/IlgPvtwFk/6JaBsmpX/\nbexww2T6hMYOjFYar30BpEiEiB6r2b6cAQH0yotRm2ntnQWj5LZ7T5b1hBobol43\nwO7WfJW/ciwEgPkWfWP5fSL8qIrGJTKaarb16UItAoGBAOXk9vl1aBzzRNypMm/a\nigbRoiV7aU4lp38dx5Yjk61k9v5R84U9+hc6++EdWnyVLIVcmCWsBH2arUSv8Ui0\nJDIDdrsHmP5sckzy52I+bRg2+QrYdlhCy5d/sQ0o7HLvTnlnTEHFPRmXEOPuuPVz\n3QXL0yJG8M+FLbz0WTRd34xP\n-----END PRIVATE KEY-----\n",
+  "client_email": "play-console-conta@my-project-adote.iam.gserviceaccount.com",
+  "client_id": "103999736544631273824",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/play-console-conta%40my-project-adote.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

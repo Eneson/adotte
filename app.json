@@ -9,10 +9,10 @@
       "backgroundColor": "#3ab6ff"
     },
     "primaryColor": "#febd59",
-    "name": "adote",
+    "name": "Adote",
     "slug": "adote",
-    "description": "your app desc",
-    "version": "1.0.0",
+    "description": "Aplicativo desenvolvido por alunos do TADS-IFPA campus Itaituba",
+    "version": "2",
     "orientation": "portrait",
     "icon": "./assets/icon2.png",
     "splash": {
@@ -35,7 +35,8 @@
         "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.adote.adote"
+      "package": "com.adote.adote",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -48,6 +49,9 @@
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
-    "owner": "enerson"
+    "owner": "enerson",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
