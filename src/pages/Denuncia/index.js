@@ -16,7 +16,7 @@ export default function Denuncia(props) {
   const [data, setData] = useState(null)
 
   const navigation = useNavigation()
-  const {Foto, Nome, Sexo, DataNasc, DoadorTelefone, id} = props.route.params.item
+  const {FotoName, Nome, Sexo, DataNasc, DoadorTelefone, id} = props.route.params.item
   console.log(props.route.params.item)
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
@@ -80,7 +80,7 @@ export default function Denuncia(props) {
             <Image
               style={{width:80, height:80}}
               source={{
-                uri: 'https://ik.imagekit.io/adote/resize_'+Foto,
+                uri: 'https://ik.imagekit.io/adote/resize_'+FotoName,
               }}
             />
           </View>

@@ -103,8 +103,8 @@ export default function ProgressiveImage(props) {
   }
   
   async function sendWhatsApp(item) {
-    const {Foto, telefone, Sexo, Vacina, Vermifugado} = item
-    console.log(Foto, telefone, Sexo, Vacina, Vermifugado)
+    const {FotoName, telefone, Sexo, Vacina, Vermifugado} = item
+    console.log(FotoName, telefone, Sexo, Vacina, Vermifugado)
 
     var moldura = () => {
       if(Sexo=='Macho'){
@@ -131,13 +131,13 @@ export default function ProgressiveImage(props) {
     }
     
     const downloadInstance = FileSystem.createDownloadResumable(
-      'https://ik.imagekit.io/adote/resize_'+Foto+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
-      FileSystem.documentDirectory + Foto,
+      'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
+      FileSystem.documentDirectory + FotoName,
       {
         cache: true
       }
     );
-    let linnk = 'https://ik.imagekit.io/adote/resize_'+Foto+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
+    let linnk = 'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
     const result = await downloadInstance.downloadAsync(linnk);
     
     Sharing.shareAsync(result.uri)

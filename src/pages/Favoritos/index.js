@@ -99,7 +99,7 @@ export default function Favoritos(props) {
               renderItem={({ item: item }) => (
               <View style={styles.viewAnimais}>
                 <ProgressiveImage
-                  source={'https://ik.imagekit.io/adote/resize_'+item.Foto}
+                  source={'https://ik.imagekit.io/adote/resize_'+item.FotoName}
                   item={item}
                   callbackParent={(item) => onChildChanged(item)}
                 />

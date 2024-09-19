@@ -210,18 +210,18 @@ export default function Initial(props) {
       keyExtractor={item => String(item.id)} 
       refreshing={true}
       renderItem={({ item: item }) => (     
-        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.Foto }})}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.FotoName }})}>
           <View style={styles.viewAnimal}>
             <Image
               style={styles.animalImage}
-              source={{uri: 'https://ik.imagekit.io/adote/resize_'+item.Foto}}
+              source={{uri: 'https://ik.imagekit.io/adote/resize_'+item.FotoName}}
             />
             <View style={styles.animalFooter}>                
               <View style={styles.animalDesc}>
                 <Text style={styles.animalName}>{item.Nome}</Text>
               </View>
               <View style={styles.animalButton}>
-              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.Foto }})}>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.FotoName }})}>
                 <Text style={styles.actionText}> Editar </Text>
                 <AntDesign name="form" size={20} color="#fff" />             
               </TouchableOpacity>
