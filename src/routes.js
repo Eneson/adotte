@@ -5,6 +5,8 @@ import { NavigationContainer, CommonActions } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialIcons, FontAwesome, FontAwesome5  } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from "jwt-decode";
 import Welcome from './pages/Welcome'
 import login from './pages/Welcome/login'
 import register from './pages/Welcome/register'
@@ -17,8 +19,9 @@ import Editar from './pages/Editar'
 import UpdatePet from './pages/NewPet/UpdatePet.js';
 import Initial from './pages/Initial'
 import CustomDrawer from './components/CustomDrawer'
-import { IsLogin } from './components/IsLogin';
 import { onSignOut } from './components/IsLogin';
+import api from './services/api.js';
+
 const Drawer = createDrawerNavigator()
 const AppStack = createStackNavigator()
 
@@ -45,13 +48,52 @@ const styles = StyleSheet.create({
 
 })
 
+function verificaUser(){
+  return new Promise(async (resolve, reject) => {    
+    const value = await AsyncStorage.getItem('@Profile:token')
+    if(value==null){
+      reject(false);
+      return
+    }  
+
+    try {
+      var decoded = jwtDecode(value); 
+      api.get('user/'+decoded.id_user).then((a) => {
+        resolve(true) 
+      }).catch((error) => {
+        if(error.message=='Network Error'){
+          resolve(true)
+          return
+        }else{
+          AsyncStorage.removeItem('@Profile:token')
+          reject(false)
+        }
+      })
+    } catch (error) {
+      return
+    }
+    
+  }) 
+}
 
 
-export default function Routes () {  
-  
+
+
+ 
+
+export default function Routes () { 
+
 function Button(props) {  
+  const [signed, setSigned] = useState(false)
+
+  verificaUser().then(() => {   
+    setSigned(true)
+  }).catch(() => {
+    setSigned(false)
+  })
+
   return (
-    <View >
+    <View>
       {signed? <TouchableOpacity style={styles.headerIcons2} onPress={()=>{onSignOut(props.navigation, CommonActions)}}>
           <Text style={{color: '#fff'}}>Sair</Text>
       </TouchableOpacity>:<TouchableOpacity style={styles.headerIcons2} onPress={()=>{props.navigation.navigate('Welcome')}}>
@@ -211,18 +253,34 @@ function DenunciaScreen() {
 }
 function WelcomeScreen(){  
     return (
+      // <Drawer.Navigator 
+      //     drawerContent={props => <CustomDrawer {...props} />}      
+      //     screenOptions={{ 
+      //       headerStyle: { 
+      //         backgroundColor: '#3ab6ff',
+      //       },        
+      //       headerTintColor: '#fff',
+      //       headerRight: () => (Button(props))
+      //     }}      
+      //   >   
+      //     <AppStack.Screen name="Inicio2" component={Initial} 
+      //       options={{
+      //           headerTitle: 'Inicio',
+      //       }} />
+          
+      //   </Drawer.Navigator>
+
       <AppStack.Navigator 
-      screenOptions={{ 
-        headerShown: true,
-        headerStyle: { 
-          backgroundColor: '#3ab6ff',
-        },        
-        headerTintColor: '#fff',
-      }}   
-      >   
-        <AppStack.Screen name="Welcome2" component={Welcome} options={{ 
-          headerShown: false,
-        }}  />      
+        screenOptions={{ 
+                headerStyle: { 
+                  backgroundColor: '#3ab6ff',
+                },        
+                headerTintColor: '#fff',
+              }}
+        >   
+        <AppStack.Screen name="Welcome2" component={Welcome} options={{
+                headerTitle: '',
+            }}  />      
         
         <AppStack.Screen name="login" component={login} options={{ 
           headerStyle: { 
@@ -257,44 +315,30 @@ function InicioScreen(props){
         >   
           <AppStack.Screen name="Inicio2" component={Initial} 
             options={{
-                headerTitle: 'Inicio',
+                headerTitle: 'Início',
             }} />
           
         </Drawer.Navigator>
       
     )
 }
-
-const [signed, setSigned] = useState(false)
-useEffect(() => {
-  IsLogin()
-        .then(res => {   
-          if(res==false){
-            setSigned(false)   
-          }else{
-            setSigned(true)
-          }
-        })
-        .catch(() => (setSigned(false)));
-}, [])  
-
-  return (
-    <SafeAreaProvider >
-      <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
-      <NavigationContainer >
-        <AppStack.Navigator initialRouteName={'Inicio'} screenOptions={{ headerShown: false,}} >            
-              <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
-              <AppStack.Screen name="Inicio" component={InicioScreen} /> 
-              <AppStack.Screen name="Profile" component={ProfileScreen} /> 
-              <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
-              <AppStack.Screen name="NewPet" component={NewPetScreen} />         
-              <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
-              <AppStack.Screen name="Adotar" component={AdotarScreen} />
-              <AppStack.Screen name="Editar" component={EditarScreen} />
-              <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />                     
-        </AppStack.Navigator>  
-    </NavigationContainer>
-    </SafeAreaProvider>
-    
-  )
+return (
+  <SafeAreaProvider >
+    <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
+    <NavigationContainer >
+      <AppStack.Navigator initialRouteName={'Inicio'} screenOptions={{ headerShown: false,}} >            
+            <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
+            <AppStack.Screen name="Inicio" component={InicioScreen} /> 
+            <AppStack.Screen name="Profile" component={ProfileScreen} /> 
+            <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
+            <AppStack.Screen name="NewPet" component={NewPetScreen} />         
+            <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
+            <AppStack.Screen name="Adotar" component={AdotarScreen} />
+            <AppStack.Screen name="Editar" component={EditarScreen} />
+            <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />                     
+      </AppStack.Navigator>  
+  </NavigationContainer>
+  </SafeAreaProvider>
+  
+)
 }

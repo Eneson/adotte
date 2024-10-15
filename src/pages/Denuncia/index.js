@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, Text, Image, ScrollView, ToastAndroid, TouchableOpacity} from 'react-native'
+import { View, Text, Image, ScrollView, ToastAndroid, Modal, TouchableOpacity} from 'react-native'
 import { RadioButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Flow  } from 'react-native-animated-spinkit'
 import styles from './styles'
 import Footer from '../../components/Footer'
 import api from '../../services/api'
@@ -17,7 +18,6 @@ export default function Denuncia(props) {
 
   const navigation = useNavigation()
   const {FotoName, Nome, Sexo, DataNasc, DoadorTelefone, id} = props.route.params.item
-  console.log(props.route.params.item)
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
     Roboto_500Medium,
@@ -27,6 +27,7 @@ export default function Denuncia(props) {
   
  
   async function sendReport(e){
+    setmodalVisible(true)
     var dados = {}
 
     if(message==""){
@@ -43,7 +44,7 @@ export default function Denuncia(props) {
       await api.post('/report', dados, {
         headers: { 'authorization':  'Bearer '+token.replace(/"/g, '')},
       })
-      .then(res => {
+      .then(res => {        
         Toast(res.data.mess)
         navigation.dispatch(
           CommonActions.reset({
@@ -53,7 +54,9 @@ export default function Denuncia(props) {
             ],
           })
         );
-        })        
+        }).finally(()=>{
+          setmodalVisible(false)
+        })    
     } 
     catch {
         Toast('Erro no servidor')
@@ -69,9 +72,21 @@ export default function Denuncia(props) {
   return ( 
       
     <View style={styles.container}>
-      <View>
-        
-      </View>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        statusBarTranslucent={true}
+      >
+        <View style={{
+          flex: 1,
+          justifyContent: "center",
+          alignContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        }}>
+            <Flow size={50} color="#3ab6ff"/>
+        </View>
+      </Modal> 
       <ScrollView>
       <View style={styles.content}>
         <Text style={{fontSize:22, fontWeight: '600', letterSpacing: 1}}>Por que você quer reportar o anúncio?</Text>
@@ -80,7 +95,7 @@ export default function Denuncia(props) {
             <Image
               style={{width:80, height:80}}
               source={{
-                uri: 'https://ik.imagekit.io/adote/resize_'+FotoName,
+                uri: 'https://ik.imagekit.io/adote/'+FotoName,
               }}
             />
           </View>

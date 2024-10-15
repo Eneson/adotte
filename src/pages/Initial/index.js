@@ -68,7 +68,7 @@ export default function Initial(props) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={{alignItems: 'flex-start', marginBottom:0,width: 120}}>
+        {/* <View style={{alignItems: 'flex-start', marginBottom:0,width: 120}}>
             <Picker
             numberOfLines={10}
               style={{
@@ -79,10 +79,10 @@ export default function Initial(props) {
               onValueChange={itemValue => props.navigation.replace('Inicio', { screen: 'Inicio2', params: { tipo: itemValue}, })}
               >
               <Picker.Item label="Filtro" value={false} />
-              <Picker.Item label="Cão" value="dog" />
-              <Picker.Item label="Gato" value="cat" />
+              <Picker.Item label="Cão" value="Cão" />
+              <Picker.Item label="Gato" value="Gato" />
             </Picker>          
-        </View>              
+        </View> */}
         
         <Suspense fallback={<Loading />}>
           {
@@ -119,7 +119,7 @@ export default function Initial(props) {
               renderItem={({ item: item }) => (            
                 <View style={[styles.viewAnimais]}>      
                   <ProgressiveImage
-                    source={'https://ik.imagekit.io/adote/resize_'+item.FotoName}
+                    source={'https://ik.imagekit.io/adote/'+item.FotoName}
                     item={item}
                   />                    
                 </View>

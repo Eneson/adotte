@@ -55,7 +55,6 @@ export default function ProgressiveImage(props) {
         })
         .catch(() => (setSigned(false)));
         
-    console.log(signed)
 
   function navigateToDetail(item) {
     navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: source }})
@@ -103,8 +102,7 @@ export default function ProgressiveImage(props) {
   }
   
   async function sendWhatsApp(item) {
-    const {FotoName, telefone, Sexo, Vacina, Vermifugado} = item
-    console.log(FotoName, telefone, Sexo, Vacina, Vermifugado)
+    const {FotoName, telefone, Sexo, Vacina, Vermifugado, Castrado} = item
 
     var moldura = () => {
       if(Sexo=='Macho'){
@@ -127,19 +125,34 @@ export default function ProgressiveImage(props) {
         }else{
           return 'moldura-08.png';
         }
-      }
+      } 
     }
-    
+
+    var attr = () => {
+      var text = ''
+      if(Vacina){
+        text = 'Vacinado '
+      }
+      if(Castrado){
+        text = text+'Castrado '
+      }
+      if(Vermifugado){
+        text = text+'Vermifugado '
+      }
+      return text
+    }
+
     const downloadInstance = FileSystem.createDownloadResumable(
-      'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
+      //'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
+      'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end',
       FileSystem.documentDirectory + FotoName,
       {
         cache: true
       }
     );
-    let linnk = 'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
+    //let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
+    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end'
     const result = await downloadInstance.downloadAsync(linnk);
-    
     Sharing.shareAsync(result.uri)
     
   }

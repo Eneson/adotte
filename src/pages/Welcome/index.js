@@ -7,6 +7,7 @@ import { Montserrat_300Light, Montserrat_700Bold, Montserrat_600SemiBold, Montse
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
 import adote_dog from '../../assets/adote_dog.png';
+import Footer from '../../components/Footer';
 
 export default function Welcome(props) {
   const navigation = useNavigation()
@@ -25,7 +26,7 @@ export default function Welcome(props) {
     Pacifico_400Regular,
     Roboto_500Medium
   });
-  useEffect(() => {   
+  useEffect(() => {  
     if(props.route.params){
       Alert.alert(
         "ATENÇÃO!",
@@ -66,6 +67,8 @@ export default function Welcome(props) {
           </View>
                       
       </KeyboardAvoidingView>
+      
+      <Footer Navigation={{...props}}/>
     </View>
   )
 }
@@ -76,7 +79,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',
-    paddingHorizontal: 10
   },
   content: {
     flex: 1,

@@ -28,10 +28,10 @@ export default function NewPet(props) {
   const [date, setDate] = useState(new Date())
   const [textDate, setTextDate] = useState('Data de Nascimento')
   const [sexo, setSexo] = useState('')
-  const [vacine, setVacine] = useState(false)
-  const [Vermifugado, setVermifugado] = useState(false)
-  const [tipo, setTipo] = useState('dog')  
-  const [castrado ,setCastrado] = useState(false)
+  const [vacine, setVacine] = useState(0)
+  const [Vermifugado, setVermifugado] = useState(0)
+  const [castrado ,setCastrado] = useState(0)
+  const [tipo, setTipo] = useState('Cão')  
   const navigation = useNavigation()
   const { register, handleSubmit, control, formState:{ errors } } = useForm();
   const [image, setImage] = useState(null);
@@ -56,16 +56,13 @@ export default function NewPet(props) {
     setDateError(false)
    
   }
-  
   const showMode = (onChange) => {
     setShow(true);
   }  
 
-  
 
-  const takePhotoAndUpload = async (e) => {    
+  const takePhotoAndUpload = async (e) => {  
     setModalVisible(true)
-    console.log('click')
 
     if(textDate == 'Data de Nascimento'){
       setDateError(true)
@@ -102,11 +99,12 @@ export default function NewPet(props) {
     formData.append('DataNasc', textDate);
     formData.append('Sexo', sexo);
     formData.append('Tipo', tipo);
-    formData.append('Vacina', vacine);
     formData.append('id_user', data.id_user)
+    formData.append('Vacina', vacine);
     formData.append('Vermifugado', Vermifugado)
     formData.append('Castrado', castrado)
     formData.append('FotoName', filename);
+    
     
     
 
@@ -196,7 +194,8 @@ export default function NewPet(props) {
           
           }
         </View>  
-        {/* NOME */}
+        
+        {/* NOME */}        
         <View style={styles.containerTextField}>    
           <Controller
           rules={{required: 'true'}}
@@ -222,18 +221,20 @@ export default function NewPet(props) {
           defaultValue=""
           />  
         </View>  
+
         {/* ESPECIE */}
         <View>
           <Text style={styles.title}>Espécie</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='dog'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('dog')}>
-              <Text style={[styles.actionText,{color: tipo=='dog'? '#fff':'#000'}]}>Cachorro</Text>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Cão'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Cão')}>
+              <Text style={[styles.actionText,{color: tipo=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
             </TouchableOpacity> 
-              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='cat'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('cat')}>
-              <Text style={[styles.actionText,{color: tipo=='cat'? '#fff':'#000'}]}>Gato</Text>
+              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Gato'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Gato')}>
+              <Text style={[styles.actionText,{color: tipo=='Gato'? '#fff':'#000'}]}>Gato</Text>
             </TouchableOpacity> 
           </View>
         </View>
+        
         {/* Data de nascimento */}
         <View>     
         <Text style={styles.title}>Data de nascimento</Text> 
@@ -243,40 +244,45 @@ export default function NewPet(props) {
           </TouchableOpacity>  
                          
         </View>
+        
         {/* SEXO */}
         <View>
           <Text style={styles.title}>Sexo</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Femea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Femea')}>
-              <Text style={[styles.actionText,{color: sexo=='Femea'? '#fff':'#000'}]}>Fêmea</Text>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
+              <Text style={[styles.actionText,{color: sexo=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
             </TouchableOpacity>  
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Macho')}>
               <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
             </TouchableOpacity>  
           </View>
         </View>
+        
         {/* CASTRADO VACINADO VERMIFUGADO */}
         <View style={{flexGrow: 1}}>
           <Text style={styles.title}>Outras informações:</Text>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: castrado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setCastrado(!castrado)}>
-                <Fontisto name="surgical-knife" size={30} color={castrado? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: castrado? '#fff': '#000'}]}>Castrado</Text>
+              <TouchableOpacity style={[styles.action,{backgroundColor: castrado==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => castrado==1?setCastrado(0):setCastrado(1)}>
+                <Fontisto name="surgical-knife" size={30} color={castrado==1? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: castrado==1? '#fff': '#000'}]}>Castrado</Text>
               </TouchableOpacity>
             </View>
+
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: vacine? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVacine(!vacine)}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: vacine==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => vacine==1?setVacine(0):setVacine(1)}>
                 <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Antirrábica</Text>
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Vacinado</Text>
               </TouchableOpacity>
             </View>
+
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVermifugado(!Vermifugado)}>
-                <FontAwesome5 name="tablets" size={30} color={Vermifugado? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vermifugado? '#fff': '#000'}]}>Vermifugado</Text>
+              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => Vermifugado==1?setVermifugado(0):setVermifugado(1)}>
+                <FontAwesome5 name="tablets" size={30} color={Vermifugado==1? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vermifugado==1? '#fff': '#000'}]}>Vermifugado</Text>
               </TouchableOpacity>
             </View>
         </View>
+        
         {/* DETALHES DO PET */}
         <Controller
           rules={{required: 'true'}}

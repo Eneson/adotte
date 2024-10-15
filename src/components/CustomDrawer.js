@@ -24,15 +24,11 @@ export default function CustomDrawer (props) {
             var palavras = res.nome.split(' ');
             //Pega os dois primeiros nomes
             setNome(palavras.slice(0, 2).join(' '))
-            var telefone = res.telefone
-                
-            setTelefone('(' + telefone.substring(0, 2) + ') ' + telefone.charAt(2) + ' ' + telefone.substring(3, 7) + '-' + telefone.substring(7))
-
+            
+            setTelefone(res.telefone)
         })
         .catch(err => (setSigned(false)));
         
-    console.log(signed)
-
     
     const screen = useRoute().name;
 

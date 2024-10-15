@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,Alert } from 'react-native';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons'; 
 import { IsLogin } from './IsLogin'
 const styles = StyleSheet.create({
@@ -41,20 +41,34 @@ const styles = StyleSheet.create({
         })
         .catch(() => (setSigned(false)));
         
-    console.log(signed)
     return (
       <View style={styles.footer}> 
                             
-          <TouchableOpacity style={styles.action} onPress={() =>{signed?props.Navigation.navigation.navigate('NewPet'):props.Navigation.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para doar um pet' }})}}>
+          <TouchableOpacity style={styles.action} onPress={() =>{signed?props.Navigation.navigation.navigate('NewPet'):props.Navigation.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para doar um pet' }})
+            if(props.Navigation.route.name=='Welcome2'){
+              Alert.alert(
+                "ATENÇÃO!",
+                'Entre ou Cadastre-se para doar um pet'
+              ) 
+            }
+          }}>
             <Feather name="sun" size={30} color="#fff" />
             <Text style={styles.actionText}> Doar </Text>
           </TouchableOpacity>        
           <TouchableOpacity style={styles.action} onPress={() => {props.Navigation.navigation.navigate('Inicio')}}>
             <Ionicons name="paw-outline" size={30} color="#fff" />
-            <Text style={styles.actionText}> Inicio </Text>
+            <Text style={styles.actionText}> Início </Text>
           </TouchableOpacity>     
           
-          <TouchableOpacity style={styles.action} onPress={() =>{signed?props.Navigation.navigation.navigate('Favoritos'):props.Navigation.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}}>
+          <TouchableOpacity style={styles.action} onPress={() =>{
+            signed?props.Navigation.navigation.navigate('Favoritos'):props.Navigation.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})
+            if(props.Navigation.route.name=='Welcome2'){
+              Alert.alert(
+                "ATENÇÃO!",
+                'Entre ou Cadastre-se para favoritar um pet'
+              ) 
+            }
+            }}>
             <MaterialIcons name="favorite-outline" size={30} color="#fff" />
             <Text style={styles.actionText}> Favoritos </Text>
           </TouchableOpacity>

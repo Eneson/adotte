@@ -119,7 +119,7 @@ export default function Initial(props) {
               renderItem={({ item: item }) => (            
                 <View style={[styles.viewAnimais]}>      
                   <ProgressiveImage
-                    source={'https://ik.imagekit.io/adote/resize_'+item.FotoName}
+                    source={'https://ik.imagekit.io/adote/'+item.FotoName}
                     item={item}
                   />                    
                 </View>

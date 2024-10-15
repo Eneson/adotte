@@ -32,8 +32,8 @@ export default function Login(props) {
 		
     setmodalVisible(true)
     const dados = {
-      "email": e.email,
-      "senha": e.senha
+      "Email": e.email,
+      "Senha": e.senha
     }
     
 

@@ -30,43 +30,39 @@ export default function Adotar(props) {
     Linking.openURL(`whatsapp://send?phone=+55${item.telefone}&text=${message}`)
   }
   async function sendWhatsApp() {
-    const {FotoName, telefone, Sexo, Vacina, Vermifugado} = item
-    console.log(FotoName, telefone, Sexo, Vacina, Vermifugado)
-
+    const {FotoName, telefone, Sexo, Vacina, Vermifugado, Castrado} = item
+    
     var moldura = () => {
-      if(Sexo=='Macho'){
-        if(Vermifugado == 'true'&&Vacina == 'true'){
-          return 'moldura-01.png';
-        }else if(Vermifugado == 'false' && Vacina == 'true'){
-          return 'moldura-02.png'
-        }else if(Vermifugado == 'true' && Vacina == 'false'){
-          return 'moldura-03.png';
-        }else{
-          return 'moldura-04.png';
-        }
-      }else{
-        if(Vermifugado == 'true'&&Vacina == 'true'){
-          return 'moldura-05.png';
-        }else if(Vermifugado == 'true' && Vacina == 'false'){
-          return 'moldura-06.png'
-        }else if(Vermifugado == 'false' && Vacina == 'true'){
-          return 'moldura-07.png';
-        }else{
-          return 'moldura-08.png';
-        }
+      if(Sexo=='Macho'){        
+        return 'moldura-04.png';        
+      }else{        
+        return 'moldura-08.png';        
       }
     }
-    
+    var attr = () => {
+      var text = ''
+      if(Vacina){
+        text = 'Vacinado '
+      }
+      if(Castrado){
+        text = text+'Castrado '
+      }
+      if(Vermifugado){
+        text = text+'Vermifugado '
+      }
+      return text
+    }
     const downloadInstance = FileSystem.createDownloadResumable(
-      'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
+      //'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
+      'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end',
       FileSystem.documentDirectory + FotoName,
       {
         cache: true
       }
     );
-    let linnk = 'https://ik.imagekit.io/adote/resize_'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
+    //let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
+    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end'
     const result = await downloadInstance.downloadAsync(linnk);
-    
     Sharing.shareAsync(result.uri)
     
   }
@@ -106,10 +102,11 @@ export default function Adotar(props) {
                   </View>                 
                   <Text style={styles.descText}><Text style={styles.textBold}>Sexo: </Text>{item.Sexo} </Text>  
                     <Text style={styles.descText}><Text style={styles.textBold}>Nascimento:</Text> {item.DataNasc} </Text>
-                    <Text style={styles.descText}><Text style={styles.textBold}>Antirrabica:</Text> {item.Vacina.includes('true')?'Sim':'Não'}</Text>
-                    <Text style={styles.descText}><Text style={styles.textBold}>Vermifugado:</Text> {item.Vermifugado.includes('true')?'Sim':'Não'}</Text>     
-                    <Text style={styles.descText}><Text style={styles.textBold}>Castrado:</Text> {item.Castrado.includes('true')?'Sim':'Não'}</Text>                  
-                  </View> 
+                    <Text style={styles.descText}><Text style={styles.textBold}>Antirrabica:</Text> {item.Vacina?'Sim':'Não'}</Text>
+                    <Text style={styles.descText}><Text style={styles.textBold}>Vermifugado:</Text> {item.Vermifugado?'Sim':'Não'}</Text>     
+                    <Text style={styles.descText}><Text style={styles.textBold}>Castrado:</Text> {item.Castrado?'Sim':'Não'}</Text>                  
+                  
+                  </View>  
                 </View>
               </View> 
 

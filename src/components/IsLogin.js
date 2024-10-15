@@ -2,8 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import "core-js/stable/atob";
 import { jwtDecode } from "jwt-decode";
 
-export function onSignOut(navi,CommonActions) { 
+export async function onSignOut(navi,CommonActions) { 
   AsyncStorage.removeItem('@Profile:token')
+  const keys = await AsyncStorage.getAllKeys();
+  // Filtrar chaves que começam com '@Favorite:'
+  const favoriteKeys = keys.filter(key => key.startsWith('@Favorite:'));
+  // Remover os favoritos
+  AsyncStorage.multiRemove(favoriteKeys);
+  
   navi.dispatch(
     CommonActions.reset({
       index: 0,

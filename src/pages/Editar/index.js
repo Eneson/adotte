@@ -12,18 +12,24 @@ import { Flow  } from 'react-native-animated-spinkit'
 export default function Editar(props) {
   
   
-  const navigation = useNavigation()
-  const [modalVisible, setModalVisible] = useState(false)
-  const [isEmailEnabled, setIsEmailEnable] = useState(false)
-  const [isNomeEnabled, setIsNomeEnabled] = useState(false);
-  const [isFoneEnabled, setIsFoneEnable] = useState(false)
-  const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
+const navigation = useNavigation()
+const [modalVisible, setModalVisible] = useState(false)
+
+const [isEmailEnabled, setIsEmailEnable] = useState(false)
+const [isNomeEnabled, setIsNomeEnabled] = useState(false);
+const [isFoneEnabled, setIsFoneEnable] = useState(false)
+const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
+
+
+  var telefone = props.route.params.item.telefone.toString().replace(/[ ]/g, "");
+  telefone = telefone.replace(/[()]/g, "");
+  telefone = telefone.replace(/[-]/g, "");
 
   const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm({
     defaultValues: {
       nome: props.route.params.item.nome,
       email: props.route.params.item.email,
-      telefone: parseInt(props.route.params.item.telefone),
+      telefone: parseInt(telefone),
     }
   })
 
@@ -35,13 +41,12 @@ export default function Editar(props) {
     register('senha')
   }, [register])
 
-
   async function handleNewDoador(e) {
-    console.log('click click')
     setModalVisible(true)
     var nome = e.nome
     var email = e.email
     var telefone = e.telefone
+
     if(!isNomeEnabled){
       nome = props.route.params.item.nome
     }
@@ -52,10 +57,28 @@ export default function Editar(props) {
       email = props.route.params.item.email
     }
 
-    //setmodalVisible(true)
-    telefone = telefone.replace(/[ ]/g, "");
-    telefone = telefone.replace(/[()]/g, "");
-    telefone = telefone.replace(/[-]/g, "");    
+    if(!isEmailEnabled&&!isFoneEnabled&&!isNomeEnabled&&!isSenhaEnabled){
+      setModalVisible(false)
+      return Alert.alert('Nenhum dado alterado', 'Preencha algum campo', [
+        {
+          text: 'Ok',
+          style: 'cancel',
+        },
+      ]);
+    }
+
+    // Formata o número
+   
+    if(telefone.length<11){      
+      setModalVisible(false)
+      return Alert.alert('Erro no preenchimento', 'Preencha o numero de telefone corretamente ex: (99) 9 9999-9999', [
+        {
+          text: 'Ok',
+          style: 'cancel',
+        },
+      ]);
+    }
+    
     email = email.toLowerCase()
     var palavras = nome.split(' ');
 
@@ -65,6 +88,11 @@ export default function Editar(props) {
     }
     // Junta as palavras de volta em uma única string
     nome = palavras.join(' ');
+    const apenasNumeros = telefone.replace(/\D/g, '');
+
+    telefone = `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.charAt(2)} ${apenasNumeros.slice(3, 7)}-${apenasNumeros.slice(7)}`;
+    
+
     var dados = []
     if(isSenhaEnabled==true){
       dados = {
@@ -92,14 +120,12 @@ export default function Editar(props) {
       onSignIn(navigation,CommonActions,doador)  
     })
     .catch(() => {
-      console.log('aaaaaaaaaaaaaaaaaaa')
       Alert.alert(
         "Erro no cadastro",
         "Não foi realizar alterações.\nVerifique sua conexão e tente novamente"
       ) 
     })
     .finally(() => {
-      console.log('finalyyyyyyyyyyyyyyyyyyyyy')
       setModalVisible(false)
     }) 
          
@@ -107,7 +133,6 @@ export default function Editar(props) {
 
   }
 
-  
   return (
     <SafeAreaView style={styles.container}>      
       <Modal
@@ -180,7 +205,6 @@ export default function Editar(props) {
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                
                   return <View style={[{marginBottom: 10}]}>                    
                   <Text>Telefone:</Text>
                   <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    

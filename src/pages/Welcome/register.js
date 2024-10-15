@@ -26,10 +26,12 @@ export default function Cadastrar(props) {
   
   async function handleNewDoador(e) {
     setmodalVisible(true)
-    var telefone = e.telefone.replace(/[ ]/g, "");
-    telefone = telefone.replace(/[()]/g, "");
-    telefone = telefone.replace(/[-]/g, "");
-    if(telefone.length<11){      
+    
+    // Formata o número
+    const apenasNumeros = e.telefone.replace(/\D/g, '');
+    var telefone = `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.charAt(2)} ${apenasNumeros.slice(3, 7)}-${apenasNumeros.slice(7)}`;
+    
+    if(apenasNumeros.length<11){      
     setmodalVisible(false)
       return Alert.alert('Erro no preenchimento', 'Preencha o numero de telefone corretamente ex: (99) 9 9999-9999', [
         {
@@ -66,7 +68,7 @@ export default function Cadastrar(props) {
           "Não foi possivel comunicar com o servidor.\nTente novamente"
         )
       }).finally(() => {
-        setmodalVisible(false)
+         setmodalVisible(false)
       })
          
         

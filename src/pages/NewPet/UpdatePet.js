@@ -28,7 +28,7 @@ export default function UpdatePet(props) {
   const [date, setDate] = useState(new Date())
   const [textDate, setTextDate] = useState(props.route.params.item.DataNasc)
   const [sexo, setSexo] = useState(props.route.params.item.Sexo)
-  const [vacine, setVacine] = useState(props.route.params.item.Vacina)
+  const [Vacina, setVacina] = useState(props.route.params.item.Vacina)
   const [Vermifugado, setVermifugado] = useState(props.route.params.item.Vermifugado)
   const [tipo, setTipo] = useState(props.route.params.item.Tipo)  
   const [ pressButton, setPressButton ] = useState(false)
@@ -37,7 +37,7 @@ export default function UpdatePet(props) {
   const [image, setImage] = useState(props.route.params.source);  
   const [dateError, setDateError] = useState(false)
   const [sexoError, setSexoError] = useState(false)
-
+  
   const navigation = useNavigation()
   const { register, handleSubmit, control, formState:{ errors } } = useForm({
     defaultValues: {
@@ -63,7 +63,7 @@ export default function UpdatePet(props) {
     setDateError(false)
    
   }
-   
+  
  
   const updateNewPet = async (e) => {
     setModalVisible(true)
@@ -101,12 +101,14 @@ export default function UpdatePet(props) {
     formData.append('DataNasc', textDate);
     formData.append('Sexo', sexo);
     formData.append('Tipo', tipo);
-    formData.append('Vacina', vacine);
+    formData.append('Vacina', Vacina);
     formData.append('id_user', data.id_user)
     formData.append('Vermifugado', Vermifugado)
     formData.append('Castrado', castrado)
     formData.append('FotoName', filename);    
+    formData.append('id', props.route.params.item.id);    
     formData.append('Image_old', props.route.params.source)
+
 
     await api.post('/animal/update', formData, {
         headers: { 
@@ -176,7 +178,7 @@ export default function UpdatePet(props) {
 
       <ScrollView style={styles.content} behavior={'padding'}> 
       {/* foto */}
-      <View style={[styles.contentImage, {borderWidth: !image?1:0}]}>
+        <View style={[styles.contentImage, {borderWidth: !image?1:0}]}>
           {image?<TouchableOpacity onPress={() => pickImage()}>
                   <View style={{height: 300, borderWidth: 1}}>
                     <ImageBackground
@@ -229,14 +231,15 @@ export default function UpdatePet(props) {
         <View>
           <Text style={styles.title}>Espécie</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='dog'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('dog')}>
-              <Text style={[styles.actionText,{color: tipo=='dog'? '#fff':'#000'}]}>Cachorro</Text>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Cão'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Cão')}>
+              <Text style={[styles.actionText,{color: tipo=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
             </TouchableOpacity> 
-              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='cat'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('cat')}>
-              <Text style={[styles.actionText,{color: tipo=='cat'? '#fff':'#000'}]}>Gato</Text>
+              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Gato'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Gato')}>
+              <Text style={[styles.actionText,{color: tipo=='Gato'? '#fff':'#000'}]}>Gato</Text>
             </TouchableOpacity> 
           </View>
         </View>
+        
         <View>     
           {/* Data de nascimento */}
         <Text style={styles.title}>Data de nascimento</Text> 
@@ -246,12 +249,13 @@ export default function UpdatePet(props) {
           </TouchableOpacity>  
                          
         </View>
+        
         {/* SEXO */}
         <View>
           <Text style={styles.title}>Sexo</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Femea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Femea')}>
-              <Text style={[styles.actionText,{color: sexo=='Femea'? '#fff':'#000'}]}>Fêmea</Text>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
+              <Text style={[styles.actionText,{color: sexo=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
             </TouchableOpacity>  
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Macho')}>
               <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
@@ -261,19 +265,19 @@ export default function UpdatePet(props) {
         <View style={{flexGrow: 1}}>
           <Text style={styles.title}>Outras informações:</Text>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: castrado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setCastrado(!castrado)}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: castrado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => castrado==1?setCastrado(0):setCastrado(1)}>
                 <Fontisto name="surgical-knife" size={30} color={castrado? '#fff': '#000'} />
                 <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: castrado? '#fff': '#000'}]}>Castrado</Text>
               </TouchableOpacity>
             </View>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: vacine? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVacine(!vacine)}>
-                <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Antirrábica</Text>
+              <TouchableOpacity style={[styles.action,{backgroundColor: Vacina? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => Vacina==1?setVacina(0):setVacina(1)}>
+                <FontAwesome5 name="syringe" size={30} color={Vacina? '#fff': '#000'} />
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vacina? '#fff': '#000'}]}>Vacinado</Text>
               </TouchableOpacity>
             </View>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => setVermifugado(!Vermifugado)}>
+              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => Vermifugado==1?setVermifugado(0):setVermifugado(1)}>
                 <FontAwesome5 name="tablets" size={30} color={Vermifugado? '#fff': '#000'} />
                 <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vermifugado? '#fff': '#000'}]}>Vermifugado</Text>
               </TouchableOpacity>

@@ -54,7 +54,6 @@ export default function Initial(props) {
   }
   
   useEffect(() => {
-    console.log('teste')
     loadAnimais()
     IsLogin()
     .then(res => {                        
@@ -62,8 +61,7 @@ export default function Initial(props) {
         var palavras = res.nome.split(' ');
         //Pega os dois primeiros nomes
         setNome(palavras.slice(0, 2).join(' '))
-        var telefone = res.telefone      
-        setTelefone('(' + telefone.substring(0, 2) + ') ' + telefone.charAt(2) + ' ' + telefone.substring(3, 7) + '-' + telefone.substring(7))
+        setTelefone(res.telefone)
         setId_User(res.id_user)
     })
     .catch(err => {
@@ -81,7 +79,6 @@ export default function Initial(props) {
     await api.get('/animal/myanimals', {
       headers: {'authorization':  'Bearer '+token.replace(/"/g, '') },
     }).then((response) => {
-      console.log(1)
       if(response.data.length === 0){
         setAnimais(null)   
       }else{
@@ -89,7 +86,6 @@ export default function Initial(props) {
       }
       setError(false) 
     }).catch((err) => {
-      console.log(err)
       setError('Erro no servidor')
     }).finally(() => {
       setRefreshing(false)
@@ -98,33 +94,43 @@ export default function Initial(props) {
   }
 
   async function deleteAnimal(id) {
-    setmodalVisible(true)
-    const token = await AsyncStorage.getItem('@Profile:token')
-      
-    try {
-      await api.delete(`animal/${id}`, {
-        headers: {
-          Authorization: 'Bearer '+token.replace(/"/g, ''),
-          Id_user: id_user
-        }
-      }).then((e) =>{        
-        setmodalVisible(false)
-        setAnimais(animais.filter(animal => animal.id !== id))
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              { name: 'Inicio' },
-            ],
+    Alert.alert('CUIDADO', 'Tem certeza que deseja excluir o pet selecionado?', [
+      {
+        text: 'Não',
+        style: 'cancel',
+      },
+      { text: 'Sim', onPress: async () => {
+        setmodalVisible(true)
+        const token = await AsyncStorage.getItem('@Profile:token')
+          
+        try {
+          await api.delete(`animal/${id}`, {
+            headers: {
+              Authorization: 'Bearer '+token.replace(/"/g, ''),
+              Id_user: id_user
+            }
+          }).then((e) =>{        
+            setmodalVisible(false)
+            setAnimais(animais.filter(animal => animal.id !== id))
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  { name: 'Inicio' },
+                ],
+              })
+            );
           })
-        );
-      })
-      
-      
-    } catch (err) {
-      alert('Erro ao deletar animal, tente novamente.')
-      setmodalVisible(false)
-    }
+          
+          
+        } catch (err) {
+          alert('Erro ao deletar animal, tente novamente.')
+          setmodalVisible(false)
+        }
+      } },
+  ]);
+
+    
   }
 
   const createTwoButtonAlert = () =>
@@ -136,9 +142,7 @@ export default function Initial(props) {
       { text: 'Sim', onPress: () => deleteDoador() },
   ]);
 
-  async function deleteDoador() {
-
-    
+  async function deleteDoador() {    
     try {
       await api.delete(`doador/${telefone}`, {
         headers: {
@@ -210,18 +214,18 @@ export default function Initial(props) {
       keyExtractor={item => String(item.id)} 
       refreshing={true}
       renderItem={({ item: item }) => (     
-        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.FotoName }})}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
           <View style={styles.viewAnimal}>
             <Image
               style={styles.animalImage}
-              source={{uri: 'https://ik.imagekit.io/adote/resize_'+item.FotoName}}
+              source={{uri: 'https://ik.imagekit.io/adote/'+item.FotoName}}
             />
             <View style={styles.animalFooter}>                
               <View style={styles.animalDesc}>
                 <Text style={styles.animalName}>{item.Nome}</Text>
               </View>
               <View style={styles.animalButton}>
-              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/resize_'+item.FotoName }})}>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
                 <Text style={styles.actionText}> Editar </Text>
                 <AntDesign name="form" size={20} color="#fff" />             
               </TouchableOpacity>
