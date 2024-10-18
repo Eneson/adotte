@@ -13,7 +13,7 @@ import { Flow  } from 'react-native-animated-spinkit'
 
 import styles from './styles'
 import Footer from '../../components/Footer'
-import { IsLogin } from '../../components/IsLogin';
+import { IsLogin } from '../../utils/IsLogin'; 
 import api from '../../services/api';
 
 export default function UpdatePet(props) {
@@ -78,69 +78,132 @@ export default function UpdatePet(props) {
       return Toast("Preencha todos os dados")
     }
 
-    const { nome, desc } = e    
-    IsLogin().then(async (data) => {
-      const token = await AsyncStorage.getItem('@Profile:token')
+    const { nome, desc } = e  
+    
+    IsLogin(async (resultado) => {
+      if(resultado==false){
+        Alert.alert( 
+          "Erro no cadastro",
+          "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
+        )
+        return
+      }
+      const token = resultado.Token
       let localUri = image;    
     
-    if(!image){
-      return Toast('Adicione uma imagem')
-    }
+      if(!image){
+        return Toast('Adicione uma imagem')
+      }
+      
+      let filename = localUri.split('/').pop()    
     
-    let filename = localUri.split('/').pop()    
-   
-    //Pegar o tipo do arquivo
-    let match = /\.(\w+)$/.exec(filename);
-    let type = match ? `image/${match[1]}` : `image`;
-    filename = new Date().toISOString().replace(/:/g, '-') + filename
+      //Pegar o tipo do arquivo
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+      filename = new Date().toISOString().replace(/:/g, '-') + filename
 
-    let formData = new FormData(); 
-    formData.append('produto_imagem', { uri: localUri, name: filename, type });
-    formData.append('Nome', nome);
-    formData.append('Descricao', desc);
-    formData.append('DataNasc', textDate);
-    formData.append('Sexo', sexo);
-    formData.append('Tipo', tipo);
-    formData.append('Vacina', Vacina);
-    formData.append('id_user', data.id_user)
-    formData.append('Vermifugado', Vermifugado)
-    formData.append('Castrado', castrado)
-    formData.append('FotoName', filename);    
-    formData.append('id', props.route.params.item.id);    
-    formData.append('Image_old', props.route.params.source)
+      let formData = new FormData(); 
+      formData.append('produto_imagem', { uri: localUri, name: filename, type });
+      formData.append('Nome', nome);
+      formData.append('Descricao', desc);
+      formData.append('DataNasc', textDate);
+      formData.append('Sexo', sexo);
+      formData.append('Tipo', tipo);
+      formData.append('Vacina', Vacina);
+      formData.append('id_user', resultado.id_user)
+      formData.append('Vermifugado', Vermifugado)
+      formData.append('Castrado', castrado)
+      formData.append('FotoName', filename);    
+      formData.append('id', props.route.params.item.id);    
+      formData.append('Image_old', props.route.params.source)
 
-
-    await api.post('/animal/update', formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          'authorization':  'Bearer '+token.replace(/"/g, ''),
-          'id_user': data.id_user
-        },
-    }).then(res => {
-      Toast('Atualizado com sucesso')
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            { name: 'Inicio' },
-          ],
-        })
-      );
-    }).catch(err => {    
-      Alert.alert(
-        "Erro",
-        "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
-      )
-    })
-    
-    }).catch(() => {
-      Alert.alert( 
-        "Erro no cadastro",
-        "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
-      )
-    }).finally(() => {
+      await api.post('/animal/update', formData, {
+          headers: { 
+            'Content-Type': 'multipart/form-data',
+            'authorization':  'Bearer '+token.replace(/"/g, ''),
+            'id_user': resultado.id_user
+          },
+      }).then(res => {
+        Toast('Atualizado com sucesso')
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              { name: 'Inicio' },
+            ],
+          })
+        );
+      }).catch(err => {    
+        Alert.alert(
+          "Erro",
+          "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
+        )
+      })
       setModalVisible(false)
-    })
+    });
+
+    // IsLogin().then(async (data) => {
+    //   const token = await AsyncStorage.getItem('@Profile:token')
+    //   let localUri = image;    
+    
+    // if(!image){
+    //   return Toast('Adicione uma imagem')
+    // }
+    
+    // let filename = localUri.split('/').pop()    
+   
+    // //Pegar o tipo do arquivo
+    // let match = /\.(\w+)$/.exec(filename);
+    // let type = match ? `image/${match[1]}` : `image`;
+    // filename = new Date().toISOString().replace(/:/g, '-') + filename
+
+    // let formData = new FormData(); 
+    // formData.append('produto_imagem', { uri: localUri, name: filename, type });
+    // formData.append('Nome', nome);
+    // formData.append('Descricao', desc);
+    // formData.append('DataNasc', textDate);
+    // formData.append('Sexo', sexo);
+    // formData.append('Tipo', tipo);
+    // formData.append('Vacina', Vacina);
+    // formData.append('id_user', data.id_user)
+    // formData.append('Vermifugado', Vermifugado)
+    // formData.append('Castrado', castrado)
+    // formData.append('FotoName', filename);    
+    // formData.append('id', props.route.params.item.id);    
+    // formData.append('Image_old', props.route.params.source)
+
+
+    // await api.post('/animal/update', formData, {
+    //     headers: { 
+    //       'Content-Type': 'multipart/form-data',
+    //       'authorization':  'Bearer '+token.replace(/"/g, ''),
+    //       'id_user': data.id_user
+    //     },
+    // }).then(res => {
+    //   Toast('Atualizado com sucesso')
+    //   navigation.dispatch(
+    //     CommonActions.reset({
+    //       index: 0,
+    //       routes: [
+    //         { name: 'Inicio' },
+    //       ],
+    //     })
+    //   );
+    // }).catch(err => {    
+    //   Alert.alert(
+    //     "Erro",
+    //     "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
+    //   )
+    // })
+    
+    // }).catch(() => {
+    //   Alert.alert( 
+    //     "Erro no cadastro",
+    //     "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
+    //   )
+    // }).finally(() => {
+    //   setModalVisible(false)
+    // })
     
     
   }

@@ -3,7 +3,7 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Image,StyleSheet, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
-import { onSignIn } from '../../components/IsLogin';
+import { onSignIn } from '../../utils/IsLogin' 
 import api from '../../services/api'
 import styles from './loginStyles'
 import { Flow  } from 'react-native-animated-spinkit'

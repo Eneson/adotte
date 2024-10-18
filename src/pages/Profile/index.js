@@ -8,14 +8,13 @@ import { Flow  } from 'react-native-animated-spinkit'
 
 import Footer from '../../components/Footer';
 import styles from './styles'
-import {IsLogin} from '../../components/IsLogin'
 import api from '../../services/api'
 
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular, OpenSans_600SemiBold, OpenSans_700Bold } from '@expo-google-fonts/open-sans';
 
-import { onSignOut } from '../../components/IsLogin'
+import { onSignOut, IsLogin } from '../../utils/IsLogin'; 
 
 
 
@@ -40,33 +39,32 @@ export default function Initial(props) {
   const [error, setError] = useState()
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation()
+  const [signed,setSigned] = useState(false);
   const [routes] = useState([
     { key: 'first', title: 'Meus Pets' },
     { key: 'second', title: 'Configuraçoes' },
   ]);
   
   function navigateToEditar() {
-    IsLogin()
-    .then(res => {         
-      navigation.navigate('Editar', {screen: 'Editar2', params: { item: res }})
+    IsLogin((resultado) => {
+      if(resultado!=false){
+        navigation.navigate('Editar', {screen: 'Editar2', params: { item: resultado }})             
+      }              
+      setSigned(resultado)            
     })
-    .catch(err => (setSigned(false)));
+
   }
   
   useEffect(() => {
     loadAnimais()
-    IsLogin()
-    .then(res => {                        
-        setUserEmail(res.email)
-        var palavras = res.nome.split(' ');
-        //Pega os dois primeiros nomes
-        setNome(palavras.slice(0, 2).join(' '))
-        setTelefone(res.telefone)
-        setId_User(res.id_user)
+    IsLogin((resultado) => {
+      if(resultado!=false){
+          var palavras = resultado.nome.split(' ');
+          setNome(palavras.slice(0, 2).join(' '))                
+          setTelefone(resultado.telefone)                
+      }              
+      setSigned(resultado)            
     })
-    .catch(err => {
-      setSigned(false)
-    });
   }, [])
   
   
@@ -153,7 +151,7 @@ export default function Initial(props) {
       })
       
     } catch (err) {
-      alert('Erro ao deletar caso, tente novamente.')
+      alert('Erro ao deletar usuário, tente novamente.')
     }
   }
 
@@ -170,7 +168,7 @@ export default function Initial(props) {
         <AntDesign name="deleteuser" size={20} color="black" />
         <Text style={styles.buttonText}>Excluir Conta</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => {onSignOut(navigation)}} style={styles.button}>
+      <TouchableOpacity onPress={() => {onSignOut(navigation,CommonActions)}} style={styles.button}>
         <AntDesign name="logout" size={20} color="black" />
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>

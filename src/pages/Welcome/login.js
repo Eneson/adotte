@@ -3,7 +3,7 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, TouchableOpacity, Alert, StyleSheet, Modal, ScrollView, SafeAreaView  } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text';
-import { onSignIn } from '../../components/IsLogin';
+import { onSignIn } from '../../utils/IsLogin'; 
 import { useFonts, Roboto_400Regular, Roboto_500Medium } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_700Bold, Montserrat_600SemiBold, Montserrat_800ExtraBold } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';

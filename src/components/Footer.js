@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity,Alert } from 'react-native';
 import { MaterialIcons, Feather, Ionicons } from '@expo/vector-icons'; 
-import { IsLogin } from './IsLogin'
+import { IsLogin } from '../utils/IsLogin'
 const styles = StyleSheet.create({
       footer:{
         bottom: 0,
@@ -31,15 +31,12 @@ const styles = StyleSheet.create({
   export default function Footer(props){
     const [signed, setSigned] = useState(false)
 
-    IsLogin()
-        .then(res => {   
-          if(res==false){
-            setSigned(false)   
-          }else{
-            setSigned(true)
-          }
-        })
-        .catch(() => (setSigned(false)));
+    useEffect(() => {    
+      IsLogin((resultado) => {
+        setSigned(resultado)
+      });
+    }, [])
+
         
     return (
       <View style={styles.footer}> 

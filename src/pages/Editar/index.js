@@ -4,7 +4,7 @@ import { View, TextInput, Switch, Text, TouchableOpacity, Modal, ScrollView, Saf
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
-import { onSignIn } from '../../components/IsLogin';
+import { onSignIn } from '../../utils/IsLogin';
 import Footer from '../../components/Footer';
 import styles from './styles'
 import api from '../../services/api'

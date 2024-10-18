@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Ionicons, MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
 import { useRoute, useNavigation,CommonActions } from '@react-navigation/native';
-import { IsLogin } from './IsLogin'
-import { onSignOut } from './IsLogin';
+import { IsLogin, onSignIn } from '../utils/IsLogin';
 
 import LoginIcon from '../assets/LoginIcon.png'
 
@@ -14,22 +13,19 @@ export default function CustomDrawer (props) {
     const [signed, setSigned] = useState(false)
     const navigation = useNavigation()
 
-    IsLogin()
-        .then(res => {   
-            if(res==false){
-                setSigned(false)   
-              }else{
-                setSigned(true)
-              }                         
-            var palavras = res.nome.split(' ');
-            //Pega os dois primeiros nomes
-            setNome(palavras.slice(0, 2).join(' '))
-            
-            setTelefone(res.telefone)
+
+    useEffect(() => {    
+        IsLogin((resultado) => {
+            if(resultado!=false){
+                var palavras = resultado.nome.split(' ');
+                //Pega os dois primeiros nomes
+                setNome(palavras.slice(0, 2).join(' '))                
+                setTelefone(resultado.telefone)                
+            }              
+            setSigned(resultado)            
         })
-        .catch(err => (setSigned(false)));
-        
-    
+    }, [])
+
     const screen = useRoute().name;
 
     function sairFunction() {
@@ -96,7 +92,7 @@ export default function CustomDrawer (props) {
                     
                     <DrawerItem
                         label="Sobre"
-                        onPress={() => {navigation.navigate('sobre')}} 
+                        onPress={() => {navigation.navigate('About')}} 
                         icon={({ focused, color, size }) =>  <Ionicons name="information-circle-outline" size={size} color={color} /> }
                         focused={screen.includes('sobre')?true:false}
                     />                  

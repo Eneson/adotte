@@ -2,10 +2,9 @@ import React, { useState, useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import { sendWhatsApp } from '../utils/sendWhatsapp';
 import { AntDesign, MaterialIcons, FontAwesome5  } from '@expo/vector-icons'
-import { IsLogin } from './IsLogin'
+import { IsLogin } from '../utils/IsLogin'; 
 
 
 const styles = StyleSheet.create({
@@ -45,15 +44,12 @@ export default function ProgressiveImage(props) {
   const [favoritePress, setFavoritePress] = useState(false)
   const [signed, setSigned] = useState(false)
 
-    IsLogin()
-        .then(res => {   
-          if(res==false){
-            setSigned(false)   
-          }else{
-            setSigned(true)
-          }
-        })
-        .catch(() => (setSigned(false)));
+  useEffect(() => {    
+    IsLogin((resultado) => {
+      setSigned(resultado)
+    });
+  }, [])
+
         
 
   function navigateToDetail(item) {
@@ -101,62 +97,7 @@ export default function ProgressiveImage(props) {
     loadFavorites()
   }
   
-  async function sendWhatsApp(item) {
-    const {FotoName, telefone, Sexo, Vacina, Vermifugado, Castrado} = item
-
-    var moldura = () => {
-      if(Sexo=='Macho'){
-        if(Vermifugado == 'true'&&Vacina == 'true'){
-          return 'moldura-01.png';
-        }else if(Vermifugado == 'false' && Vacina == 'true'){
-          return 'moldura-02.png'
-        }else if(Vermifugado == 'true' && Vacina == 'false'){
-          return 'moldura-03.png';
-        }else{
-          return 'moldura-04.png';
-        }
-      }else{
-        if(Vermifugado == 'true'&&Vacina == 'true'){
-          return 'moldura-05.png';
-        }else if(Vermifugado == 'true' && Vacina == 'false'){
-          return 'moldura-06.png'
-        }else if(Vermifugado == 'false' && Vacina == 'true'){
-          return 'moldura-07.png';
-        }else{
-          return 'moldura-08.png';
-        }
-      } 
-    }
-
-    var attr = () => {
-      var text = ''
-      if(Vacina){
-        text = 'Vacinado '
-      }
-      if(Castrado){
-        text = text+'Castrado '
-      }
-      if(Vermifugado){
-        text = text+'Vermifugado '
-      }
-      return text
-    }
-
-    const downloadInstance = FileSystem.createDownloadResumable(
-      //'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
-      'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end',
-      FileSystem.documentDirectory + FotoName,
-      {
-        cache: true
-      }
-    );
-    //let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
-    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end'
-    const result = await downloadInstance.downloadAsync(linnk);
-    Sharing.shareAsync(result.uri)
-    
-  }
-
+  
     return (
       <TouchableHighlight style={styles.childrenAnimais} onPress={() => {navigateToDetail(item)}}>
           {loading?<ActivityIndicator style={{display: loading?'flex':'none', marginTop: 50}} size="large" color="#3ab6ff" />:

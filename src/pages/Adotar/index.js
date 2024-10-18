@@ -1,8 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect} from 'react'
 import {  StyleSheet, SafeAreaView, ScrollView, View, Text, TouchableOpacity, Linking, ImageBackground } from 'react-native'
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
 
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
@@ -10,8 +8,16 @@ import { OpenSans_400Regular, OpenSans_600SemiBold, OpenSans_700Bold } from '@ex
 
 import styles from './styles'
 import Footer from '../../components/Footer';
-
+import { IsLogin,IsLogin2 } from '../../utils/IsLogin';
+import { sendWhatsApp } from '../../utils/sendWhatsapp';
 export default function Adotar(props) {
+  const [signed, setSigned] = useState(false)
+
+  useEffect(() => {    
+    IsLogin((resultado) => {
+      setSigned(resultado)
+    });
+  }, [])
 
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
@@ -29,43 +35,9 @@ export default function Adotar(props) {
   function contato() {
     Linking.openURL(`whatsapp://send?phone=+55${item.telefone}&text=${message}`)
   }
-  async function sendWhatsApp() {
-    const {FotoName, telefone, Sexo, Vacina, Vermifugado, Castrado} = item
-    
-    var moldura = () => {
-      if(Sexo=='Macho'){        
-        return 'moldura-04.png';        
-      }else{        
-        return 'moldura-08.png';        
-      }
-    }
-    var attr = () => {
-      var text = ''
-      if(Vacina){
-        text = 'Vacinado '
-      }
-      if(Castrado){
-        text = text+'Castrado '
-      }
-      if(Vermifugado){
-        text = text+'Vermifugado '
-      }
-      return text
-    }
-    const downloadInstance = FileSystem.createDownloadResumable(
-      //'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end',
-      'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end',
-      FileSystem.documentDirectory + FotoName,
-      {
-        cache: true
-      }
-    );
-    //let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,co-000000,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end';
-    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end'
-    const result = await downloadInstance.downloadAsync(linnk);
-    Sharing.shareAsync(result.uri)
-    
-  }
+
+  
+
   if (!fontsLoaded) {
     return null
   }
@@ -78,16 +50,31 @@ export default function Adotar(props) {
             source={{uri: source}}
             style={styles.childrenAnimais}
             resizeMode="cover"
-            >                                                            
+            >                                                          
           </ImageBackground>
         </View>
         <View style={styles.animaisDesc}>
                 <View>
                   <View style={{marginTop: 5,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                     <Text style={styles.textNome}>{item.Nome}</Text>
-                    <TouchableOpacity onPress={sendWhatsApp}>
-                        <AntDesign name="sharealt" size={30} color="#000" />
-                    </TouchableOpacity>
+                    <View style={{flexDirection: 'row', marginTop: 20}}>
+                      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <TouchableOpacity onPress={()=> sendWhatsApp(item)}>
+                            <AntDesign name="sharealt" size={30} color="#000" />
+                        </TouchableOpacity>
+                        <Text>
+                          Compartilhar
+                        </Text>
+                      </View>
+                      <View style={{marginStart: 20, justifyContent: 'center', alignItems: 'center'}}>
+                        <TouchableOpacity onPress={() => {signed?props.navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):props.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
+                          <AntDesign name="warning" size={30} color="black" />   
+                        </TouchableOpacity>
+                        <Text>
+                          Denunciar
+                        </Text>
+                      </View>
+                    </View>
                   </View>
                   <View style={{}}>         
                     <Text style={styles.descText}>{item.Descricao}</Text>

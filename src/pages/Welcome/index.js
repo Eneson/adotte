@@ -26,14 +26,13 @@ export default function Welcome(props) {
     Pacifico_400Regular,
     Roboto_500Medium
   });
-  useEffect(() => {  
-    if(props.route.params){
-      Alert.alert(
-        "ATENÇÃO!",
-        props.route.params.Message
-      ) 
-    }    
-  }, []);
+
+  if(props.route.params){
+    Alert.alert(
+      "ATENÇÃO!",
+      props.route.params.Message
+    ) 
+  }    
 
   
   

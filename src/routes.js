@@ -4,9 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, CommonActions } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { MaterialIcons, FontAwesome, FontAwesome5  } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { jwtDecode } from "jwt-decode";
+import { FontAwesome5  } from '@expo/vector-icons'
 import Welcome from './pages/Welcome'
 import login from './pages/Welcome/login'
 import register from './pages/Welcome/register'
@@ -15,12 +13,15 @@ import Denuncia from './pages/Denuncia'
 import Adotar from './pages/Adotar'
 import Favoritos from './pages/Favoritos'
 import Profile from './pages/Profile'
+import About from './pages/about'
 import Editar from './pages/Editar'
 import UpdatePet from './pages/NewPet/UpdatePet.js';
 import Initial from './pages/Initial'
 import CustomDrawer from './components/CustomDrawer'
-import { onSignOut } from './components/IsLogin';
-import api from './services/api.js';
+
+import { onSignOut } from './utils/IsLogin.js'; 
+
+import { IsLogin } from './utils/IsLogin.js';
 
 const Drawer = createDrawerNavigator()
 const AppStack = createStackNavigator()
@@ -48,49 +49,16 @@ const styles = StyleSheet.create({
 
 })
 
-function verificaUser(){
-  return new Promise(async (resolve, reject) => {    
-    const value = await AsyncStorage.getItem('@Profile:token')
-    if(value==null){
-      reject(false);
-      return
-    }  
-
-    try {
-      var decoded = jwtDecode(value); 
-      api.get('user/'+decoded.id_user).then((a) => {
-        resolve(true) 
-      }).catch((error) => {
-        if(error.message=='Network Error'){
-          resolve(true)
-          return
-        }else{
-          AsyncStorage.removeItem('@Profile:token')
-          reject(false)
-        }
-      })
-    } catch (error) {
-      return
-    }
-    
-  }) 
-}
-
-
-
-
- 
-
 export default function Routes () { 
 
 function Button(props) {  
   const [signed, setSigned] = useState(false)
+  useEffect(() => {    
+    IsLogin((resultado) => {                     
+        setSigned(resultado)            
+    })
+}, [])
 
-  verificaUser().then(() => {   
-    setSigned(true)
-  }).catch(() => {
-    setSigned(false)
-  })
 
   return (
     <View>
@@ -253,23 +221,6 @@ function DenunciaScreen() {
 }
 function WelcomeScreen(){  
     return (
-      // <Drawer.Navigator 
-      //     drawerContent={props => <CustomDrawer {...props} />}      
-      //     screenOptions={{ 
-      //       headerStyle: { 
-      //         backgroundColor: '#3ab6ff',
-      //       },        
-      //       headerTintColor: '#fff',
-      //       headerRight: () => (Button(props))
-      //     }}      
-      //   >   
-      //     <AppStack.Screen name="Inicio2" component={Initial} 
-      //       options={{
-      //           headerTitle: 'Inicio',
-      //       }} />
-          
-      //   </Drawer.Navigator>
-
       <AppStack.Navigator 
         screenOptions={{ 
                 headerStyle: { 
@@ -322,6 +273,23 @@ function InicioScreen(props){
       
     )
 }
+function AboutScreen() {
+  return (
+    <AppStack.Navigator 
+    screenOptions={{ 
+        headerShown: true,
+        headerStyle: { 
+          backgroundColor: '#3ab6ff',
+        },        
+        headerTintColor: '#fff',
+      }} >
+          <AppStack.Screen name="About2" component={About} 
+            options={{
+                headerTitle: 'Sobre',
+            }} />
+    </AppStack.Navigator>
+  )
+}
 return (
   <SafeAreaProvider >
     <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
@@ -335,7 +303,8 @@ return (
             <AppStack.Screen name="Denuncia" component={DenunciaScreen} />
             <AppStack.Screen name="Adotar" component={AdotarScreen} />
             <AppStack.Screen name="Editar" component={EditarScreen} />
-            <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />                     
+            <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />     
+            <AppStack.Screen name="About" component={AboutScreen} />                     
       </AppStack.Navigator>  
   </NavigationContainer>
   </SafeAreaProvider>
