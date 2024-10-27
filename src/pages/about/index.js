@@ -13,7 +13,7 @@ export default function About(props) {
     <View style={styles.container}>      
       <ScrollView>
       <View style={styles.content}>
-        <Text style={styles.titulo}>Sobre o Aplicativo ADOTE</Text>
+        <Text style={styles.titulo}>Sobre o aplicativo ADOTE</Text>
         <Text style={styles.texto}>
         {'\t'}Bem-vindo ao nosso aplicativo de adoção de animais! Este trabalho de conclusão de curso foi desenvolvido por Enerson Macedo da Silva e Cristiane da Conceição Dias Macedo, alunos do IFPA Campus Itaituba.
         </Text>

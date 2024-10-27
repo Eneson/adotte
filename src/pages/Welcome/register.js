@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Image,StyleSheet, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { TextInputMask} from 'react-native-masked-text'
 import { onSignIn } from '../../utils/IsLogin' 
 import api from '../../services/api'
@@ -9,9 +10,11 @@ import styles from './loginStyles'
 import { Flow  } from 'react-native-animated-spinkit'
 
 export default function Cadastrar(props) {
-  const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm()
+  const { register, watch, handleSubmit, control, formState:{ errors }  } = useForm()
   const navigation = useNavigation()
   const [modalVisible, setmodalVisible] = useState(false)
+  const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true);
+  const [isViewSenha, setIsViewSenha] = useState(true);
 
   function navigateTo(Page) {
     navigation.navigate(Page)
@@ -22,6 +25,7 @@ export default function Cadastrar(props) {
     register('telefone')
     register('email')
     register('senha')
+    register('ConfirmSenha')
   }, [register])
   
   async function handleNewDoador(e) {
@@ -65,7 +69,7 @@ export default function Cadastrar(props) {
       }).catch(() => {
         return Alert.alert(
           "Erro no cadastro",
-          "Não foi possivel comunicar com o servidor.\nTente novamente"
+          "Não foi possível comunicar com o servidor.\nTente novamente."
         )
       }).finally(() => {
          setmodalVisible(false)
@@ -121,7 +125,7 @@ export default function Cadastrar(props) {
       </Modal> 
       <ScrollView style={styles.scrollView}>
         <View style={styles.loginHeader}>
-          <Text style={styles.loginText}>Novo Usuario</Text>
+          <Text style={styles.loginText}>Novo Usuário</Text>
           <Text style={styles.loginHeaderText}>Faça a diferença na vida de um animal. Registre-se agora e descubra seu próximo melhor amigo.</Text>
         </View>
         <View  style={styles.loginForm}>
@@ -147,7 +151,7 @@ export default function Cadastrar(props) {
                     onChangeText={value => onChange(value)}
                     value={value}
                   />
-                  <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+                  <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
                 </View>
                 }
 
@@ -173,8 +177,8 @@ export default function Cadastrar(props) {
                   return <View style={[{marginBottom: 10}]}>
                   <Text>Telefone:</Text>
                   {phoneField(onChange, onBlur, value)}              
-                  <Text style={[{color: 'red'}]}>{errors.telefone?errors.telefone.message=='lowCaractere'?'Telefone deve conter 11 digitos':'':''}
-                    {errors.telefone?errors.telefone.type=='required'?'Campo obrigatorio':'':''}</Text>
+                  <Text style={[{color: 'red'}]}>{errors.telefone?errors.telefone.message=='lowCaractere'?'Telefone deve conter 11 dígitos':'':''}
+                    {errors.telefone?errors.telefone.type=='required'?'Campo obrigatório':'':''}</Text>
                    
                 </View>
                 }
@@ -200,10 +204,10 @@ export default function Cadastrar(props) {
               }) => {
                 
                   return <View style={[{marginBottom: 10}]}>
-                  <Text>Email:</Text>
+                  <Text>E-mail:</Text>
                   <TextInput
                     style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                    placeholder='email@gmail.com'
+                    placeholder='exemplo@gmail.com'
                     keyboardType='email-address'
                     autoComplete='email'
                     placeholderTextColor= {invalid && 'red'}
@@ -211,8 +215,8 @@ export default function Cadastrar(props) {
                     onChangeText={value => onChange(value)}
                     value={value}
                   />
-                  <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um email correto: exemplo@gmail.com':'':''}
-                {errors.email?errors.email.type=='required'?'Email obrigatorio':'':''}</Text>
+                  <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
+                {errors.email?errors.email.type=='required'?'E-mail obrigatório':'':''}</Text>
                 </View>
                 }
 
@@ -224,41 +228,99 @@ export default function Cadastrar(props) {
           </View>
 
           <View style={styles.containerTextField}>
+             
             <Controller
-              rules={{
-                required: 'true',
-                minLength: {
-                  value: 8,
-                  message: "lowCaractere"
-                }
-              }}
-              render={({ 
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error }
-              }) => {
-                
-                  return <View>
-                    <Text>Senha:</Text>
-                    <TextInput
-                      style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
-                      placeholder='********'
-                      secureTextEntry={true}
-                      placeholderTextColor= {invalid && 'red'}
-                      onBlur={onBlur}
-                      onChangeText={value => onChange(value)}
-                      value={value}
-                    />
-                    <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no minimo 8 caracteres':'':''}
-                    {errors.senha?errors.senha.type=='required'?'Senha obrigatoria':'':''}</Text>
-                </View>
-                
-                }
+                  rules={{
+                    required: 'true',
+                    minLength: {
+                      value: 8,
+                      message: "lowCaractere"
+                    }
+                  }}
+                  render={({ 
+                    field: { onChange, onBlur, value, name, ref },
+                    fieldState: { invalid, isTouched, isDirty, error }
+                  }) => {
+                      return <View>
+                        <Text>Senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                          <TextInput
+                            style={{borderColor: invalid? 'red':'#000',
+                              paddingVertical: 10,
+                              width: 'auto',
+                              flex: 1}}
+                            
+                            secureTextEntry={isViewSenha}
+                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
+                            onBlur={onBlur}
+                            onChangeText={value => onChange(value)}
+                            value={value}   
+                          />
+                          <TouchableOpacity 
+                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                            onPress={() => {                   
+                              setIsViewSenha(!isViewSenha)  
+                            }}
+                          >
+                            <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
+                          </TouchableOpacity>
+                        </View>
+                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Senha deve conter no mínimo 8 caracteres</Text>:''}
+                        {errors.senha&&errors.senha.type=='required'?<Text style={[{color: 'red'}]}>Senha obrigatoria</Text>:''}
+                    </View>                
+                    }
+                  }
+                  name="senha"
+                  control={control}
+                  defaultValue=""
+                />
 
-              }
-              name="senha"
-              control={control}
-              defaultValue=""
-            /> 
+                <Controller
+                  rules={{
+                    required: 'true',
+                    validate: (value) =>  {
+                      if ( watch('senha') != value ){
+                        return "As senhas digitadas não coincidem"
+                      }
+                    }
+                  }}
+                  render={({ 
+                    field: { onChange, onBlur, value, name, ref },
+                    fieldState: { invalid, isTouched, isDirty, error }
+                  }) => {
+                      return <View>
+                        <Text>Confirmar Senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                          <TextInput
+                           style={{borderColor: invalid? 'red':'#000',
+                            paddingVertical: 10,
+                            width: 'auto',
+                            flex:1}}
+                            placeholder={''}
+                            secureTextEntry={isViewConfirmSenha}
+                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
+                            onBlur={onBlur}
+                            onChangeText={value => onChange(value)}
+                            value={value}       
+                          />
+                          <TouchableOpacity 
+                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                            onPress={() => {                   
+                              setIsViewConfirmSenha(!isViewConfirmSenha)  
+                            }}
+                          >
+                            <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
+                          </TouchableOpacity>
+                        </View>            
+                        {console.log(error)}            
+                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
+                    </View>                
+                    }
+                  }
+                  name="ConfirmSenha"
+                  control={control}
+                  defaultValue=""
+                />
           </View>
           
            

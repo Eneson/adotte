@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Ionicons, MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
 import { useRoute, useNavigation,CommonActions } from '@react-navigation/native';
-import { IsLogin, onSignIn } from '../utils/IsLogin';
+import { IsLogin, onSignOut } from '../utils/IsLogin';
 
 import LoginIcon from '../assets/LoginIcon.png'
 

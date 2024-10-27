@@ -12,7 +12,7 @@
     "name": "Adote",
     "slug": "adote",
     "description": "Aplicativo desenvolvido por alunos do TADS-IFPA campus Itaituba",
-    "version": "2",
+    "version": "1",
     "orientation": "portrait",
     "icon": "./assets/icon2.png",
     "splash": {
@@ -35,8 +35,8 @@
         "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.adote.adote",
-      "versionCode": 2
+      "package": "com.adoteIFPA.adote",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -107,7 +107,7 @@ export default function ProgressiveImage(props) {
           style={{flex: 1, justifyContent: 'flex-start'}}
           resizeMode="cover"
           >       
-          <View style={{position: 'relative', alignSelf: 'flex-end', marginTop:0}}>
+          {/* <View style={{position: 'relative', alignSelf: 'flex-end', marginTop:0}}>
             <TouchableOpacity onPress={()=> setMenuVisible(true)} style={{padding:20,position: 'relative', margin: 0, display: menuVisible?'none': 'flex'}}>
               <FontAwesome5 name="ellipsis-v" size={20} color="black" />
             </TouchableOpacity>
@@ -120,21 +120,29 @@ export default function ProgressiveImage(props) {
                     </TouchableOpacity>
                     
             </View>
-          </View>
+          </View> */}
               
             <View style={styles.animaisDesc}>
               <Text style={styles.descTitle}> {item.Nome} </Text>
               <Text style={styles.descText}> {item.Sexo} </Text>
-                      {favorite.includes(item.id) ? (
-                        <TouchableOpacity style={{paddingTop: 5}} onPressIn={() => setFavoritePress(true)} onPress={() => props.callbackParent?props.callbackParent(item):removeFavorito(item) }>
-                          {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                        <MaterialIcons name="favorite" size={25} color={'red'} />}
-                        </TouchableOpacity>
-                      ): (<TouchableOpacity style={{paddingTop: 5}} onPressIn={() => setFavoritePress(true)} onPress={() => {signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
-                        {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                        <MaterialIcons name="favorite-border" size={25} color={'black'} />}
-                    </TouchableOpacity>
-                    )}
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', marginEnd: 10, marginVertical: 5}}>
+                {favorite.includes(item.id) ? (
+                  <TouchableOpacity onPressIn={() => setFavoritePress(true)} onPress={() => props.callbackParent?props.callbackParent(item):removeFavorito(item) }>
+                    {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
+                  <MaterialIcons name="favorite" size={25} color={'red'} />}
+                  </TouchableOpacity>
+                ): (<TouchableOpacity onPressIn={() => setFavoritePress(true)} onPress={() => {signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
+                  {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
+                  <MaterialIcons name="favorite-border" size={25} color={'black'} />}
+                </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={() => sendWhatsApp(item)}>
+                  <AntDesign name="sharealt" size={25} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {signed?navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
+                  <AntDesign name="warning" size={25} color="black" />   
+                </TouchableOpacity>
+              </View>
             </View>                                
           </ImageBackground>
           }

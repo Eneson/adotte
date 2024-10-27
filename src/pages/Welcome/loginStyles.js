@@ -14,12 +14,19 @@ export default StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 2,
-        paddingStart: 15    
+        paddingStart: 15,
+        padding: 10, width: 'auto'
       },
       containerTextField:{
         marginTop: 0,
       },
-    
+      TextInputEditable:{
+        justifyContent:'space-between',
+        borderWidth: 1,
+        borderRadius: 2, 
+        paddingStart: 15,
+        flexDirection:'row', 
+      },
       loginHeader:{
         justifyContent: 'flex-end',
         paddingBottom: 40

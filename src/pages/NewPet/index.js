@@ -82,7 +82,7 @@ export default function NewPet(props) {
         setModalVisible(false)
         Alert.alert(
           "Erro no cadastro",
-          "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
+          "Não foi possível autenticar usuário.\nFaça login e tente novamente"
         )
       }
       const token = resultado.Token
@@ -131,7 +131,7 @@ export default function NewPet(props) {
       }).catch(err => {
         Alert.alert(
           "Erro no cadastro",
-          "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
+          "Não foi possível estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente."
         )
         Toast('Erro no cadastro')
       }).finally(() => {
@@ -214,7 +214,7 @@ export default function NewPet(props) {
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatóorio':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -272,7 +272,7 @@ export default function NewPet(props) {
             <View style={{flex: 1}}>
               <TouchableOpacity style={[styles.action,{backgroundColor: vacine==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => vacine==1?setVacine(0):setVacine(1)}>
                 <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Vacinado</Text>
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Antirrábica</Text>
               </TouchableOpacity>
             </View>
 
@@ -304,7 +304,7 @@ export default function NewPet(props) {
               onChangeText={value => onChange(value)}
               value={value}
             />
-            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatorio':'':''}</Text>
+            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
           </View>
           }}
         name="desc"

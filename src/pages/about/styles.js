@@ -21,7 +21,6 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 50,
     paddingVertical: 10,
-    marginRight: 20
   },
   
 })

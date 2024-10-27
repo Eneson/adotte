@@ -14,7 +14,7 @@ export default StyleSheet.create({
     padding: 10, 
   },
   containerTextField:{
-    marginTop: 0,
+    marginVertical: 0,
   },
 
   scrollView:{

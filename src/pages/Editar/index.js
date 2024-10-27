@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Switch, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,18 +20,23 @@ const [isEmailEnabled, setIsEmailEnable] = useState(false)
 const [isNomeEnabled, setIsNomeEnabled] = useState(false);
 const [isFoneEnabled, setIsFoneEnable] = useState(false)
 const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
+const [isViewSenha, setIsViewSenha] = useState(true)
+const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
 
 
   var telefone = props.route.params.item.telefone.toString().replace(/[ ]/g, "");
   telefone = telefone.replace(/[()]/g, "");
   telefone = telefone.replace(/[-]/g, "");
 
-  const { register, setValue, handleSubmit, control, formState:{ errors }  } = useForm({
+  const { watch, register, setValue, handleSubmit, control, formState:{ errors }  } = useForm({
     defaultValues: {
       nome: props.route.params.item.nome,
       email: props.route.params.item.email,
       telefone: parseInt(telefone),
-    }
+      senha: '',
+      ConfirmSenha: '',
+    },
+    
   })
 
 
@@ -39,6 +45,7 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
     register('telefone')
     register('email')
     register('senha')
+    register('ConfirmSenha')
   }, [register])
 
   async function handleNewDoador(e) {
@@ -152,7 +159,7 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
       </Modal> 
       <ScrollView style={styles.scrollView}>
         <View  style={styles.loginForm}>
-        <View style={styles.containerTextField}>
+          <View style={styles.containerTextField}>
             <Controller
               rules={{
                 required: 'true',                
@@ -161,9 +168,9 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                  return <View style={[{marginBottom: 10}]}>
+                  return <View>
                   <Text>Nome completo:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
+                  <View style={[styles.TextInputEditable, {borderColor: isNomeEnabled&&invalid? 'red':'#000'}]}>
                     <TextInput
                       style={styles.input}
                       placeholder='Fulano pereira costa'
@@ -175,22 +182,23 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
                       onChangeText={value => onChange(value)}
                       value={isNomeEnabled ? value : props.route.params.item.nome}
                     />
-                    <Switch
-                      trackColor={{false: '#767577', true: '#81b0ff'}}
-                      thumbColor={isNomeEnabled ? '#f5dd4b' : '#f4f3f4'}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={() => setIsNomeEnabled(!isNomeEnabled)}
-                      value={isNomeEnabled}
-                    />
+                    <TouchableOpacity 
+                      style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                      onPress={() => {
+                        setIsNomeEnabled(!isNomeEnabled)
+                      }}
+                    >
+                      <FontAwesome5 name="edit" size={20} color={isNomeEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity>   
                   </View>
-                  <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+                  {isNomeEnabled&&errors.nome&&errors.nome.type=='required'?<Text style={[{color: 'red'}]}>Campo obrigatório</Text>:''}
+                  
                 </View>
                 }
               }
               name="nome"
               control={control}
-            /> 
-              
+            />               
           </View>
           <View style={styles.containerTextField}>
             <Controller
@@ -199,15 +207,15 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
                 minLength: {
                   value: 15,
                   message: "lowCaractere"
-                }            
+                }                
               }}
               render={({ 
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                  return <View style={[{marginBottom: 10}]}>                    
+                  return <View>                    
                   <Text>Telefone:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                  <View style={[styles.TextInputEditable, {borderColor: isFoneEnabled&&invalid? 'red':'#000'}]}>                    
                     <TextInputMask                  
                       style={[styles.input]}
                       placeholder={'Telefone'}        
@@ -221,23 +229,21 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
                         
                       }}                  
                       onChangeText={onChange}
-                    />             
-                    <Switch
-                      trackColor={{false: '#767577', true: '#81b0ff'}}
-                      thumbColor={isFoneEnabled ? '#f5dd4b' : '#f4f3f4'}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={() => {
+                    />   
+                    <TouchableOpacity 
+                      style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                      onPress={() => {
                         setIsFoneEnable(!isFoneEnabled)
-
                       }}
-                      value={isFoneEnabled}
-                    />
+                    >
+                      <FontAwesome5 name="edit" size={20} color={isFoneEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity >   
                   </View>
-                  <Text style={[{color: 'red'}]}>{errors.telefone?errors.telefone.message=='lowCaractere'?'Telefone deve conter 11 digitos':'':''}
-                    {errors.telefone?errors.telefone.type=='required'?'Campo obrigatorio':'':''}</Text>
+                  {console.log(value)}
+                    {isFoneEnabled&&errors.telefone&&errors.telefone.type=='required'?<Text style={[{color: 'red'}]}>Campo obrigatório</Text>:''}
+                    {isFoneEnabled&&errors.telefone&&errors.telefone.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Telefone deve conter 11 dígitos</Text>:''}
                 </View>
                 }
-
               }
               name="telefone"
               control={control}
@@ -256,36 +262,32 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                if(!isEmailEnabled){
-                  value = props.route.params.item.email
-                }
-                  return <View style={[{marginBottom: 10}]}>
-                  <Text>Email:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
-                    
+                  return <View>
+                  <Text>E-mail:</Text>
+                  <View style={[styles.TextInputEditable, {borderColor: isEmailEnabled&&invalid? 'red':'#000'}]}>                    
                     <TextInput
-                      style={[styles.input, {borderColor: invalid? 'red':'#000',}]}                      
-                      value={value}
-                      placeholder='email@gmail.com'
+                      style={[styles.input, {borderColor: isEmailEnabled&&invalid? 'red':'#000',}]}                      
+                      value={isEmailEnabled?value:props.route.params.item.email}
+                      placeholder='exemplo@gmail.com'
                       keyboardType='email-address'
                       autoComplete='email'                  
                       editable={isEmailEnabled}
-                      placeholderTextColor= {invalid && 'red'}
+                      placeholderTextColor= {isEmailEnabled&&invalid?'':'red'}
                       onBlur={onBlur}
-                      onChangeText={value => onChange(value)}
-                      
+                      onChangeText={value => onChange(value)}                      
                     />
-                    <Switch
-                      trackColor={{false: '#767577', true: '#81b0ff'}}
-                      thumbColor={isEmailEnabled ? '#f5dd4b' : '#f4f3f4'}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={() => {setIsEmailEnable(!isEmailEnabled)}}
-                      value={isEmailEnabled}
-                    />
+                    <TouchableOpacity 
+                      style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                      onPress={() => {
+                        setIsEmailEnable(!isEmailEnabled)
+                      }}
+                    >
+                      <FontAwesome5 name="edit" size={20} color={isEmailEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity>
                     </View>
-                    {errors.email&&errors.email.message=='Invalid_email'?<Text style={[{color: 'red'}]}>Digite um email correto: exemplo@gmail.com</Text>:''}
-                    {errors.email&&errors.email.type=='required'?<Text style={[{color: 'red'}]}>Email obrigatorio</Text>:''}
-                  
+                    {console.log(value)}
+                    {isEmailEnabled&&errors.email&&errors.email.message=='Invalid_email'?<Text style={[{color: 'red'}]}>Digite um e-mail correto: exemplo@gmail.com</Text>:''}
+                    {/* {isEmailEnabled&&errors.email&&errors.email.type=='required'?<Text style={[{color: 'red'}]}>E-mail obrigatório</Text>:''} */}
                 </View>
                 }
 
@@ -294,67 +296,119 @@ const [isSenhaEnabled, setIsSenhaEnabled] = useState(false)
               control={control}
             /> 
           </View>
-
           <View style={styles.containerTextField}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text>Alterar senha?</Text>
               <Switch
                 trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={isSenhaEnabled ? '#f5dd4b' : '#f4f3f4'}
+                thumbColor={isSenhaEnabled ? '#3ab6ff' : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={() => {setIsSenhaEnabled(!isSenhaEnabled)}}
                 value={isSenhaEnabled}
               />
             </View>
             {
-              isSenhaEnabled?<Controller
-              rules={{
-                required: 'true',
-                minLength: {
-                  value: 8,
-                  message: "lowCaractere"
-                }
-              }}
-              render={({ 
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error }
-              }) => {
-                
-                  return <View>
-                    <Text>Nova senha:</Text>
-                    <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
-                      <TextInput
-                        style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
-                        placeholder='********'
-                        secureTextEntry={true}
-                        placeholderTextColor= {invalid && 'red'}
-                        onBlur={onBlur}
-                        onChangeText={value => onChange(value)}
-                        value={value}
-                      />
-                    </View>
-                    <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no minimo 8 caracteres':'':''}
-                    {errors.senha?errors.senha.type=='required'?'Senha obrigatoria':'':''}</Text>
-                </View>
-                
-                }
+              isSenhaEnabled?
+              <View>
+                  <Controller
+                  rules={{
+                    required: 'true',
+                    minLength: {
+                      value: 8,
+                      message: "lowCaractere"
+                    }
+                  }}
+                  render={({ 
+                    field: { onChange, onBlur, value, name, ref },
+                    fieldState: { invalid, isTouched, isDirty, error }
+                  }) => {
+                      return <View>
+                        <Text>Nova senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: isSenhaEnabled&&invalid? 'red':'#000'}]}>                    
+                          <TextInput
+                            style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                            placeholder={isSenhaEnabled?'':'********'}
+                            secureTextEntry={isViewSenha}
+                            placeholderTextColor= {isSenhaEnabled&&invalid?'red': '#bdbdbd'}
+                            onBlur={onBlur}
+                            onChangeText={value => onChange(value)}
+                            value={isSenhaEnabled?value:'********'}       
+                            editable={isSenhaEnabled}
+                          />
+                          <TouchableOpacity 
+                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                            onPress={() => {                   
+                              setIsViewSenha(!isViewSenha)  
+                            }}
+                          >
+                            <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
+                          </TouchableOpacity>
+                        </View>
+                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Senha deve conter no mínimo 8 caracteres</Text>:''}
+                        {errors.senha&&errors.senha.type=='required'?<Text style={[{color: 'red'}]}>Senha obrigatoria</Text>:''}
+                    </View>                
+                    }
+                  }
+                  name="senha"
+                  control={control}
+                  defaultValue=""
+                />
 
-              }
-              name="senha"
-              control={control}
-              defaultValue=""
-            /> : ''
-            }
-            
-          </View>
-          
-          
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.action} onPress={handleSubmit(handleNewDoador)} >
-              <Text style={styles.actionText}>CONFIRMAR</Text>
-            </TouchableOpacity>
-          </View>  
+                <Controller
+                  rules={{
+                    required: 'true',
+                    validate: (value) =>  {
+                      if ( watch('senha') != value ){
+                        return "As senhas digitadas não coincidem"
+                      }
+                    }
+                  }}
+                  render={({ 
+                    field: { onChange, onBlur, value, name, ref },
+                    fieldState: { invalid, isTouched, isDirty, error }
+                  }) => {
+                      return <View>
+                        <Text>Confirmar Senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                          <TextInput
+                            style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                            placeholder={''}
+                            secureTextEntry={isViewConfirmSenha}
+                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
+                            onBlur={onBlur}
+                            onChangeText={value => onChange(value)}
+                            value={value}       
+                            editable={isSenhaEnabled}
+                          />
+                          <TouchableOpacity 
+                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                            onPress={() => {                   
+                              setIsViewConfirmSenha(!isViewConfirmSenha)  
+                            }}
+                          >
+                            <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
+                          </TouchableOpacity>
+                        </View>            
+                        {console.log(error)}            
+                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
+                    </View>                
+                    }
+                  }
+                  name="ConfirmSenha"
+                  control={control}
+                  defaultValue=""
+                />
+              </View>
+              
+            :''}
+          </View>      
         </View>
+
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.action} onPress={handleSubmit(handleNewDoador)} >
+            <Text style={styles.actionText}>CONFIRMAR</Text>
+          </TouchableOpacity>
+        </View>  
              
       </ScrollView>
       

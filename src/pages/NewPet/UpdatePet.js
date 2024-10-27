@@ -84,7 +84,7 @@ export default function UpdatePet(props) {
       if(resultado==false){
         Alert.alert( 
           "Erro no cadastro",
-          "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
+          "Não foi possível autenticar usuário.\nFaça login e tente novamente."
         )
         return
       }
@@ -136,7 +136,7 @@ export default function UpdatePet(props) {
       }).catch(err => {    
         Alert.alert(
           "Erro",
-          "Não foi possivel estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente"
+          "Não foi possível estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente."
         )
       })
       setModalVisible(false)
@@ -199,7 +199,7 @@ export default function UpdatePet(props) {
     // }).catch(() => {
     //   Alert.alert( 
     //     "Erro no cadastro",
-    //     "Não foi possivel autenticar usuario.\nFaça login e tente novamente"
+    //     "Não foi possivel autenticar usuário.\nFaça login e tente novamente"
     //   )
     // }).finally(() => {
     //   setModalVisible(false)
@@ -283,7 +283,7 @@ export default function UpdatePet(props) {
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatorio':'':''}</Text>
+              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -336,7 +336,7 @@ export default function UpdatePet(props) {
             <View style={{flex: 1}}>
               <TouchableOpacity style={[styles.action,{backgroundColor: Vacina? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => Vacina==1?setVacina(0):setVacina(1)}>
                 <FontAwesome5 name="syringe" size={30} color={Vacina? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vacina? '#fff': '#000'}]}>Vacinado</Text>
+                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vacina? '#fff': '#000'}]}>Antirrábica</Text>
               </TouchableOpacity>
             </View>
             <View style={{flex: 1}}>
@@ -365,7 +365,7 @@ export default function UpdatePet(props) {
               onChangeText={value => onChange(value)}
               value={value}
             />
-            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatorio':'':''}</Text>
+            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
           </View>
           }}
         name="desc"

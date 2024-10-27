@@ -42,7 +42,7 @@ export default function Initial(props) {
   const [signed,setSigned] = useState(false);
   const [routes] = useState([
     { key: 'first', title: 'Meus Pets' },
-    { key: 'second', title: 'Configuraçoes' },
+    { key: 'second', title: 'Configurações' },
   ]);
   
   function navigateToEditar() {
@@ -92,7 +92,7 @@ export default function Initial(props) {
   }
 
   async function deleteAnimal(id) {
-    Alert.alert('CUIDADO', 'Tem certeza que deseja excluir o pet selecionado?', [
+    Alert.alert('ATENÇÃO', 'Tem certeza que deseja excluir o pet selecionado?', [
       {
         text: 'Não',
         style: 'cancel',
@@ -132,7 +132,7 @@ export default function Initial(props) {
   }
 
   const createTwoButtonAlert = () =>
-    Alert.alert('CUIDADO', 'Tem certeza que deseja apagar todos os seus dados?', [
+    Alert.alert('ATENÇÃO', 'Tem certeza que deseja apagar todos os seus dados?', [
       {
         text: 'Não',
         style: 'cancel',

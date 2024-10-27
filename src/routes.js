@@ -8,6 +8,7 @@ import { FontAwesome5  } from '@expo/vector-icons'
 import Welcome from './pages/Welcome'
 import login from './pages/Welcome/login'
 import register from './pages/Welcome/register'
+import {EsqueciSenha, ConfirmarToken, NewSenha} from './pages/Welcome/esqueciSenha.js';
 import NewPet from './pages/NewPet'
 import Denuncia from './pages/Denuncia'
 import Adotar from './pages/Adotar'
@@ -152,30 +153,23 @@ function AdotarScreen(props) {
         headerStyle: { 
           backgroundColor: '#3ab6ff',
         },        
-        headerTintColor: '#fff',
-        headerBackImage: () => (
-          <View style={{margin: 5}}>
-            <FontAwesome5 name="arrow-left" size={35} color="#3ab6ff" />
-          </View>
-        ),
-        
+        headerTintColor: '#fff',             
       }}      
     >   
-      <AppStack.Screen  name="Adotar2" component={Adotar} 
-  
+      <AppStack.Screen  name="Adotar2" component={Adotar}   
         options={{
-          headerTransparent: true,
+          //headerTransparent: true,
           headerStyle: { 
-            backgroundColor: '#fff',
+            backgroundColor: '#3ab6ff',
 
           },        
           cardStyle:{
-            backgroundColor: 'transparent'
+            //backgroundColor: 'transparent'
           },
-          headerTintColor: '#fff',
+          //headerTintColor: '#fff',
           headerTitle: '',
           headerTitleStyle: {
-            height: 100
+            //height: 100
           },
           
         }} />
@@ -185,8 +179,8 @@ function AdotarScreen(props) {
 }
 function EditarScreen(props) {
   return (
-    <Drawer.Navigator 
-      drawerContent={props => <CustomDrawer {...props} />}      
+    <AppStack.Navigator 
+      //drawerContent={props => <CustomDrawer {...props} />}      
       screenOptions={{ 
         headerStyle: { 
           backgroundColor: '#3ab6ff',
@@ -199,7 +193,7 @@ function EditarScreen(props) {
         options={{
             headerTitle: 'Editar Perfil',
         }} />
-    </Drawer.Navigator>
+    </AppStack.Navigator>
   )
 }
 function DenunciaScreen() {
@@ -214,7 +208,7 @@ function DenunciaScreen() {
       }} >
           <AppStack.Screen name="Denuncia2" component={Denuncia} 
             options={{
-                headerTitle: 'Denuncia',
+                headerTitle: 'Denúncia',
             }} />
     </AppStack.Navigator>
   )
@@ -246,7 +240,29 @@ function WelcomeScreen(){
           },        
           headerTintColor: '#000',
           headerTitle: '',
-        }}  />     
+        }}  />  
+        
+        <AppStack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{ 
+          headerStyle: { 
+            backgroundColor: '#fff',
+          },        
+          headerTintColor: '#000',
+          headerTitle: '',
+        }}  />  
+        <AppStack.Screen name="ConfirmarToken" component={ConfirmarToken} options={{ 
+          headerStyle: { 
+            backgroundColor: '#fff',
+          },        
+          headerTintColor: '#000',
+          headerTitle: '',
+        }}  />    
+         <AppStack.Screen name="NewSenha" component={NewSenha} options={{ 
+          headerStyle: { 
+            backgroundColor: '#fff',
+          },        
+          headerTintColor: '#000',
+          headerTitle: '',
+        }}  />  
       </AppStack.Navigator>
     )
   
@@ -290,6 +306,7 @@ function AboutScreen() {
     </AppStack.Navigator>
   )
 }
+
 return (
   <SafeAreaProvider >
     <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
@@ -304,7 +321,7 @@ return (
             <AppStack.Screen name="Adotar" component={AdotarScreen} />
             <AppStack.Screen name="Editar" component={EditarScreen} />
             <AppStack.Screen name="UpdatePet" component={UpdatePetScreen} />     
-            <AppStack.Screen name="About" component={AboutScreen} />                     
+            <AppStack.Screen name="About" component={AboutScreen} />                           
       </AppStack.Navigator>  
   </NavigationContainer>
   </SafeAreaProvider>

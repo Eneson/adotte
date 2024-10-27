@@ -3,6 +3,7 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, TouchableOpacity, Alert, StyleSheet, Modal, ScrollView, SafeAreaView  } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text';
+import { FontAwesome5 } from '@expo/vector-icons'
 import { onSignIn } from '../../utils/IsLogin'; 
 import { useFonts, Roboto_400Regular, Roboto_500Medium } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_700Bold, Montserrat_600SemiBold, Montserrat_800ExtraBold } from '@expo-google-fonts/montserrat';
@@ -16,6 +17,7 @@ import api from '../../services/api'
 export default function Login(props) {
   const { register, handleSubmit, control, formState:{ errors } } = useForm()
   const [modalVisible, setmodalVisible] = useState(false)
+  const [isViewSenha, setIsViewSenha] = useState(true);
   const navigation = useNavigation()
   
  function navigateTo(Page) {
@@ -50,7 +52,7 @@ export default function Login(props) {
       if(err.code.includes('BAD_REQUEST')){
         Alert.alert(
           "Erro no login",
-          "Usuario e senha não encontrados",
+          "Usuário e senha não encontrados",
           [
             {
               text: "OK",
@@ -121,10 +123,10 @@ export default function Login(props) {
                 }) => {
                   
                     return <View style={[{marginBottom: 10}]}>
-                    <Text>Email:</Text>
+                    <Text>E-mail:</Text>
                     <TextInput
                       style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                      placeholder='email@gmail.com'
+                      placeholder='exemplo@gmail.com'
                       keyboardType='email-address'
                       autoComplete='email'
                       placeholderTextColor= {invalid && 'red'}
@@ -132,8 +134,8 @@ export default function Login(props) {
                       onChangeText={value => onChange(value)}
                       value={value}
                     />
-                    <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um email correto: exemplo@gmail.com':'':''}
-                  {errors.email?errors.email.type=='required'?'Email obrigatorio':'':''}</Text>
+                    <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
+                  {errors.email?errors.email.type=='required'?'E-mail obrigatório':'':''}</Text>
                   </View>
                   }
 
@@ -156,20 +158,31 @@ export default function Login(props) {
                 render={({ 
                   field: { onChange, onBlur, value, name, ref },
                   fieldState: { invalid, isTouched, isDirty, error }
-                }) => {
-                  
+                }) => {                  
                     return <View>
                       <Text>Senha:</Text>
-                      <TextInput
-                        style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
-                        placeholder='********'
-                        secureTextEntry={true}
-                        placeholderTextColor= {invalid && 'red'}
-                        onBlur={onBlur}
-                        onChangeText={value => onChange(value)}
-                        value={value}
-                      />
-                      <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no minimo 8 caracteres':'':''}
+                      <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
+                        <TextInput
+                          style={{borderColor: invalid? 'red':'#000',
+                            paddingVertical: 10,
+                            width: 'auto' }}
+                          placeholder='********'
+                          secureTextEntry={isViewSenha}
+                          placeholderTextColor= {invalid && 'red'}
+                          onBlur={onBlur}
+                          onChangeText={value => onChange(value)}
+                          value={value}
+                        />
+                        <TouchableOpacity 
+                          style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                          onPress={() => {                   
+                            setIsViewSenha(!isViewSenha)  
+                          }}
+                        >
+                          <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no mínimo 8 caracteres':'':''}
                       {errors.senha?errors.senha.type=='required'?'Senha obrigatoria':'':''}</Text>
                   </View>
                   
@@ -187,11 +200,20 @@ export default function Login(props) {
               <TouchableOpacity style={styles.action} onPress={handleSubmit(handleLogin)} >
                 <Text style={styles.actionText}>ENTRAR</Text>
               </TouchableOpacity>
-            <View style={styles.cadastroButton}>
-              <Text>Não possui um cadastro? </Text>
-              <TouchableOpacity disabled={modalVisible} onPress={() => navigateTo('register')}>
-                <Text style={styles.actionText2}>Cadastrar</Text>
-              </TouchableOpacity>
+            <View >
+              <View style={styles.cadastroButton}>
+                <Text>Esqueceu a senha? </Text>              
+                <TouchableOpacity disabled={modalVisible} onPress={() => navigateTo('EsqueciSenha')}>
+                  <Text style={styles.actionText2}>Recuperar senha</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={[styles.cadastroButton, {marginTop:10}]}>
+                <Text>Não possui um cadastro? </Text>
+                <TouchableOpacity disabled={modalVisible} onPress={() => navigateTo('register')}>
+                  <Text style={styles.actionText2}>Cadastrar</Text>
+                </TouchableOpacity>
+
+              </View>
                     
               
             </View>

@@ -7,32 +7,43 @@ export async function sendWhatsApp(item) {
 
     var moldura = () => {
         if(Sexo=='Macho'){        
-        return 'moldura-04.png';        
+            return 'moldura-MACHO.png';        
         }else{        
-        return 'moldura-08.png';        
+            return 'moldura-FEMEA.png';        
         }
     }
-    var attr = () => {
-        var text = ''
-        if(Vacina){
-        text = 'Vacinado '
-        }
-        if(Castrado){
-        text = text+'Castrado '
-        }
+    var vermifugado = () => {
         if(Vermifugado){
-        text = text+'Vermifugado '
+            return 'Sim'
+        }else{
+            return 'Não'
         }
-        return text
     }
+    var vacina = () => {
+        if(Vacina){
+            return 'Sim'
+        }else{
+            return 'Não'
+        }
+    }
+    
+    var castrado = () => {
+        if(Castrado){
+            return 'Sim'
+        }else{
+            return 'Não'
+        }
+    }
+    
     const downloadInstance = FileSystem.createDownloadResumable(
-        'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end',
+        'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',fs-35,w-300,ly-973,lx-250,ia-left,l-end,l-end:l-text,i-'+vermifugado()+',fs-25,ly-1025,lx-285,ia-left,l-end:l-text,i-'+vacina()+',fs-25,ly-1080,lx-280,ia-left,l-end:l-text,i-'+castrado()+',fs-25,ly-1127,lx-235,ia-left,l-end',
         FileSystem.documentDirectory + FotoName,
         {
         cache: true
         }
     );
-    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',ff-AbrilFatFace,fs-35,w-300,ly-990,lx-250,ia-left,l-end,l-end:l-text,i-'+attr()+',fs-25,ly-1040,lx-100,ia-left,l-end'
+    let linnk = 'https://ik.imagekit.io/adote/'+FotoName+'?tr=w-650,h-1341,cm-pad_extract,bg-F3F3F3,l-image,i-'+moldura()+',h-1341,l-text,i-'+telefone+',fs-35,w-300,ly-973,lx-250,ia-left,l-end,l-end:l-text,i-'+vermifugado()+',fs-25,ly-1025,lx-285,ia-left,l-end:l-text,i-'+vacina()+',fs-25,ly-1080,lx-280,ia-left,l-end:l-text,i-'+castrado()+',fs-25,ly-1127,lx-235,ia-left,l-end'
+        
     const result = await downloadInstance.downloadAsync(linnk);
     Sharing.shareAsync(result.uri)
     

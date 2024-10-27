@@ -85,7 +85,7 @@ export default function Favoritos(props) {
             favorite.length == 0&&refreshing==false&&
             <View style={{alignItems: 'center', marginTop: 20}}>
               <Text>
-                Clique no icone <MaterialIcons name="favorite" size={28} color={'red'} /> Para favoritar um pet
+                Clique no ícone <MaterialIcons name="favorite" size={28} color={'red'} /> para favoritar um pet.
               </Text>
             </View>
           }

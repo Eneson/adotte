@@ -103,7 +103,7 @@ export default function Initial(props) {
           {
             animais.length === 0&&refreshing==false&&error!=='Erro no servidor'&&
             <View style={{alignItems: 'center',marginTop: 20}}>
-              <Text>Sem pet disponivel para adoção</Text>
+              <Text>Sem pet disponível para adoção</Text>
             </View>
           }
           {
