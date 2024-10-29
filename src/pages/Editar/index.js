@@ -368,7 +368,7 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
                       return <View>
-                        <Text>Confirmar Senha:</Text>
+                        <Text>Confirmar senha:</Text>
                         <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
                           <TextInput
                             style={[styles.input, {borderColor: invalid? 'red':'#000'}]}

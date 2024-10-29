@@ -312,8 +312,8 @@ return (
     <StatusBar barStyle="light-content" backgroundColor="#3ab6ff" />
     <NavigationContainer >
       <AppStack.Navigator initialRouteName={'Inicio'} screenOptions={{ headerShown: false,}} >            
-            <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
             <AppStack.Screen name="Inicio" component={InicioScreen} /> 
+            <AppStack.Screen name="Welcome" component={WelcomeScreen} /> 
             <AppStack.Screen name="Profile" component={ProfileScreen} /> 
             <AppStack.Screen name="Favoritos" component={FavoritosScreen} />           
             <AppStack.Screen name="NewPet" component={NewPetScreen} />         

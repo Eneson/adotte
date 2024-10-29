@@ -14,7 +14,7 @@ export async function onSignOut(navi,CommonActions) {
     CommonActions.reset({
       index: 0,
       routes: [
-        { name: 'Welcome' },
+        { name: 'Inicio' },
       ],
     }))    
   

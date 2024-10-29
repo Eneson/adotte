@@ -257,7 +257,7 @@ export default function UpdatePet(props) {
                     <View style={styles.viewFoto}>
                       <FontAwesome5 name="plus-circle" size={100} color="black" />
                       <Text style={{fontSize: 20}}>
-                        Adicionar Foto
+                        Adicionar foto
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -271,7 +271,7 @@ export default function UpdatePet(props) {
           render={({ field: { onChange, onBlur, value, name, ref },
             fieldState: { invalid, isTouched, isDirty, error } }) => {
             return <View>
-              <Text style={[styles.title]}>Nome</Text>
+              <Text style={[styles.title]}>Nome:</Text>
               <TextInput
                 style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
                 placeholder='Nome'
@@ -292,7 +292,7 @@ export default function UpdatePet(props) {
         </View>  
         {/* ESPECIE */}
         <View>
-          <Text style={styles.title}>Espécie</Text>
+          <Text style={styles.title}>Espécie:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Cão'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Cão')}>
               <Text style={[styles.actionText,{color: tipo=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
@@ -305,7 +305,7 @@ export default function UpdatePet(props) {
         
         <View>     
           {/* Data de nascimento */}
-        <Text style={styles.title}>Data de nascimento</Text> 
+        <Text style={styles.title}>Data de nascimento:</Text> 
           <TouchableOpacity style={styles.date} onPress={() => setShow(true)} >
             <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />
             <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
@@ -351,13 +351,13 @@ export default function UpdatePet(props) {
           render={({ field: { onChange, onBlur, value, name, ref },
             fieldState: { invalid, isTouched, isDirty, error } }) => {
             return <View>
-            <Text style={styles.title}>Descrição</Text>
+            <Text style={styles.title}>Descrição:</Text>
             <TextInput
               style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
               multiline
-              numberOfLines={4}
+              numberOfLines={6}
               textAlignVertical='top'
-              maxLength={40}
+              maxLength={150}
               placeholder='Conte mais um pouco sobre o pet'
               keyboardType='default'
               placeholderTextColor= {invalid && 'red'}

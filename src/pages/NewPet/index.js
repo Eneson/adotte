@@ -26,7 +26,7 @@ export default function NewPet(props) {
 
   const [show, setShow] = useState(false)
   const [date, setDate] = useState(new Date())
-  const [textDate, setTextDate] = useState('Data de Nascimento')
+  const [textDate, setTextDate] = useState('Data de nascimento')
   const [sexo, setSexo] = useState('')
   const [vacine, setVacine] = useState(0)
   const [Vermifugado, setVermifugado] = useState(0)
@@ -188,7 +188,7 @@ export default function NewPet(props) {
                     <View style={styles.viewFoto}>
                       <FontAwesome5 name="plus-circle" size={100} color="black" />
                       <Text style={{fontSize: 20}}>
-                        Adicionar Foto
+                        Adicionar foto
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -203,7 +203,7 @@ export default function NewPet(props) {
           render={({ field: { onChange, onBlur, value, name, ref },
             fieldState: { invalid, isTouched, isDirty, error } }) => {
             return <View>
-              <Text style={[styles.title]}>Nome</Text>
+              <Text style={[styles.title]}>Nome:</Text>
               <TextInput
                 style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
                 placeholder='Nome'
@@ -214,7 +214,7 @@ export default function NewPet(props) {
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatóorio':'':''}</Text>
+              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -225,7 +225,7 @@ export default function NewPet(props) {
 
         {/* ESPECIE */}
         <View>
-          <Text style={styles.title}>Espécie</Text>
+          <Text style={styles.title}>Espécie:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Cão'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Cão')}>
               <Text style={[styles.actionText,{color: tipo=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
@@ -238,7 +238,7 @@ export default function NewPet(props) {
         
         {/* Data de nascimento */}
         <View>     
-        <Text style={styles.title}>Data de nascimento</Text> 
+        <Text style={styles.title}>Data de nascimento:</Text> 
           <TouchableOpacity style={styles.date} onPress={() => showMode()} >
             <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />
             <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
@@ -248,7 +248,7 @@ export default function NewPet(props) {
         
         {/* SEXO */}
         <View>
-          <Text style={styles.title}>Sexo</Text>
+          <Text style={styles.title}>Sexo:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
               <Text style={[styles.actionText,{color: sexo=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
@@ -294,9 +294,9 @@ export default function NewPet(props) {
             <TextInput
               style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
               multiline
-              numberOfLines={4}
+              numberOfLines={5}
               textAlignVertical='top'
-              maxLength={40}
+              maxLength={150}
               placeholder='Conte mais um pouco sobre o pet'
               keyboardType='default'
               placeholderTextColor= {invalid && 'red'}

@@ -142,9 +142,6 @@ export function EsqueciSenha() {
               <TouchableOpacity style={styles.action} onPress={handleSubmit(handleRecover)} >
                 <Text style={styles.actionText}>CONTINUAR</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.action} onPress={() => {navigateTo('ConfirmarToken')}} >
-                <Text style={styles.actionText}>CONTINUAR3</Text>
-              </TouchableOpacity>
     	
             </View>
           </View>

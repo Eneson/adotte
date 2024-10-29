@@ -203,7 +203,7 @@ export default function Initial(props) {
         error==false&&animais==null&&
         <View style={{alignItems: 'center', marginTop: 20}}>
           <Text>
-           Sem pet cadastrado para adoção
+           Sem pet cadastrado para adoção.
           </Text>
         </View>
       }

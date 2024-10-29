@@ -35,8 +35,8 @@
         "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.adoteIFPA.adote",
-      "versionCode": 1
+      "package": "com.adote.adote",
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"
