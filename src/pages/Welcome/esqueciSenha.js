@@ -462,7 +462,7 @@ export function NewSenha(props) {
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
                       return <View>
-                        <Text>Confirmar Senha:</Text>
+                        <Text>Confirmar senha:</Text>
                         <View style={[stylesEsqueciSenha.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
                           <TextInput
                             style={[stylesEsqueciSenha.input, {borderColor: invalid? 'red':'#000'}]}

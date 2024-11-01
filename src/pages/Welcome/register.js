@@ -85,7 +85,7 @@ export default function Cadastrar(props) {
     if(errors.telefone){
       return <TextInputMask                  
         style={[styles.input, {borderColor: errors.telefone.type=== "required"? 'red':''}]}
-        placeholder={'Telefone'}
+        placeholder={'(99) 9 9999-9999'}
         placeholderTextColor= {errors.telefone.type=== "required" && 'red'}
         value={value}                  
         type={'cel-phone'}
@@ -100,7 +100,7 @@ export default function Cadastrar(props) {
     }else {
       return <TextInputMask                  
         style={[styles.input]}
-        placeholder={'Telefone'}
+        placeholder={'(99) 9 9999-9999'}
         value={value}                  
         type={'cel-phone'}
         options={{
@@ -184,7 +184,7 @@ export default function Cadastrar(props) {
                 }
 
               }
-              name="telefone"
+              name="telefone"              
               control={control}
               defaultValue=""
             /> 
@@ -249,7 +249,7 @@ export default function Cadastrar(props) {
                               paddingVertical: 10,
                               width: 'auto',
                               flex: 1}}
-                            
+                            placeholder='********'
                             secureTextEntry={isViewSenha}
                             placeholderTextColor= {invalid?'red': '#bdbdbd'}
                             onBlur={onBlur}
@@ -296,7 +296,7 @@ export default function Cadastrar(props) {
                             paddingVertical: 10,
                             width: 'auto',
                             flex:1}}
-                            placeholder={''}
+                            placeholder='********'
                             secureTextEntry={isViewConfirmSenha}
                             placeholderTextColor= {invalid?'red': '#bdbdbd'}
                             onBlur={onBlur}

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, Text, TouchableOpacity, FlatList, Image, Alert, Modal, ActivityIndicator  } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, Image, Alert, Modal, ToastAndroid, ActivityIndicator  } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Flow  } from 'react-native-animated-spinkit'
+import Checkbox from 'expo-checkbox';
 
 import Footer from '../../components/Footer';
 import styles from './styles'
@@ -40,6 +41,12 @@ export default function Initial(props) {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation()
   const [signed,setSigned] = useState(false);
+  const [isChecked,setChecked] = useState(false);
+  
+  const Toast = (text) => {
+    ToastAndroid.show(text, ToastAndroid.LONG);
+  };
+  
   const [routes] = useState([
     { key: 'first', title: 'Meus Pets' },
     { key: 'second', title: 'Configurações' },
@@ -57,6 +64,7 @@ export default function Initial(props) {
   
   useEffect(() => {
     loadAnimais()
+
     IsLogin((resultado) => {
       if(resultado!=false){
           var palavras = resultado.nome.split(' ');
@@ -175,6 +183,43 @@ export default function Initial(props) {
     </View>
   );
 
+  async function adotado(id,Adotado) {
+    const token = await AsyncStorage.getItem('@Profile:token')
+    var data;
+    if(Adotado=='0'){
+      data = '1'
+    }else{
+      data = '0'
+    }
+    
+    const dados = {
+      "Adotado": data
+    }  
+    await api.post(`/animal/update_adotado/${id}`, dados, {
+      headers: { 
+        'authorization':  'Bearer '+token.replace(/"/g, ''),
+        'id_user': id_user
+      },
+    }).then(res => {
+        Toast('Alterado com sucesso')
+        loadAnimais()
+        setChecked(!isChecked)
+    }).catch(err => {    
+      console.log(err)
+      Alert.alert(
+        "Erro",
+        "Não foi possível estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente."
+      )
+    })
+    
+  }
+
+  const filtroAdotado = (Adotado) => {
+    if(Adotado){
+      return 'tr:h-300,e-grayscale,l-text,i-ADOTADO,bg-white,pa-10,fs-40,rt-340,l-end/'
+    }
+    return ''
+  }
   //Meus pets
   const SecondRoute = () => (
     <View style={styles.container}>
@@ -192,18 +237,18 @@ export default function Initial(props) {
       }
       {
         error=='Erro no servidor'&&
-        <View style={{alignItems: 'center',marginTop: 20}}>
-          <Text>Sem conexão com o servidor </Text>
-          <TouchableOpacity style={styles.action} onPress={() => {loadAnimais()}}>
-            <Text style={styles.actionText}>Repetir</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={{alignItems: 'center',marginTop: 20}}>
+            <Text>Sem conexão com o servidor </Text>
+            <TouchableOpacity style={styles.action_error} onPress={() => {loadAnimais()}}>
+              <Text style={styles.actionText_error}>Repetir</Text>
+            </TouchableOpacity>
+          </View>
       }
       {
         error==false&&animais==null&&
         <View style={{alignItems: 'center', marginTop: 20}}>
           <Text>
-           Sem pet cadastrado para adoção.
+           Sem pet cadastrado em sua conta.
           </Text>
         </View>
       }
@@ -212,12 +257,19 @@ export default function Initial(props) {
       keyExtractor={item => String(item.id)} 
       refreshing={true}
       renderItem={({ item: item }) => (     
-        <TouchableOpacity onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
+        <TouchableOpacity 
+          disabled={isChecked} 
+          onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}
+        >
+          
           <View style={styles.viewAnimal}>
-            <Image
-              style={styles.animalImage}
-              source={{uri: 'https://ik.imagekit.io/adote/'+item.FotoName}}
+            <Image              
+              style={[styles.animalImage]}
+              source={{uri: "https://ik.imagekit.io/adote/"+filtroAdotado(item.Adotado)+item.FotoName}}
+            
+              //source={{uri: 'https://ik.imagekit.io/adote/'+isChecked?'tr:h-300,e-grayscale':''+'/'+item.FotoName}}
             />
+            {console.log(item.Adotado)}
             <View style={styles.animalFooter}>                
               <View style={styles.animalDesc}>
                 <Text style={styles.animalName}>{item.Nome}</Text>
@@ -227,10 +279,20 @@ export default function Initial(props) {
                 <Text style={styles.actionText}> Editar </Text>
                 <AntDesign name="form" size={20} color="#fff" />             
               </TouchableOpacity>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => adotado(item.id,item.Adotado) }>
+                <Text style={styles.actionText}> Adotado </Text>
+                <Checkbox
+                  style={styles.checkbox}
+                  value={item.Adotado ? true:false}
+                  color={item.Adotado ? '#28a745' : '#fff'}
+                />
+                     
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.action, {backgroundColor: 'red'}]} onPress={() => deleteAnimal(item.id)}>
                 <Text style={styles.actionText}> Excluir </Text>
                 <AntDesign name="delete" size={20} color="#fff" />             
               </TouchableOpacity>
+              
               </View>
             </View>    
           </View>
@@ -268,10 +330,8 @@ export default function Initial(props) {
             renderScene={renderScene}
             onIndexChange={setIndex}    
             renderTabBar={renderTabBar}        
-          />
-          
+          />          
         </View>
-        
       <Footer Navigation={{...props}}/>
       </View>
   )

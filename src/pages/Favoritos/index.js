@@ -34,7 +34,11 @@ export default function Favoritos(props) {
   async function loadFavorites(){   
     setError()
     setRefreshing(true)
-    await api.get('/animal',{}).then(async (response) => {       
+    await api.get('animal', { 
+      params: { 
+        adotado: 0 
+    } })    
+    .then(async (response) => {       
       setError(false)
       const keys = await AsyncStorage.getAllKeys()   
       var teste = []  
@@ -82,7 +86,7 @@ export default function Favoritos(props) {
             </View>
           }
           {
-            favorite.length == 0&&refreshing==false&&
+            favorite.length == 0&&refreshing==false&&error!='Erro no servidor'&&
             <View style={{alignItems: 'center', marginTop: 20}}>
               <Text>
                 Clique no ícone <MaterialIcons name="favorite" size={28} color={'red'} /> para favoritar um pet.

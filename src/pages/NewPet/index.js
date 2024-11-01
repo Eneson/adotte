@@ -24,25 +24,24 @@ export default function NewPet(props) {
     OpenSans_400Regular
   });
 
+  const navigation = useNavigation()
   const [show, setShow] = useState(false)
   const [date, setDate] = useState(new Date())
-  const [textDate, setTextDate] = useState('Data de nascimento')
-  const [sexo, setSexo] = useState('')
-  const [vacine, setVacine] = useState(0)
-  const [Vermifugado, setVermifugado] = useState(0)
-  const [castrado ,setCastrado] = useState(0)
-  const [tipo, setTipo] = useState('Cão')  
-  const navigation = useNavigation()
-  const { register, handleSubmit, control, formState:{ errors } } = useForm();
+  const [textDate, setTextDate] = useState('Data de nascimento') 
+  const { register, handleSubmit, control, formState:{ errors }, setValue,clearErrors } = useForm();
   const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false)
   
-  const [dateError, setDateError] = useState(false)
-  const [sexoError, setSexoError] = useState(false)
   
   useEffect(() => {
     register('nome')
     register('desc')
+    register('sexo')
+    register('tipo')
+    register('date')
+    register('castrado')
+    register('vacine')
+    register('vermifugado')
   }, [register])
 
   const onChangeDate = (event, selectDate) => {
@@ -53,7 +52,8 @@ export default function NewPet(props) {
     let tempDate = new Date(currentDate)
     let fDate = tempDate.getDate() + '/' +(tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     setTextDate(fDate)
-    setDateError(false)
+    setValue('date',fDate)
+    clearErrors("date")
    
   }
   const showMode = (onChange) => {
@@ -63,19 +63,8 @@ export default function NewPet(props) {
 
   const takePhotoAndUpload = async (e) => {  
     setModalVisible(true)
-
-    if(textDate == 'Data de Nascimento'){
-      setDateError(true)
-    }
-    if(sexo == ''){
-      setSexoError(true)
-    }
-    if(textDate == 'Data de Nascimento'||sexo == ''){  
-      setModalVisible(false)
-      return Toast("Preencha todos os dados")
-    }
-
-    const { nome, desc } = e    
+    
+    const { nome, desc,date,sexo,tipo,castrado,vacine,vermifugado } = e    
       
     IsLogin(async (resultado) => {
       if(resultado==false){
@@ -104,18 +93,16 @@ export default function NewPet(props) {
       formData.append('produto_imagem', { uri: localUri, name: filename, type });
       formData.append('Nome', nome);
       formData.append('Descricao', desc);
-      formData.append('DataNasc', textDate);
+      formData.append('DataNasc', date);
       formData.append('Sexo', sexo);
       formData.append('Tipo', tipo);
       formData.append('id_user', resultado.id_user)
+      formData.append('Adotado', 0);
       formData.append('Vacina', vacine);
-      formData.append('Vermifugado', Vermifugado)
+      formData.append('Vermifugado', vermifugado)
       formData.append('Castrado', castrado)
       formData.append('FotoName', filename);
       
-      
-      
-
       await api.post('/animal', formData, {
           headers: { 'Content-Type': 'multipart/form-data', 'authorization':  'Bearer '+token.replace(/"/g, '')},
       }).then(res => {
@@ -214,7 +201,7 @@ export default function NewPet(props) {
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
+              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'*Campo obrigatório':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -224,30 +211,80 @@ export default function NewPet(props) {
         </View>  
 
         {/* ESPECIE */}
-        <View>
-          <Text style={styles.title}>Espécie:</Text>
+        <Controller
+          rules={{required: 'true'}}
+          render={({ field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error, } }) => {
+            return <View style={{marginBottom:0}}>
+            <Text style={styles.title}>Espécie:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Cão'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Cão')}>
-              <Text style={[styles.actionText,{color: tipo=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Cão'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Cão')}>
+              <Text style={[styles.actionText,{color: value=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
             </TouchableOpacity> 
-              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: tipo=='Gato'? '#3ab6ff':'#fff', }]} onPress={() => setTipo('Gato')}>
-              <Text style={[styles.actionText,{color: tipo=='Gato'? '#fff':'#000'}]}>Gato</Text>
-            </TouchableOpacity> 
+              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Gato'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Gato')}>
+              <Text style={[styles.actionText,{color: value=='Gato'? '#fff':'#000'}]}>Gato</Text>
+            </TouchableOpacity>             
           </View>
-        </View>
+          {/* {errors.tipo&&errors.tipo.type=='required'?<Text style={{color: 'red',marginTop:-10}}>*Campo obrigatório</Text>:''} */}
+          <Text style={[{color: 'red',marginTop:-10}]}>{errors.tipo?errors.tipo.type=='required'?'*Campo obrigatório':'':''}</Text>
+          
+          </View>
+          }}
+        name="tipo"
+        control={control}
+        defaultValue=""
+        /> 
         
         {/* Data de nascimento */}
-        <View>     
-        <Text style={styles.title}>Data de nascimento:</Text> 
+        <Controller
+          rules={{required: 'true'}}
+          render={({ field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error, } }) => {
+            return <View style={{marginBottom:0}}>
+                    <Text style={styles.title}>Data de nascimento:</Text> 
+                    <TouchableOpacity style={styles.date} onPress={() => showMode()} >
+                      <Feather name="calendar" size={30} color={errors.date? 'red':'#000'} />            
+                      <Text style={[styles.dateText, {borderColor: errors.date? 'red':'#000'}]}>{textDate}</Text>
+                    </TouchableOpacity> 
+                    <Text style={[{color: 'red',marginTop:0}]}>{errors.date?errors.date.type=='required'?'*Campo obrigatório':'':''}</Text>
+          
+          </View>
+          }}
+        name="date"
+        control={control}
+        defaultValue=""
+        /> 
+
+        {/* <View>     
+          <Text style={styles.title}>Data de nascimento:</Text> 
           <TouchableOpacity style={styles.date} onPress={() => showMode()} >
-            <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />
+            <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />            
             <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
-          </TouchableOpacity>  
-                         
-        </View>
+          </TouchableOpacity> 
+        </View> */}
         
         {/* SEXO */}
-        <View>
+        <Controller
+          rules={{required: 'true'}}
+          render={({ field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error, } }) => {
+            return <View>
+            <Text style={styles.title}>Sexo:</Text>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
+                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Fêmea'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Fêmea')}>
+                  <Text style={[styles.actionText,{color: value=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
+                </TouchableOpacity>  
+                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Macho'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Macho')}>
+                  <Text style={[styles.actionText,{color: value=='Macho'? '#fff':'#000'}]}>Macho</Text>
+                </TouchableOpacity>  
+              </View>
+          </View>
+          }}
+        name="sexo"
+        control={control}
+        defaultValue=""
+        /> 
+        {/* <View>
           <Text style={styles.title}>Sexo:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
             <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
@@ -257,30 +294,63 @@ export default function NewPet(props) {
               <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
             </TouchableOpacity>  
           </View>
-        </View>
+        </View> */}
         
         {/* CASTRADO VACINADO VERMIFUGADO */}
         <View style={{flexGrow: 1}}>
           <Text style={styles.title}>Outras informações:</Text>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: castrado==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => castrado==1?setCastrado(0):setCastrado(1)}>
-                <Fontisto name="surgical-knife" size={30} color={castrado==1? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: castrado==1? '#fff': '#000'}]}>Castrado</Text>
-              </TouchableOpacity>
+              <Controller
+                  rules={{required: 'false'}}
+                  render={({ field: { onChange, onBlur, value, name, ref },
+                    fieldState: { invalid, isTouched, isDirty, error, } }) => {
+                    return <View>
+                      <TouchableOpacity style={[styles.action,{backgroundColor: value==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => onChange(value==1?0:1)}>
+                        <Fontisto name="surgical-knife" size={30} color={value==1? '#fff': '#000'} />
+                        <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: value==1? '#fff': '#000'}]}>Castrado</Text>
+                      </TouchableOpacity>
+                  </View>
+                  }}
+                name="castrado"
+                control={control}
+                defaultValue=""
+                />              
             </View>
 
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: vacine==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => vacine==1?setVacine(0):setVacine(1)}>
-                <FontAwesome5 name="syringe" size={30} color={vacine? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: vacine? '#fff': '#000'}]}>Antirrábica</Text>
-              </TouchableOpacity>
+              <Controller
+                rules={{required: 'false'}}
+                render={({ field: { onChange, onBlur, value, name, ref },
+                  fieldState: { invalid, isTouched, isDirty, error, } }) => {
+                  return  <View>
+                            <TouchableOpacity style={[styles.action,{backgroundColor: value==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => onChange(value==1?0:1)}>
+                              <FontAwesome5 name="syringe" size={30} color={value? '#fff': '#000'} />
+                              <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: value? '#fff': '#000'}]}>Antirrábica</Text>
+                            </TouchableOpacity>
+                          </View>
+                  }}
+                name="vacine"
+                control={control}
+                defaultValue=""
+              />
             </View>
 
             <View style={{flex: 1}}>
-              <TouchableOpacity style={[styles.action,{backgroundColor: Vermifugado==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => Vermifugado==1?setVermifugado(0):setVermifugado(1)}>
-                <FontAwesome5 name="tablets" size={30} color={Vermifugado==1? '#fff': '#000'} />
-                <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: Vermifugado==1? '#fff': '#000'}]}>Vermifugado</Text>
-              </TouchableOpacity>
+            <Controller
+                rules={{required: 'false'}}
+                render={({ field: { onChange, onBlur, value, name, ref },
+                  fieldState: { invalid, isTouched, isDirty, error, } }) => {
+                  return  <View>                            
+                            <TouchableOpacity style={[styles.action,{backgroundColor: value==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => onChange(value==1?0:1)}>
+                              <FontAwesome5 name="tablets" size={30} color={value==1? '#fff': '#000'} />
+                              <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: value==1? '#fff': '#000'}]}>Vermifugado</Text>
+                            </TouchableOpacity>
+                          </View>
+                  }}
+                name="vermifugado"
+                control={control}
+                defaultValue=""
+              />
             </View>
         </View>
         

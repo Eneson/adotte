@@ -67,6 +67,23 @@ export default StyleSheet.create({
     marginHorizontal: 10,    
     fontFamily: 'Roboto_500Medium',
   },
+  actionText_error: {
+    color: '#fff',
+    fontSize: 15,       
+    fontFamily: 'Roboto_500Medium'
+  },
+  action_error: {
+    borderRadius: 8,
+    height: 30,
+    width: 80,
+    justifyContent: 'center',
+    backgroundColor: '#3ab6ff',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderColor: '#fff',
+    borderWidth: 1,
+    marginTop: 10,
+  },
   animalImage: {
     width: '50%',
     height: '100%',

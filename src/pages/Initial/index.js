@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense } from 'react'
-import { View, TouchableOpacity,Text, FlatList} from 'react-native'
+import { View, TouchableOpacity,Text, FlatList, RefreshControl, StyleSheet} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Footer from '../../components/Footer';
@@ -20,54 +20,76 @@ export default function Initial(props) {
     Roboto_500Medium,
     Roboto_400Regular,
   });
-  const [animais, setAnimais] = useState([])
-  const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(1)
-  const [error, setError] = useState()
+  const [animais, setAnimais] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState();
   const [refreshing, setRefreshing] = useState(false);
-  
-  useEffect(() => {
-    loadAnimais()
-  }, [])  
+  const [filter, setFilter] = useState('Todos');
 
-  async function loadAnimais(a) { 
-    setError()
-    setRefreshing(true)
-    if(a){
-      setPage(1)
+  useEffect(() => {
+    loadAnimais(true);
+  }, []);
+
+  async function loadAnimais(reset = false,Tipo = false) {
+    console.log(Tipo)
+    setError();
+    setRefreshing(true);
+    
+    // Se resetar for true, redefina a página para 1 e limpe os animais
+    if (reset) {
+      setPage(1);
+      setAnimais([]);
     }
-    await api.get('animal', {
-      params: { page },
-    })
-    .then((response) => {       
-      setRefreshing(false);  
-      if (total > 0 && animais.length == total) {      
-        return
+
+    try {
+      const response = await api.get('animal', { 
+        params: { 
+          page: reset ? 1 : page,
+          adotado: 0 
+      } });
+      setRefreshing(false);
+
+      if (total > 0 && animais.length == total && !reset) return;
+
+      var newAnimals = response.data
+      
+      if (Tipo) {
+        newAnimals = response.data.filter(animal => animal.Tipo === Tipo);
       }
-      if(props.route.params){      
-        const {tipo} = props.route.params
-        
-        if(tipo == false){
-          setAnimais([...animais, ...response.data])
-        }else{
-          setAnimais([...animais, ...response.data.filter(animal => animal.Tipo === tipo)])
-        }
-        
-      }else {
-        setAnimais([...animais, ...response.data])
-      }
-      setTotal(response.headers['x-total-count'])
-      setPage(page + 1)
-    })
-    .catch((a) => {
-      setRefreshing(false);   
-      setError('Erro no servidor')
-    })
+
+      setAnimais(reset ? newAnimals : [...animais, ...newAnimals]);
+      setTotal(response.headers['x-total-count']);
+      setPage(prevPage => (reset ? 2 : prevPage + 1));
+    } catch (err) {
+      setRefreshing(false);
+      setError('Erro no servidor');
+    }
   }
- 
+
+  // Função para atualizar todos os animais ao arrastar para baixo
+  const onRefresh = () => {
+    loadAnimais(true); // Passa 'true' para resetar e carregar tudo novamente
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+        <View style={StylesIcon.filter}>
+        {console.log('filter')}
+        {console.log(filter)}
+          <TouchableOpacity style={filter=='Todos'?StylesIcon.headerIcons:StylesIcon.headerIcons2} 
+            onPress={() => {setFilter('Todos'), loadAnimais(true)}}>
+              <Text style={filter=='Todos'?StylesIcon.textIconFilter:StylesIcon.textIconFilter2}>Todos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={filter=='Cão'?StylesIcon.headerIcons:StylesIcon.headerIcons2}
+            onPress={() => {setFilter('Cão'),loadAnimais(true,'Cão')}}>
+            <Text style={filter=='Cão'?StylesIcon.textIconFilter:StylesIcon.textIconFilter2}>Cães</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={filter=='Gato'?StylesIcon.headerIcons:StylesIcon.headerIcons2} onPress={() => {setFilter('Gato'),loadAnimais(true, 'Gato')}}>
+              <Text style={filter=='Gato'?StylesIcon.textIconFilter:StylesIcon.textIconFilter2}>Gatos</Text>
+          </TouchableOpacity>
+        </View>        
         {/* <View style={{alignItems: 'flex-start', marginBottom:0,width: 120}}>
             <Picker
             numberOfLines={10}
@@ -111,7 +133,9 @@ export default function Initial(props) {
               <FlatList
               data={animais}
               style={{backgroundColor:'#fff'}}
-              refreshing={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               horizontal={false}
               numColumns={2}
               keyExtractor={item => String(item.id)} 
@@ -134,3 +158,44 @@ export default function Initial(props) {
     </SafeAreaView >
   )
 }
+
+const StylesIcon = StyleSheet.create({
+  textIconFilter: {
+    color: '#ffffff'
+  },
+  textIconFilter2: {
+    color: '#3ab6ff'
+  },
+  headerIcons:{
+    marginEnd: 10,
+    borderRadius: 20,      
+    paddingVertical: 3,
+    padding:7,
+    alignContent: 'center',
+    alignItems: 'center',     
+    borderColor: '#3ab6ff',
+    borderWidth: 1,
+    backgroundColor: '#3ab6ff',
+    width: 60
+  },
+  headerIcons2:{
+    marginEnd: 10,
+    borderRadius: 20,      
+    paddingVertical: 3,
+    padding:7,
+    alignContent: 'center',
+    alignItems: 'center',     
+    borderColor: '#3ab6ff',
+    borderWidth: 1,
+    width: 60
+  },
+  filter:{
+    marginTop: 5,
+    marginStart: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom:10,
+  },
+  
+
+})
