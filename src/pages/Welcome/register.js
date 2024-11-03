@@ -311,8 +311,7 @@ export default function Cadastrar(props) {
                           >
                             <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
                           </TouchableOpacity>
-                        </View>            
-                        {console.log(error)}            
+                        </View>                     
                         {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
                     </View>                
                     }

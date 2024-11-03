@@ -151,7 +151,6 @@ function AdotarScreen(props) {
     <AppStack.Navigator  
       screenOptions={{ 
         headerStyle: { 
-          backgroundColor: '#3ab6ff',
         },        
         headerTintColor: '#fff',             
       }}      
@@ -166,10 +165,10 @@ function AdotarScreen(props) {
           cardStyle:{
             //backgroundColor: 'transparent'
           },
-          //headerTintColor: '#fff',
+          headerTintColor: '#fff',
           headerTitle: '',
           headerTitleStyle: {
-            //height: 100
+            textAlign: 'center'
           },
           
         }} />

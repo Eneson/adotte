@@ -60,7 +60,7 @@ export default StyleSheet.create({
     borderColor: '#000',
     borderWidth: 1,
     padding: 10,
-    borderRadius: 2,
+    borderRadius: 8,
     paddingStart: 15,
     fontFamily: 'OpenSans_400Regular'
   },
@@ -89,20 +89,21 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     backgroundColor: '#3ab6ff',
     letterSpacing: 2,
-    fontFamily: 'Roboto_500Medium',
+    fontFamily: 'Roboto_400Regular',
     color: '#fff',
   },
   actionText: {
     color: '#fff',
     fontSize: 15,
     letterSpacing: 1.5,    
-    fontFamily: 'Roboto_500Medium'
+    fontFamily: 'Roboto_400Regular',
   },
   contentImage:{
     marginVertical: 20,
     width: '100%', 
     height: 300, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderRadius: 8
   },
   childrenAnimais: {
     flex: 1,    

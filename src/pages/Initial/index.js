@@ -32,7 +32,6 @@ export default function Initial(props) {
   }, []);
 
   async function loadAnimais(reset = false,Tipo = false) {
-    console.log(Tipo)
     setError();
     setRefreshing(true);
     
@@ -76,8 +75,6 @@ export default function Initial(props) {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={StylesIcon.filter}>
-        {console.log('filter')}
-        {console.log(filter)}
           <TouchableOpacity style={filter=='Todos'?StylesIcon.headerIcons:StylesIcon.headerIcons2} 
             onPress={() => {setFilter('Todos'), loadAnimais(true)}}>
               <Text style={filter=='Todos'?StylesIcon.textIconFilter:StylesIcon.textIconFilter2}>Todos</Text>
@@ -89,22 +86,7 @@ export default function Initial(props) {
           <TouchableOpacity style={filter=='Gato'?StylesIcon.headerIcons:StylesIcon.headerIcons2} onPress={() => {setFilter('Gato'),loadAnimais(true, 'Gato')}}>
               <Text style={filter=='Gato'?StylesIcon.textIconFilter:StylesIcon.textIconFilter2}>Gatos</Text>
           </TouchableOpacity>
-        </View>        
-        {/* <View style={{alignItems: 'flex-start', marginBottom:0,width: 120}}>
-            <Picker
-            numberOfLines={10}
-              style={{
-                width: '100%',
-                color: '#000',
-              }}
-              selectedValue={props.route.params? props.route.params.tipo: 'Filtrar'}
-              onValueChange={itemValue => props.navigation.replace('Inicio', { screen: 'Inicio2', params: { tipo: itemValue}, })}
-              >
-              <Picker.Item label="Filtro" value={false} />
-              <Picker.Item label="Cão" value="Cão" />
-              <Picker.Item label="Gato" value="Gato" />
-            </Picker>          
-        </View> */}
+        </View> 
         
         <Suspense fallback={<Loading />}>
           {

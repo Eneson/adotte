@@ -65,7 +65,6 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     marginHorizontal: 10,    
-    fontFamily: 'Roboto_500Medium',
   },
   actionText_error: {
     color: '#fff',

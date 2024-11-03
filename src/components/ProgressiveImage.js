@@ -1,11 +1,12 @@
 import React, { useState, useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, TouchableHighlight, ActivityIndicator,Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sendWhatsApp } from '../utils/sendWhatsapp';
 import { AntDesign, MaterialIcons, FontAwesome5  } from '@expo/vector-icons'
 import { IsLogin } from '../utils/IsLogin'; 
 
+import { Flow  } from 'react-native-animated-spinkit'
 
 const styles = StyleSheet.create({
   animaisDesc: {
@@ -43,6 +44,7 @@ export default function ProgressiveImage(props) {
   const [loading, setLoading] = useState(true)
   const [favoritePress, setFavoritePress] = useState(false)
   const [signed, setSigned] = useState(false)
+  const [modalVisible, setmodalVisible] = useState(false)
 
   useEffect(() => {    
     IsLogin((resultado) => {
@@ -100,43 +102,43 @@ export default function ProgressiveImage(props) {
   
     return (
       <TouchableHighlight style={styles.childrenAnimais} onPress={() => {navigateToDetail(item)}}>
+        
           {loading?<ActivityIndicator style={{display: loading?'flex':'none', marginTop: 50}} size="large" color="#3ab6ff" />:
           <ImageBackground
           imageStyle={{ borderRadius: 8}}
           source={{uri: source}}
           style={{flex: 1, justifyContent: 'flex-start'}}
           resizeMode="cover"
-          >       
-          {/* <View style={{position: 'relative', alignSelf: 'flex-end', marginTop:0}}>
-            <TouchableOpacity onPress={()=> setMenuVisible(true)} style={{padding:20,position: 'relative', margin: 0, display: menuVisible?'none': 'flex'}}>
-              <FontAwesome5 name="ellipsis-v" size={20} color="black" />
-            </TouchableOpacity>
-            <View style={{display: menuVisible?'flex':'none', position: 'relative', margin: 10}} >
-                    <TouchableOpacity onPress={() => sendWhatsApp(item)}>
-                      <AntDesign name="sharealt" size={25} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {signed?navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
-                      <AntDesign name="warning" size={25} color="black" />   
-                    </TouchableOpacity>
-                    
-            </View>
-          </View> */}
-              
+          >
             <View style={styles.animaisDesc}>
+              <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
+                <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                    <Flow size={50} color="#3ab6ff"/>
+                </View>
+              </Modal>
               <Text style={styles.descTitle}> {item.Nome} </Text>
               <Text style={styles.descText}> {item.Sexo} </Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginEnd: 10, marginVertical: 5}}>
                 {favorite.includes(item.id) ? (
-                  <TouchableOpacity onPressIn={() => setFavoritePress(true)} onPress={() => props.callbackParent?props.callbackParent(item):removeFavorito(item) }>
+                  <TouchableOpacity onPressIn={() => {}} onPress={() => {
+                    setFavoritePress(true) 
+                    props.callbackParent?props.callbackParent(item):removeFavorito(item) } }>
                     {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
                   <MaterialIcons name="favorite" size={25} color={'red'} />}
                   </TouchableOpacity>
-                ): (<TouchableOpacity onPressIn={() => setFavoritePress(true)} onPress={() => {signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
+                ): (<TouchableOpacity onPressIn={() => {}} onPress={() => {
+                  setFavoritePress(true)
+                  signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
                   {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
                   <MaterialIcons name="favorite-border" size={25} color={'black'} />}
                 </TouchableOpacity>
                 )}
-                <TouchableOpacity onPress={() => sendWhatsApp(item)}>
+                <TouchableOpacity onPress={() => {
+                  setmodalVisible(true)
+                  sendWhatsApp(item).finally(() => {
+                    setmodalVisible(false)
+                  })
+                }}>
                   <AntDesign name="sharealt" size={25} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {signed?navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>

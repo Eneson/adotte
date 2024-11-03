@@ -239,7 +239,6 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                       <FontAwesome5 name="edit" size={20} color={isFoneEnabled?"#3ab6ff":"#000"} />
                     </TouchableOpacity >   
                   </View>
-                  {console.log(value)}
                     {isFoneEnabled&&errors.telefone&&errors.telefone.type=='required'?<Text style={[{color: 'red'}]}>Campo obrigatório</Text>:''}
                     {isFoneEnabled&&errors.telefone&&errors.telefone.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Telefone deve conter 11 dígitos</Text>:''}
                 </View>
@@ -285,7 +284,6 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                       <FontAwesome5 name="edit" size={20} color={isEmailEnabled?"#3ab6ff":"#000"} />
                     </TouchableOpacity>
                     </View>
-                    {console.log(value)}
                     {isEmailEnabled&&errors.email&&errors.email.message=='Invalid_email'?<Text style={[{color: 'red'}]}>Digite um e-mail correto: exemplo@gmail.com</Text>:''}
                     {/* {isEmailEnabled&&errors.email&&errors.email.type=='required'?<Text style={[{color: 'red'}]}>E-mail obrigatório</Text>:''} */}
                 </View>
@@ -388,8 +386,7 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                           >
                             <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
                           </TouchableOpacity>
-                        </View>            
-                        {console.log(error)}            
+                        </View>                     
                         {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
                     </View>                
                     }

@@ -4,7 +4,7 @@ import * as Sharing from 'expo-sharing';
 
 export async function sendWhatsApp(item) {
     const {FotoName, telefone, Sexo, Vacina, Vermifugado, Castrado} = item
-
+    
     var moldura = () => {
         if(Sexo=='Macho'){        
             return 'moldura-MACHO.png';        
@@ -46,5 +46,4 @@ export async function sendWhatsApp(item) {
         
     const result = await downloadInstance.downloadAsync(linnk);
     Sharing.shareAsync(result.uri)
-    
 }

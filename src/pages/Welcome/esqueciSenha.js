@@ -116,7 +116,6 @@ export function EsqueciSenha() {
                   field: { onChange, onBlur, value, name, ref },
                   fieldState: { invalid, isTouched, isDirty, error }
                 }) => {
-                    console.log(errors)
                     return <View style={[{marginBottom: 10}]}>
                     <Text>E-mail:</Text>
                     <TextInput
@@ -190,11 +189,9 @@ export function ConfirmarToken(){
 
 
   async function handleVerifyToken() {
-    console.log('sssssssssssssssssssssss')
     setmodalVisible(true)
 
     const tokenJoin = token.join("");
-    console.log(tokenJoin)
     const dados = {
       "token": tokenJoin,
     }
@@ -310,8 +307,6 @@ export function ConfirmarToken(){
                     field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
-                    console.log('error - '+index)
-                    console.log(error)
                     return <TextInput
                       ref={(ref) => inputs.current[index] = ref}
                       style={[{width: 50,
@@ -481,8 +476,7 @@ export function NewSenha(props) {
                           >
                             <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
                           </TouchableOpacity>
-                        </View>            
-                        {console.log(error)}            
+                        </View>                     
                         {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
                     </View>                
                     }

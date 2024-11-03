@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { AntDesign, FontAwesome5,FontAwesome } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, Text, TouchableOpacity, FlatList, Image, Alert, Modal, ToastAndroid, ActivityIndicator  } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
@@ -122,7 +122,7 @@ export default function Initial(props) {
               CommonActions.reset({
                 index: 0,
                 routes: [
-                  { name: 'Inicio' },
+                  { name: 'Profile' }, 
                 ],
               })
             );
@@ -184,6 +184,7 @@ export default function Initial(props) {
   );
 
   async function adotado(id,Adotado) {
+    setmodalVisible(true)
     const token = await AsyncStorage.getItem('@Profile:token')
     var data;
     if(Adotado=='0'){
@@ -205,13 +206,12 @@ export default function Initial(props) {
         loadAnimais()
         setChecked(!isChecked)
     }).catch(err => {    
-      console.log(err)
       Alert.alert(
         "Erro",
         "Não foi possível estabelecer conexão com o servidor. \nVerifique sua conexão e tente novamente."
       )
     })
-    
+    setmodalVisible(false)
   }
 
   const filtroAdotado = (Adotado) => {
@@ -269,23 +269,18 @@ export default function Initial(props) {
             
               //source={{uri: 'https://ik.imagekit.io/adote/'+isChecked?'tr:h-300,e-grayscale':''+'/'+item.FotoName}}
             />
-            {console.log(item.Adotado)}
             <View style={styles.animalFooter}>                
               <View style={styles.animalDesc}>
                 <Text style={styles.animalName}>{item.Nome}</Text>
               </View>
               <View style={styles.animalButton}>
-              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
-                <Text style={styles.actionText}> Editar </Text>
-                <AntDesign name="form" size={20} color="#fff" />             
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#fff',borderColor: '#000', borderWidth: 1}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
+                <Text style={[styles.actionText, {color: '#000'}]}> Editar </Text>
+                <AntDesign name="form" size={20} color="#000" />             
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.action, {backgroundColor: '#3ab6ff'}]} onPress={() => adotado(item.id,item.Adotado) }>
-                <Text style={styles.actionText}> Adotado </Text>
-                <Checkbox
-                  style={styles.checkbox}
-                  value={item.Adotado ? true:false}
-                  color={item.Adotado ? '#28a745' : '#fff'}
-                />
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#fff', borderColor: '#000', borderWidth: 1}]} onPress={() => adotado(item.id,item.Adotado) }>
+                <Text style={[styles.actionText, {color: '#000'}]}> Adotado </Text>
+                {item.Adotado?<FontAwesome name="check" size={20} color="#000" />:''}
                      
               </TouchableOpacity>
               <TouchableOpacity style={[styles.action, {backgroundColor: 'red'}]} onPress={() => deleteAnimal(item.id)}>

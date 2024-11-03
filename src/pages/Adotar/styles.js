@@ -14,7 +14,14 @@ export default StyleSheet.create({
 
   incident: {
     flex: 1,
-    height: 500
+    height: 300,
+    width: '100%',
+    paddingHorizontal:45,
+    marginVertical: 10, 
+  },
+  childrenAnimais: {
+    flex: 1,    
+    padding: 10
   },
 
   contactBox: {
@@ -36,7 +43,9 @@ export default StyleSheet.create({
   },
 
   action: {
-    backgroundColor: '#34af23',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#000',
     borderRadius: 8,
     height: 50,
     width: '100%',
@@ -52,12 +61,6 @@ export default StyleSheet.create({
     marginHorizontal: 10,    
     fontFamily: 'Roboto_500Medium',
   },
-  childrenAnimais: {
-    flex: 1,    
-    justifyContent: 'center',
-    minHeight: 20,    
-    maxHeight: '100%'
-  },
   animaisDesc: {
     paddingHorizontal: 20,
   },
@@ -65,14 +68,15 @@ export default StyleSheet.create({
     color: '#000',
     fontSize: 15,
     fontFamily: 'OpenSans_400Regular',
-    marginTop:5
+    marginTop:5,
   },
   textBold:{
     fontFamily: 'OpenSans_700Bold',
   },
   textNome:{
     fontSize: 30,    
-    fontFamily: 'Montserrat_500Medium'
+    fontFamily: 'Montserrat_500Medium',
+    textAlign: 'center'
 
   },
   descTitle: {

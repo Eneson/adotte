@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Feather, FontAwesome5, Fontisto  } from '@expo/vector-icons'
+import { Feather, FontAwesome5, FontAwesome, Fontisto,AntDesign,EvilIcons  } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, Modal, TouchableOpacity, Alert, Platform, ImageBackground, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,6 +31,8 @@ export default function NewPet(props) {
   const { register, handleSubmit, control, formState:{ errors }, setValue,clearErrors } = useForm();
   const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false)
+
+ 
   
   
   useEffect(() => {
@@ -39,10 +41,11 @@ export default function NewPet(props) {
     register('sexo')
     register('tipo')
     register('date')
-    register('castrado')
-    register('vacine')
-    register('vermifugado')
+    register('castrado', { value: 0 })
+    register('vacine', { value: 0 })
+    register('vermifugado', { value: 0 })
   }, [register])
+
 
   const onChangeDate = (event, selectDate) => {
     const currentDate = selectDate || date;
@@ -173,8 +176,8 @@ export default function NewPet(props) {
                   </TouchableOpacity>:
                   <TouchableOpacity onPress={() => pickImage()}>
                     <View style={styles.viewFoto}>
-                      <FontAwesome5 name="plus-circle" size={100} color="black" />
-                      <Text style={{fontSize: 20}}>
+                    <FontAwesome name="photo" size={48} color="black" />
+                      <Text style={[styles.actionText,{fontSize: 16, color: '#000'}]}>
                         Adicionar foto
                       </Text>
                     </View>
@@ -192,7 +195,7 @@ export default function NewPet(props) {
             return <View>
               <Text style={[styles.title]}>Nome:</Text>
               <TextInput
-                style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
+                style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
                 placeholder='Nome'
                 keyboardType='default'
                 autoComplete='name'
@@ -238,7 +241,7 @@ export default function NewPet(props) {
         {/* Data de nascimento */}
         <Controller
           rules={{required: 'true'}}
-          render={({ field: { onChange, onBlur, value, name, ref },
+          render={({ field: { onChange, onBlur, value, name, ref, },
             fieldState: { invalid, isTouched, isDirty, error, } }) => {
             return <View style={{marginBottom:0}}>
                     <Text style={styles.title}>Data de nascimento:</Text> 
@@ -255,13 +258,6 @@ export default function NewPet(props) {
         defaultValue=""
         /> 
 
-        {/* <View>     
-          <Text style={styles.title}>Data de nascimento:</Text> 
-          <TouchableOpacity style={styles.date} onPress={() => showMode()} >
-            <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />            
-            <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
-          </TouchableOpacity> 
-        </View> */}
         
         {/* SEXO */}
         <Controller
@@ -284,17 +280,6 @@ export default function NewPet(props) {
         control={control}
         defaultValue=""
         /> 
-        {/* <View>
-          <Text style={styles.title}>Sexo:</Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
-              <Text style={[styles.actionText,{color: sexo=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
-            </TouchableOpacity>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Macho')}>
-              <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
-            </TouchableOpacity>  
-          </View>
-        </View> */}
         
         {/* CASTRADO VACINADO VERMIFUGADO */}
         <View style={{flexGrow: 1}}>
@@ -304,6 +289,7 @@ export default function NewPet(props) {
                   rules={{required: 'false'}}
                   render={({ field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error, } }) => {
+
                     return <View>
                       <TouchableOpacity style={[styles.action,{backgroundColor: value==1? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => onChange(value==1?0:1)}>
                         <Fontisto name="surgical-knife" size={30} color={value==1? '#fff': '#000'} />
@@ -360,7 +346,7 @@ export default function NewPet(props) {
           render={({ field: { onChange, onBlur, value, name, ref },
             fieldState: { invalid, isTouched, isDirty, error } }) => {
             return <View>
-            <Text style={styles.title}>Descrição</Text>
+            <Text style={styles.title}>Descrição:</Text>
             <TextInput
               style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
               multiline
@@ -381,7 +367,7 @@ export default function NewPet(props) {
         control={control}
         defaultValue=""
         />  
-        <TouchableOpacity disabled={modalVisible} style={[styles.action, {borderColor: '#000', marginTop: 20}]} onPress={handleSubmit(takePhotoAndUpload)}>
+        <TouchableOpacity disabled={modalVisible} style={[styles.action, {borderColor: '#000', marginTop: 10, borderWidth: 0}]} onPress={handleSubmit(takePhotoAndUpload)}>
           <Text style={styles.actionText}>CONTINUAR</Text>
         </TouchableOpacity>         
       </ScrollView>   
