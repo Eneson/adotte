@@ -36,7 +36,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.adote.adote",
-      "versionCode": 5
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"
