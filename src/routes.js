@@ -19,14 +19,10 @@ import Editar from './pages/Editar'
 import UpdatePet from './pages/NewPet/UpdatePet.js';
 import Initial from './pages/Initial'
 import CustomDrawer from './components/CustomDrawer'
-import { useAuth } from '@clerk/clerk-expo'
-
-
 
 import { onSignOut } from './utils/IsLogin.js'; 
 
 import { IsLogin } from './utils/IsLogin.js';
-import Telefone from './pages/Welcome/telefone.js';
 
 const Drawer = createDrawerNavigator()
 const AppStack = createStackNavigator()
@@ -58,8 +54,6 @@ export default function Routes () {
 
 function Button(props) {  
   const [signed, setSigned] = useState(false)
-  
-
   useEffect(() => {    
     IsLogin((resultado) => {                     
         setSigned(resultado)            
@@ -262,13 +256,6 @@ function WelcomeScreen(){
           headerTitle: '',
         }}  />    
          <AppStack.Screen name="NewSenha" component={NewSenha} options={{ 
-          headerStyle: { 
-            backgroundColor: '#fff',
-          },        
-          headerTintColor: '#000',
-          headerTitle: '',
-        }}  />  
-        <AppStack.Screen name="Telefone" component={Telefone} options={{ 
           headerStyle: { 
             backgroundColor: '#fff',
           },        

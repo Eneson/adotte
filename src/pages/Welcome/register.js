@@ -328,7 +328,7 @@ export default function Cadastrar(props) {
               <Text style={styles.actionText}>CADASTRAR</Text>
             </TouchableOpacity>
            <View style={styles.cadastroButton}>
-            <Text>Já possui cadastro? </Text>
+            <Text>já possui cadastro? </Text>
             <TouchableOpacity  onPress={() => navigateTo('login')}>
               <Text style={styles.actionText2}>Entrar</Text>
             </TouchableOpacity>

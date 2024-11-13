@@ -20,8 +20,8 @@ export default StyleSheet.create({
     marginVertical: 10, 
   },
   childrenAnimais: {
-    flex: 1,
-    padding: 10,
+    flex: 1,    
+    padding: 10
   },
 
   contactBox: {
