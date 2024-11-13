@@ -62,7 +62,7 @@ export default function Adotar(props) {
           <ImageBackground
             source={{uri: source.replace("/adote/", "/adote/tr:r-max/")}}
             style={styles.childrenAnimais}
-            resizeMode="cover"
+            resizeMode="contain"
             >                                                          
           </ImageBackground>
         </View>
@@ -115,8 +115,8 @@ export default function Adotar(props) {
                   
                   </View>  
                 </View>
-              </View> 
-              <View style={styles.contactBox}>
+        </View> 
+        <View style={styles.contactBox}>
          
           <View style={[styles.actions, {
             
