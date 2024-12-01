@@ -1,7 +1,8 @@
 import React, { useState, useEffect} from 'react'
-import {  StyleSheet, SafeAreaView, ScrollView, View, Text, TouchableOpacity,Modal, Linking, ImageBackground } from 'react-native'
-import { FontAwesome, AntDesign } from '@expo/vector-icons';
-
+import { useNavigation,useIsFocused } from '@react-navigation/native'
+import {  StyleSheet, SafeAreaView, ScrollView, View, Text, TouchableOpacity,Modal, Linking, ImageBackground, ActivityIndicator } from 'react-native'
+import { FontAwesome, AntDesign, MaterialIcons} from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Flow  } from 'react-native-animated-spinkit'
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
@@ -16,6 +17,12 @@ import { sendWhatsApp } from '../../utils/sendWhatsapp';
 export default function Adotar(props) {
   const [signed, setSigned] = useState(false)
   const [modalVisible, setmodalVisible] = useState(false)
+  const [favoritePress, setFavoritePress] = useState(false)
+  const [favorite, setFavorite] = useState([])
+  const [loading, setLoading] = useState(true)
+    console.log(useIsFocused())
+  
+  const navigation = useNavigation()
 
 
   useEffect(() => {    
@@ -23,6 +30,39 @@ export default function Adotar(props) {
       setSigned(resultado)
     });
   }, [])
+
+  useEffect(() => {    
+    loadFavorites()
+  }, [useIsFocused()])
+
+  async function loadFavorites(){
+    const keys = await AsyncStorage.getAllKeys()
+    var teste = []
+    for(var i =0; i<keys.length;i++){
+      if(keys[i].includes('Favorite')){
+        const get = await AsyncStorage.getItem(keys[i])
+        const get2 = JSON.parse(get)
+        teste[i] = get2.id
+      }      
+    }
+    setFavorite(teste)
+    setLoading(false)    
+    setFavoritePress(false)
+  }
+
+  async function removeFavorito(item) {       
+    await AsyncStorage.removeItem('@Favorite:'+item.id).then(() => {
+      setFavorite(favorite.filter(res => res.id !== item.id))  
+    })
+    loadFavorites()
+  }
+
+  async function favoritar(item) {
+    //operador ternario adcionar e remover favorito
+    {favorite.includes(item.id) ? (await AsyncStorage.removeItem('@Favorite:'+item.id))
+    : ( await AsyncStorage.setItem('@Favorite:'+item.id, JSON.stringify(item)))}
+    loadFavorites()
+  }
 
   let [fontsLoaded] = useFonts({
     Montserrat_300Light,
@@ -47,7 +87,7 @@ export default function Adotar(props) {
 
   if (!fontsLoaded) {
     return null
-  }
+  } 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -62,7 +102,7 @@ export default function Adotar(props) {
           <ImageBackground
             source={{uri: source.replace("/adote/", "/adote/tr:r-max/")}}
             style={styles.childrenAnimais}
-            resizeMode="cover"
+            resizeMode="contain"
             >                                                          
           </ImageBackground>
         </View>
@@ -73,7 +113,33 @@ export default function Adotar(props) {
                     marginTop: 10, 
                     flexDirection: 'row', 
                     alignItems: 'center', 
-                  }}>                      
+                  }}>   
+                  <View style={{
+                      justifyContent: 'center', alignItems: 'center',
+                      position: 'absolute', // Fazendo a posição do botão ser absoluta
+                      left: 0, // Ajuste a posição do botão a partir do lado direito
+                      top: '50%', // Centraliza verticalmente em relação ao contêiner
+                      transform: [{ translateY: -20 }] // Ajuste para centralizar verticalmente (metade do tamanho do ícone)                    
+                      }}>
+                        {favorite.includes(item.id) ? (
+                          <TouchableOpacity onPressIn={() => {}} onPress={() => {
+                              setFavoritePress(true) 
+                              props.callbackParent?props.callbackParent(item):removeFavorito(item) } }>
+                              {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
+                            <MaterialIcons name="favorite" size={25} color={'red'} />}
+                          </TouchableOpacity>
+                        ): (<TouchableOpacity onPressIn={() => {}} onPress={() => {
+                              setFavoritePress(true)
+                              signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
+                              {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
+                              <MaterialIcons name="favorite-border" size={25} color={'black'} />}
+                            </TouchableOpacity>
+                        )}                  
+                      
+                      <Text>
+                        Favoritar
+                      </Text>
+                    </View> 
                     <View style={{ flex: 1, alignItems: 'center' }}>
                       <Text style={styles.textNome}>
                         {item.Nome}
