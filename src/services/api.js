@@ -3,8 +3,8 @@ import axios from 'axios'
 //baseURL: 'https://adote-app.herokuapp.com',
 
 const api = axios.create({
-  baseURL: 'https://adote-app.herokuapp.com',
-  timeout: 30000,
+  baseURL: 'http://192.168.3.7:3000',
+  timeout: 300000,
 })
 
 export default api

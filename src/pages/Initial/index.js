@@ -120,12 +120,12 @@ export default function Initial(props) {
               }
               horizontal={false}
               numColumns={2}
-              keyExtractor={item => String(item.id)} 
+              keyExtractor={(item, index) => String(item.id ?? index)}
               onEndReached={() => {loadAnimais}}
               renderItem={({ item: item }) => (            
-                <View style={[styles.viewAnimais]}>      
+                <View style={[styles.viewAnimais]}> 
                   <ProgressiveImage
-                    source={'https://ik.imagekit.io/adote/'+item.FotoName}
+                    source={'https://ik.imagekit.io/adote/'+JSON.parse(item.FotoName)[0]}
                     item={item}
                   />                    
                 </View>

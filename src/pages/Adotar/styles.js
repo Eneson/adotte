@@ -23,6 +23,30 @@ export default StyleSheet.create({
     flex: 1,    
     padding: 10
   },
+  fullImage: {
+    width: '90%',
+    height: '70%',
+    resizeMode: 'contain',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 20,
+    padding: 10,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: '#fff',
+  },
 
   contactBox: {
     padding: 24,

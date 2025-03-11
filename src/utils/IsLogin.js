@@ -57,7 +57,6 @@ export const IsLogin = (callback) => {
       }
     })
     .catch((error) => {
-      console.error('Erro ao obter o token:', error);
       callback(false); // Chama o callback com false em caso de erro
     });
 };

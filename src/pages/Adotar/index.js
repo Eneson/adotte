@@ -1,12 +1,13 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState, useEffect,useRef} from 'react'
 import { useNavigation,useIsFocused } from '@react-navigation/native'
-import {  StyleSheet, SafeAreaView, ScrollView, View, Text, TouchableOpacity,Modal, Linking, ImageBackground, ActivityIndicator } from 'react-native'
-import { FontAwesome, AntDesign, MaterialIcons} from '@expo/vector-icons';
+import {  StyleSheet, SafeAreaView,Image, ScrollView, View, Text, TouchableOpacity,Modal, Linking, ImageBackground, ActivityIndicator } from 'react-native'
+import { FontAwesome, AntDesign, MaterialIcons, Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Flow  } from 'react-native-animated-spinkit'
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular, OpenSans_600SemiBold, OpenSans_700Bold } from '@expo-google-fonts/open-sans';
+import PagerView from 'react-native-pager-view';
 
 import styles from './styles'
 import Footer from '../../components/Footer';
@@ -20,10 +21,14 @@ export default function Adotar(props) {
   const [favoritePress, setFavoritePress] = useState(false)
   const [favorite, setFavorite] = useState([])
   const [loading, setLoading] = useState(true)
-    console.log(useIsFocused())
+  const [currentIndex, setCurrentIndex] = useState(0) 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [modalVisibleImage, setModalVisibleImage] = useState(false);
+  
   
   const navigation = useNavigation()
 
+  const ref = useRef(PagerView);
 
   useEffect(() => {    
     IsLogin((resultado) => {
@@ -75,6 +80,7 @@ export default function Adotar(props) {
   });
 
   const {item, source} = props.route.params
+  const images = JSON.parse(item.FotoName)
   let modifiedUrl = source.replace("/adote/", "/adote/tr:r-max/");
 
   const message = `Olá, vi o anúncio no aplicativo ADOTE e gostaria de adotar o "${item.Nome}" `
@@ -83,7 +89,15 @@ export default function Adotar(props) {
     Linking.openURL(`whatsapp://send?phone=+55${item.telefone}&text=${message}`)
   }
 
-  
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisibleImage(true);
+  };
+
+  const closeModal = () => {
+    setModalVisibleImage(false);
+    setSelectedImage(null);
+  };
 
   if (!fontsLoaded) {
     return null
@@ -92,6 +106,23 @@ export default function Adotar(props) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content} behavior={'padding'}>  
+        {/* Modal para exibir a imagem ampliada */}
+        <Modal
+          visible={modalVisibleImage}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+              <Text style={styles.closeButtonText}>×</Text>
+            </TouchableOpacity>
+            
+            {selectedImage && (
+              <Image source={{ uri: "https://ik.imagekit.io/adote/"+images[currentIndex] }} style={styles.fullImage} />
+            )}
+          </View>
+        </Modal>
         {/* MODAL LOADING */}
         <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
           <View style={{ flex: 1, justifyContent: "center", alignContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
@@ -99,12 +130,52 @@ export default function Adotar(props) {
           </View>
         </Modal>
         <View style={styles.incident}>
+           <PagerView
+            style={{ flex: 1 }}
+            initialPage={0}
+            ref={ref}
+            pageMargin={20}
+            onPageSelected={(e) => {
+              setCurrentIndex(e.nativeEvent.position);
+              
+            }}
+          >
+              {images.map((uri, index) => (
+                <View style={styles.page} key={index}>
+                    <TouchableOpacity key={index} onPress={() => openModal("https://ik.imagekit.io/adote/"+uri)}>
+                    <View style={{ height: 300 }}>
+                      <ImageBackground
+                        //source={{uri: uri.replace("/adote/", "/adote/tr:r-max/")}}
+                        source={ {uri: "https://ik.imagekit.io/adote/tr:r-max/"+uri} }
+                        style={styles.childrenAnimais}
+                        resizeMode="cover"
+                      />
+                    </View>
+                      </TouchableOpacity>
+                </View>
+              ))}              
+            </PagerView> 
+            {images.length > 1 &&
+          <View style={{
+                  flexDirection:'row',
+                  position:'absolute',
+                  bottom:5,
+                  alignSelf: 'center'
+                }}>
+                  {images.map((uri, index) => (
+                    <Ionicons style={{marginLeft: 3, }} key={index} name={currentIndex==index?'ellipse':'ellipse-outline'} size={13} color="#000" />
+                                       
+                  ))}
+          </View>
+        }
+{/*                       
           <ImageBackground
             source={{uri: source.replace("/adote/", "/adote/tr:r-max/")}}
             style={styles.childrenAnimais}
             resizeMode="contain"
             >                                                          
-          </ImageBackground>
+          </ImageBackground>  */}
+          
         </View>
         <View style={styles.animaisDesc}>
                 <View>
@@ -181,8 +252,8 @@ export default function Adotar(props) {
                   
                   </View>  
                 </View>
-              </View> 
-              <View style={styles.contactBox}>
+        </View> 
+        <View style={styles.contactBox}>
          
           <View style={[styles.actions, {
             
@@ -191,7 +262,7 @@ export default function Adotar(props) {
           }]}>
               <TouchableOpacity style={[styles.action, {}]} onPress={()=> {
                 setmodalVisible(true)
-                sendWhatsApp(item).finally(() => {
+                sendWhatsApp(item,currentIndex).finally(() => {
                   setmodalVisible(false)
                 })
                 }}>

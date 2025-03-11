@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Feather, FontAwesome5, FontAwesome, Fontisto,AntDesign,EvilIcons  } from '@expo/vector-icons'
+import React, { useState, useEffect,useRef } from 'react'
+import { Feather, FontAwesome5, FontAwesome, Fontisto,AntDesign,EvilIcons,Ionicons  } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, Modal, TouchableOpacity, Alert, Platform, ImageBackground, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,8 @@ import { Montserrat_300Light } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 import * as ImagePicker from 'expo-image-picker';
 import { Flow  } from 'react-native-animated-spinkit'
+import PagerView from 'react-native-pager-view';
+
 
 import styles from './styles'
 import Footer from '../../components/Footer'
@@ -23,7 +25,7 @@ export default function NewPet(props) {
     Roboto_400Regular,
     OpenSans_400Regular
   });
-
+  const ref = useRef(PagerView);
   const navigation = useNavigation()
   const [show, setShow] = useState(false)
   const [date, setDate] = useState(new Date())
@@ -31,9 +33,9 @@ export default function NewPet(props) {
   const { register, handleSubmit, control, formState:{ errors }, setValue,clearErrors } = useForm();
   const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [imageUris, setImageUris] = useState([]);
 
- 
-  
   
   useEffect(() => {
     register('nome')
@@ -45,7 +47,6 @@ export default function NewPet(props) {
     register('vacine', { value: 0 })
     register('vermifugado', { value: 0 })
   }, [register])
-
 
   const onChangeDate = (event, selectDate) => {
     const currentDate = selectDate || date;
@@ -63,7 +64,6 @@ export default function NewPet(props) {
     setShow(true);
   }  
 
-
   const takePhotoAndUpload = async (e) => {  
     setModalVisible(true)
     
@@ -78,35 +78,39 @@ export default function NewPet(props) {
         )
       }
       const token = resultado.Token
-      let localUri = image;    
-    
-      if(!image){           
+
+      var imageFilename = []     
+      if(!imageUris){
         setModalVisible(false)
         return Toast('Adicione uma imagem')
       }
+        
+        
       
-      let filename = localUri.split('/').pop()    
-    
-      //Pegar o tipo do arquivo
-      let match = /\.(\w+)$/.exec(filename);
-      let type = match ? `image/${match[1]}` : `image`;
-      filename = new Date().toISOString().replace(/:/g, '-') + filename
-
       let formData = new FormData(); 
-      formData.append('produto_imagem', { uri: localUri, name: filename, type });
-      formData.append('Nome', nome);
-      formData.append('Descricao', desc);
-      formData.append('DataNasc', date);
-      formData.append('Sexo', sexo);
-      formData.append('Tipo', tipo);
+      formData.append('Nome', nome)
+      formData.append('Descricao', desc)
+      formData.append('DataNasc', date)
+      formData.append('Sexo', sexo)
+      formData.append('Tipo', tipo)
       formData.append('id_user', resultado.id_user)
-      formData.append('Adotado', 0);
-      formData.append('Vacina', vacine);
+      formData.append('Adotado', 0)
+      formData.append('Vacina', vacine)
       formData.append('Vermifugado', vermifugado)
       formData.append('Castrado', castrado)
-      formData.append('FotoName', filename);
+      
+      imageUris.forEach((uri,index) => {
+        let filename = uri.split('/').pop() 
+        //Pegar o tipo do arquivo
+        let match = /\.(\w+)$/.exec(filename);
+        let type = match ? `image/${match[1]}` : `image`;
+        filename = new Date().toISOString().replace(/:/g, '-') + filename
+        
+        formData.append('produto_imagem', { uri: uri, name: filename, type });
+      })
       
       await api.post('/animal', formData, {
+        timeout: 50000, // 5 segundos
           headers: { 'Content-Type': 'multipart/form-data', 'authorization':  'Bearer '+token.replace(/"/g, '')},
       }).then(res => {
         Toast('Cadastrado com sucesso')  
@@ -136,18 +140,35 @@ export default function NewPet(props) {
   };  
 
   const pickImage = async () => {
+    const permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissions.granted) {
+      alert('Permissão para acessar a biblioteca de imagens é necessária!');
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [25, 31],      
+      allowsMultipleSelection: true, // Permitir múltiplas imagens
+      selectionLimit: 3, // Limite de 3 imagens      
+      aspect: [25, 31], 
       quality: 1,
     });
     if (!result.canceled) {
-      
-      setImage(result.assets[0].uri);
+      setImageUris(result.assets.map((asset) => asset.uri)); // Salvar URIs selecionadas
     }
   };
-  
+
+  const pickImage2 = async (index) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true, // Permite recorte/edição
+      quality: 1, // Qualidade da imagem
+      aspect: [25, 31], 
+    });
+    
+    if (!result.canceled) {
+      const updatedImages = [...imageUris];
+      updatedImages[index] = result.assets[0].uri; // Atualiza a URI da imagem editada
+      setImageUris(updatedImages);
+    }
+  };
   if (!fontsLoaded) {
     return null
   }
@@ -162,8 +183,69 @@ export default function NewPet(props) {
       </Modal> 
       <ScrollView style={styles.content} behavior={'padding'}> 
         {/* foto */}
-        <View style={[styles.contentImage, {borderWidth: !image?1:0}]}>
-          {image?<TouchableOpacity onPress={() => pickImage()}>
+        <View style={[styles.contentImage, {borderWidth: imageUris.length === 0 ?1:0, flexDirection: 'row', alignItems: imageUris.length === 0 &&'center'}]}>
+          {imageUris.length === 0 ? (
+            <TouchableOpacity onPress={() => pickImage()} >
+            <View style={{alignItems: 'center', justifyContent: 'center', alignContent: 'center', alignSelf:'center'}}>
+              <FontAwesome name="photo" size={48} color="black" />
+              <Text style={[styles.actionText,{fontSize: 16, color: '#000'}]}>
+                Adicionar foto
+              </Text>
+            </View>
+          </TouchableOpacity>                 
+          ) : (
+            <PagerView
+              style={{ flex: 1 }}
+              initialPage={0}
+              ref={ref}
+              pageMargin={20}
+              onPageSelected={(e) => {
+                setCurrentIndex(e.nativeEvent.position);
+              }}
+            >
+              {/* Renderiza as imagens */}
+              {imageUris.map((uri, index) => (
+                <View style={styles.page} key={uri}>
+                  <TouchableOpacity onPress={() => pickImage2(index)}>
+                    <View style={{ height: 300 }}>
+                      <ImageBackground
+                        source={{ uri: uri}}
+                        style={styles.childrenAnimais}
+                        resizeMode="cover"
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ))}              
+            </PagerView>
+            
+          )}  
+          {/* Verifique se o número de imagens é menor que 3 antes de adicionar a página "Adicionar foto" */}
+          
+          {imageUris.length < 3 && currentIndex==imageUris.length-1 && (
+                <View style={[styles.page, {marginLeft: 15, alignContent: 'center', alignItems:'center', justifyContent:'center',alignSelf: 'center'}]} key="add-photo">
+                  <TouchableOpacity onPress={() => pickImage2(imageUris.length)}>
+                    <View style={{ alignItems: "center", justifyContent: 'center', alignContent: 'center' }}>
+                      <AntDesign name="pluscircleo" size={24} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )}     
+
+        {imageUris.length !== 0 &&
+          <View style={{
+                  flexDirection:'row',
+                  position:'absolute',
+                  bottom:5,
+                  alignSelf: 'center'
+                }}>
+                  {imageUris.map((uri, index) => (
+                    <Ionicons style={{marginLeft: 3, }} key={index} name={currentIndex==index?'ellipse':'ellipse-outline'} size={13} color="#000" />
+                                       
+                  ))}
+          </View>
+        }
+          {/* {image?<TouchableOpacity onPress={() => pickImage()}>
                   <View style={{height: 300, borderWidth: 1}}>
                     <ImageBackground
                       source={{uri: image}}
@@ -183,7 +265,7 @@ export default function NewPet(props) {
                     </View>
                   </TouchableOpacity>
           
-          }
+          } */}
         </View>  
         
         {/* NOME */}        
@@ -348,9 +430,9 @@ export default function NewPet(props) {
             return <View>
             <Text style={styles.title}>Descrição:</Text>
             <TextInput
-              style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
+              style={[styles.input, {borderColor: invalid? 'red':'#000',minHeight:100}]}
               multiline
-              numberOfLines={5}
+              numberOfLines={4}
               textAlignVertical='top'
               maxLength={150}
               placeholder='Conte mais um pouco sobre o pet'

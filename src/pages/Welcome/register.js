@@ -62,18 +62,23 @@ export default function Cadastrar(props) {
       "senha": e.senha
     }        
     
-      await api.post('/user', dados)
-      .then(async (data) => {
-        const doador = JSON.stringify(data.data.token)
-        onSignIn(navigation,CommonActions,doador)  
-      }).catch(() => {
-        return Alert.alert(
-          "Erro no cadastro",
-          "Não foi possível comunicar com o servidor.\nTente novamente."
-        )
-      }).finally(() => {
-         setmodalVisible(false)
-      })
+    await api.post('/user', dados)
+  .then(async (data) => {
+    const doador = JSON.stringify(data.data.token)
+    onSignIn(navigation, CommonActions, doador)
+  }).catch((e) => {
+    console.log(e.response.data);
+
+    // Verifique se o erro tem a propriedade "response" (que é quando o erro é do servidor)
+    const errorMessage = e.response ? e.response.data.error : "Erro desconhecido";
+
+    return Alert.alert(
+      "Erro no cadastro",
+      errorMessage || "Não foi possível comunicar com o servidor.\nTente novamente."
+    )
+  }).finally(() => {
+    setmodalVisible(false)
+  })
          
         
       

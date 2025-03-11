@@ -5,7 +5,6 @@ import { View, Text, TouchableOpacity, FlatList, Image, Alert, Modal, ToastAndro
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Flow  } from 'react-native-animated-spinkit'
-import Checkbox from 'expo-checkbox';
 
 import Footer from '../../components/Footer';
 import styles from './styles'
@@ -130,6 +129,7 @@ export default function Initial(props) {
           
           
         } catch (err) {
+          console.log(err)
           alert('Erro ao deletar animal, tente novamente.')
           setmodalVisible(false)
         }
@@ -253,19 +253,19 @@ export default function Initial(props) {
         </View>
       }
       <FlatList
-      data={animais}
-      keyExtractor={item => String(item.id)} 
+      data={animais}      
+      keyExtractor={(item, index) => String(item.id ?? index)} 
       refreshing={true}
       renderItem={({ item: item }) => (     
+        
         <TouchableOpacity 
           disabled={isChecked} 
           onPress={() => props.navigation.navigate('Adotar', {screen: 'Adotar2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}
         >
-          
           <View style={styles.viewAnimal}>
             <Image              
               style={[styles.animalImage]}
-              source={{uri: "https://ik.imagekit.io/adote/"+filtroAdotado(item.Adotado)+item.FotoName}}
+              source={{uri: "https://ik.imagekit.io/adote/"+filtroAdotado(item.Adotado)+JSON.parse(item.FotoName)[0]}}
             
               //source={{uri: 'https://ik.imagekit.io/adote/'+isChecked?'tr:h-300,e-grayscale':''+'/'+item.FotoName}}
             />
@@ -274,7 +274,7 @@ export default function Initial(props) {
                 <Text style={styles.animalName}>{item.Nome}</Text>
               </View>
               <View style={styles.animalButton}>
-              <TouchableOpacity style={[styles.action, {backgroundColor: '#fff',borderColor: '#000', borderWidth: 1}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: 'https://ik.imagekit.io/adote/'+item.FotoName }})}>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#fff',borderColor: '#000', borderWidth: 1}]} onPress={() => props.navigation.navigate('UpdatePet', {screen: 'updatePet2', params: { item: item, source: JSON.parse(item.FotoName) }})}>
                 <Text style={[styles.actionText, {color: '#000'}]}> Editar </Text>
                 <AntDesign name="form" size={20} color="#000" />             
               </TouchableOpacity>
@@ -302,6 +302,7 @@ export default function Initial(props) {
     second: FirstRoute,
     
   });
+  
   const renderTabBar = props => (
     <TabBar
       {...props}
@@ -309,6 +310,7 @@ export default function Initial(props) {
       style={{ backgroundColor: '#fff' }}
       activeColor={'#000'}
       inactiveColor={'#000'}
+      
     />
   );
   
@@ -321,13 +323,14 @@ export default function Initial(props) {
           <Text>{userEmail}</Text>
         </View>
           <TabView
+          keyExtractor={(item, index) => String(item.id ?? index)}
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}    
             renderTabBar={renderTabBar}        
           />          
         </View>
-      <Footer Navigation={{...props}}/>
+      <Footer Navigation={props}/>
       </View>
   )
 }

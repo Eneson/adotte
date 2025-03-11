@@ -91,11 +91,11 @@ export default function Denuncia(props) {
       <View style={styles.content}>
         <Text style={{fontSize:22, fontWeight: '600', letterSpacing: 1}}>Por que você quer reportar o anúncio?</Text>
         <View style={{flexDirection:'row', alignItems: 'center', borderWidth: 0.5, marginTop:20}}>
-          <View>
+          <View style={{borderRightWidth:0.5}}>
             <Image
               style={{width:80, height:80}}
               source={{
-                uri: 'https://ik.imagekit.io/adote/'+FotoName,
+                uri: 'https://ik.imagekit.io/adote/'+JSON.parse(FotoName)[0],
               }}
             />
           </View>

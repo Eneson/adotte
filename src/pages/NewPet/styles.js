@@ -108,6 +108,8 @@ export default StyleSheet.create({
   childrenAnimais: {
     flex: 1,    
     justifyContent: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
    
   },
   viewFoto:{

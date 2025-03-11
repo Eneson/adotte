@@ -135,7 +135,7 @@ export default function ProgressiveImage(props) {
                 )}
                 <TouchableOpacity onPress={() => {
                   setmodalVisible(true)
-                  sendWhatsApp(item).finally(() => {
+                  sendWhatsApp(item,0).finally(() => {
                     setmodalVisible(false)
                   })
                 }}>
