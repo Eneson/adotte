@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Feather, FontAwesome5,FontAwesome, Fontisto, Ionicons, AntDesign } from '@expo/vector-icons'
+import { Feather, FontAwesome5,FontAwesome, Fontisto, Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, TouchableOpacity, Alert, Platform, Modal, ImageBackground, TouchableHighlight, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -58,6 +58,8 @@ export default function UpdatePet(props) {
     register('teste')
   }, [register])
 
+  
+
   const onChangeDate = (event, selectDate) => {
     const currentDate = selectDate || date;
     setShow(Platform.OS === 'ios');
@@ -73,6 +75,10 @@ export default function UpdatePet(props) {
  
   const updateNewPet = async (e) => {
     setModalVisible(true)
+    if(imageUris.length==0){
+      setModalVisible(false)
+      return Toast("Adicione pelo menos uma foto")
+    }
     if(textDate == 'Data de Nascimento'){
       setDateError(true)
     }
@@ -112,7 +118,6 @@ export default function UpdatePet(props) {
       formData.append('Vermifugado', Vermifugado)
       formData.append('Castrado', castrado) 
       formData.append('id', props.route.params.item.id);  
-      
       imageUris.forEach((uri,index) => {
         let filename = uri.split('/').pop() 
         //Pegar o tipo do arquivo
@@ -123,25 +128,21 @@ export default function UpdatePet(props) {
           imageUris[index] = filename
           formData.append('produto_imagem', { uri: uri, name: filename, type });
         }
-        
-        
       })
 
-            
       formData.append('imageUris', imageUris);     
-
-      image.forEach((sourceItem, index) => {
-        // Extrai o nome do arquivo de ambos os arrays (source e imageUris)
+      image.forEach((sourceItem) => {
+        // Extrai o nome do arquivo de sourceItem
         const sourceFilename = sourceItem.split('/').pop();
-        const imageFilename = imageUris[index].split('/').pop();
       
-        // Verifica se os arquivos são diferentes
-        if (sourceFilename !== imageFilename) {
-          // Se forem diferentes, adiciona ao FormData para ser apagado
+        // Verifica se algum dos elementos de imageUris é igual ao sourceFilename
+        const existsInImageUris = imageUris.some((uri) => uri.split('/').pop() === sourceFilename);
+      
+        // Se NÃO existir em imageUris, adiciona ao FormData para ser apagado
+        if (!existsInImageUris) {
           formData.append('ImagensParaApagar', sourceItem);
         }
       });
-      
       
 
       await api.post('/animal/update', formData, {
@@ -167,11 +168,25 @@ export default function UpdatePet(props) {
         )
       })
       setModalVisible(false)
-    });
-    
-    
+    });  
   }
-  
+  const handleDeleteImage = (index) => {
+    setImageUris((prevList) => {
+      const newList = [...prevList]; // Garante que estamos trabalhando com uma cópia
+      newList.splice(index, 1); // Remove a imagem no índice correto
+      return newList;
+    });
+  };
+  const confirmDeleteImage = (index) => {
+    Alert.alert(
+      "Excluir Imagem",
+      "Tem certeza que deseja excluir esta imagem?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Excluir", onPress: () => handleDeleteImage(index), style: "destructive" }
+      ]
+    );
+  };
   const Toast = (text) => {
     ToastAndroid.show(text, ToastAndroid.LONG);
   };  
@@ -243,13 +258,27 @@ export default function UpdatePet(props) {
             >
               {/* Renderiza as imagens */}     
 
- {imageUris.map((uri, index) => (
+            {imageUris.map((uri, index) => (
                 <View style={styles.page} key={index}>
                   <TouchableOpacity onPress={() => pickImage2(index)}>
-                    <View style={{ height: 300 }}>
+                    <View style={{ height: 300, position: 'relative' }}>
+                      {/* Ícone no canto superior direito */}
+                      <TouchableOpacity 
+                        onPress={() => confirmDeleteImage(index)}  
+                        style={{
+                          position: 'absolute',
+                          top: 10,
+                          right: 10,
+                          backgroundColor: 'rgba(0, 0, 0, 0.34)', 
+                          borderRadius: 8, 
+                          padding: 5,
+                          zIndex: 1
+                        }}>
+                        <MaterialCommunityIcons name="trash-can-outline" size={24} color="white" />
+                      </TouchableOpacity>
+                      
                       <ImageBackground
-                        //source={{uri: uri.replace("/adote/", "/adote/tr:r-max/")}}
-                        source={ {uri: uri} }
+                        source={{ uri: uri }}
                         style={styles.childrenAnimais}
                         resizeMode="cover"
                       />
