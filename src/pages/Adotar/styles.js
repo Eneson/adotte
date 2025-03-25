@@ -88,17 +88,43 @@ export default StyleSheet.create({
   animaisDesc: {
     paddingHorizontal: 20,
   },
+  descTextInformation: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center', // Dá um pequeno espaço horizontal entre os itens
+  },
+  textContainer: {
+    marginLeft: 5, // Adiciona espaçamento entre o ícone e o texto
+    flexDirection: 'row', 
+    alignItems:'center', 
+    justifyContent: 'space-between',
+    alignContent: 'space-between',
+    alignSelf: 'baseline',
+
+    
+  },
+  textInformation: {
+    fontSize: 16,
+    marginLeft: 10
+  
+  },
   descText: {
     color: '#000',
     fontSize: 15,
     fontFamily: 'OpenSans_400Regular',
     marginTop:5,
+    alignItems: 'center'
   },
   textBold:{
     fontFamily: 'OpenSans_700Bold',
+    fontSize: 16
+  },
+  textMuted: {
+    fontSize: 14.5,
+    color: 'rgba(33 37 41 / 0.75)'
   },
   textNome:{
-    fontSize: 30,    
+    fontSize: 20,    
     fontFamily: 'Montserrat_500Medium',
     textAlign: 'center'
 

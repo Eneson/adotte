@@ -10,8 +10,9 @@ import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
 import { Flow  } from 'react-native-animated-spinkit'
 
 import styles from './loginStyles'
-import stylesEsqueciSenha from './esqueciSenhaStyles'
+import stylesGeral from './styles'
 import api from '../../services/api'
+import InputSenhaForm from '../../components/InputSenhaForm'
 
 export function EsqueciSenha() {
   const { register, handleSubmit, control, formState:{ errors } } = useForm()
@@ -87,8 +88,7 @@ export function EsqueciSenha() {
   if (!fontsLoaded) {
     return <Text>Carregando...</Text>;
   }else {  
-    return (
-      
+    return (      
       <SafeAreaView style={styles.container}>
         {/* MODAL LOADING */}
         <Modal visible={modalVisible} transparent={true} statusBarTranslucent={true}>
@@ -99,7 +99,7 @@ export function EsqueciSenha() {
         <ScrollView style={styles.scrollView}>
           <View style={styles.loginHeader}>
             <Text style={styles.loginText}>Recuperar senha</Text>
-            <Text style={styles.loginHeaderText}>Digite o email cadastrado para recuperar a senha!</Text>
+            <Text style={styles.loginHeaderText}>Digite o e-mail cadastrado para recuperar a senha!</Text>
           </View>
           <View  style={styles.loginForm}>
           
@@ -117,18 +117,18 @@ export function EsqueciSenha() {
                   fieldState: { invalid, isTouched, isDirty, error }
                 }) => {
                     return <View style={[{marginBottom: 10}]}>
-                    <Text>E-mail:</Text>
+                    <Text style={[stylesGeral.textMuted, {color: invalid?'#DC3545':'rgba(33 37 41 / 0.6)'}]}>E-mail:</Text>
                     <TextInput
-                      style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                      placeholder='exemplo@gmail.com'
+                      style={[stylesGeral.input, {borderColor: invalid? '#DC3545':'#000',}]}
+                      placeholder={invalid?'':'exemplo@gmail.com'}
                       keyboardType='email-address'
                       autoComplete='email'
-                      placeholderTextColor= {invalid && 'red'}
+                      placeholderTextColor= {invalid && '#DC3545'}
                       onBlur={onBlur}
                       onChangeText={value => onChange(value)}
                       value={value}
                     />
-                    <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
+                    <Text style={stylesGeral.errorMessage}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
                   {errors.email?errors.email.type=='required'?'E-mail obrigatório':'':''}</Text>
                   </View>
                   }
@@ -214,8 +214,8 @@ export function ConfirmarToken(){
     } catch (err) {      
       if(err.code.includes('BAD_REQUEST')){
         Alert.alert(
-          "Erro no login",
-          "Usuário e senha não encontrados",
+          "Erro inesperado",
+          "Por favor, tente novamente mais tarde",
           [
             {
               text: "OK",
@@ -224,7 +224,7 @@ export function ConfirmarToken(){
         );
       }else{
         Alert.alert(
-          "Erro no login",
+          "Erro inesperado",
           "Erro inesperado, tente novamente mais tarde",
           [
             {
@@ -271,26 +271,6 @@ export function ConfirmarToken(){
           </View>
           <View style={styles.loginForm}>
             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {/* {token.map((digit, index) => (
-                 <TextInput
-                      key={index}
-                      ref={(ref) => inputs.current[index] = ref}
-                      style={{width: 50,
-                        height: 50,
-                        margin: 10,
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                        borderRadius: 5,
-                        fontSize: 24,}}
-                      value={digit}
-                      onChangeText={(value) => handleChange(value, index)}
-                      onKeyPress={(e) => handleKeyPress(e, index)}
-                      maxLength={1}
-                      keyboardType="numeric"
-                      textAlign="center"
-                    />
-              ))} */}
-
               {Array(4).fill().map((_, index) => (
                 <Controller
                   rules={{
@@ -315,7 +295,7 @@ export function ConfirmarToken(){
                         borderWidth: 1,
                         borderColor: '#ccc',
                         borderRadius: 5,
-                        fontSize: 24,}, {borderColor: invalid? 'red':'#000'}]}
+                        fontSize: 24,}, {borderColor: invalid? '#DC3545':'#000'}]}
                       value={value}
                       onChangeText={(val) => {
                         onChange(val);
@@ -400,7 +380,7 @@ export function NewSenha(props) {
         <View  style={styles.loginForm}>
           <View style={styles.containerTextField}>
           <View>
-                  <Controller
+                <Controller
                   rules={{
                     required: 'true',
                     minLength: {
@@ -413,28 +393,15 @@ export function NewSenha(props) {
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
                       return <View>
-                        <Text>Nova senha:</Text>
-                        <View style={[stylesEsqueciSenha.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
-                          <TextInput
-                            style={[stylesEsqueciSenha.input, {borderColor: invalid? 'red':'#000'}]}
-                            
-                            secureTextEntry={isViewSenha}
-                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
-                            onBlur={onBlur}
-                            onChangeText={value => onChange(value)}
-                            value={value}   
-                          />
-                          <TouchableOpacity 
-                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
-                            onPress={() => {                   
-                              setIsViewSenha(!isViewSenha)  
-                            }}
-                          >
-                            <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
-                          </TouchableOpacity>
-                        </View>
-                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Senha deve conter no mínimo 8 caracteres</Text>:''}
-                        {errors.senha&&errors.senha.type=='required'?<Text style={[{color: 'red'}]}>Senha obrigatoria</Text>:''}
+                        <InputSenhaForm 
+                          placeholder='Nova senha:'
+                          invalid={invalid} 
+                          onBlur={onBlur} 
+                          onChange={onChange} 
+                          value={value}
+                        /> 
+                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={stylesGeral.errorMessage}>(*) Senha deve conter no mínimo 8 caracteres</Text>:''}
+                        {errors.senha&&errors.senha.type=='required'?<Text style={stylesGeral.errorMessage}>(*) Senha obrigatoria</Text>:''}
                     </View>                
                     }
                   }
@@ -442,7 +409,6 @@ export function NewSenha(props) {
                   control={control}
                   defaultValue=""
                 />
-
                 <Controller
                   rules={{
                     required: 'true',
@@ -456,29 +422,18 @@ export function NewSenha(props) {
                     field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
-                      return <View>
-                        <Text>Confirmar senha:</Text>
-                        <View style={[stylesEsqueciSenha.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
-                          <TextInput
-                            style={[stylesEsqueciSenha.input, {borderColor: invalid? 'red':'#000'}]}
-                            placeholder={''}
-                            secureTextEntry={isViewConfirmSenha}
-                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
-                            onBlur={onBlur}
-                            onChangeText={value => onChange(value)}
-                            value={value}       
-                          />
-                          <TouchableOpacity 
-                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
-                            onPress={() => {                   
-                              setIsViewConfirmSenha(!isViewConfirmSenha)  
-                            }}
-                          >
-                            <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
-                          </TouchableOpacity>
-                        </View>                     
-                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
-                    </View>                
+                      return <View style={stylesGeral.FieldView}>
+                          <InputSenhaForm 
+                          placeholder='Confirmar senha:'
+                          invalid={invalid} 
+                          onBlur={onBlur} 
+                          onChange={onChange} 
+                          value={value}
+                          errors={errors}
+                          error={error}
+                        /> 
+                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={stylesGeral.errorMessage}>{error.message}</Text>:''}
+                      </View>             
                     }
                   }
                   name="ConfirmSenha"

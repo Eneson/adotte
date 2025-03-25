@@ -3,22 +3,12 @@ import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
     container: {
         backgroundColor: '#fff',
-        justifyContent: 'flex-start',
-        alignItems: 'center',  
-        paddingHorizontal: 15,
+        paddingHorizontal: 25,
         flex: 1,
       },       
       
-      input:{
-        borderColor: '#414757',
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 2,
-        paddingStart: 15,
-        padding: 10, width: 'auto'
-      },
       containerTextField:{
-        marginTop: 0,
+        marginBottom: 15,
       },
       TextInputEditable:{
         justifyContent:'space-between',
@@ -50,7 +40,7 @@ export default StyleSheet.create({
       },
           
       actions: {
-        marginTop: 16,
+        marginTop: 10,
         justifyContent: 'flex-start',
       },
     

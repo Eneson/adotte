@@ -1,8 +1,8 @@
 import React, { useState, useEffect,useRef } from 'react'
-import { Feather, FontAwesome5, FontAwesome, Fontisto,AntDesign,EvilIcons,Ionicons  } from '@expo/vector-icons'
+import { Feather, FontAwesome5, FontAwesome, Fontisto,AntDesign,MaterialCommunityIcons,Ionicons  } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { View, TextInput, Text, Modal, TouchableOpacity, Alert, Platform, ImageBackground, ToastAndroid, SafeAreaView, ScrollView } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useForm, Controller } from 'react-hook-form'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
@@ -80,6 +80,7 @@ export default function NewPet(props) {
       const token = resultado.Token
 
       var imageFilename = []     
+      
       if(!imageUris){
         setModalVisible(false)
         return Toast('Adicione uma imagem')
@@ -134,6 +135,14 @@ export default function NewPet(props) {
       
       })
   }
+
+  const confirmDeleteImage = (index) => {    
+    setImageUris((prevList) => {
+      const newList = [...prevList]; // Garante que estamos trabalhando com uma cópia
+      newList.splice(index, 1); // Remove a imagem no índice correto
+      return newList;
+    });
+  };
   
   const Toast = (text) => {
     ToastAndroid.show(text, ToastAndroid.LONG);
@@ -146,8 +155,9 @@ export default function NewPet(props) {
       return;
     }
     let result = await ImagePicker.launchImageLibraryAsync({
-      allowsMultipleSelection: true, // Permitir múltiplas imagens
-      selectionLimit: 3, // Limite de 3 imagens      
+      allowsMultipleSelection: false, // Permitir múltiplas imagens
+      allowsEditing: true, // Permite recorte/edição
+      selectionLimit: 1, // Limite de 3 imagens      
       aspect: [25, 31], 
       quality: 1,
     });
@@ -208,11 +218,25 @@ export default function NewPet(props) {
                 <View style={styles.page} key={uri}>
                   <TouchableOpacity onPress={() => pickImage2(index)}>
                     <View style={{ height: 300 }}>
+                      {/* Ícone no canto superior direito */}
+                      <TouchableOpacity 
+                        onPress={() => confirmDeleteImage(index)}  
+                        style={{
+                          position: 'absolute',
+                          top: 10,
+                          right: 10,
+                          backgroundColor: 'rgba(0, 0, 0, 0.34)', 
+                          borderRadius: 8, 
+                          padding: 5,
+                          zIndex: 1
+                        }}>
+                        <MaterialCommunityIcons name="trash-can-outline" size={24} color="white" />
+                      </TouchableOpacity>
                       <ImageBackground
                         source={{ uri: uri}}
                         style={styles.childrenAnimais}
                         resizeMode="cover"
-                      />
+                      /> 
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -223,7 +247,14 @@ export default function NewPet(props) {
           {/* Verifique se o número de imagens é menor que 3 antes de adicionar a página "Adicionar foto" */}
           
           {imageUris.length < 3 && currentIndex==imageUris.length-1 && (
-                <View style={[styles.page, {marginLeft: 15, alignContent: 'center', alignItems:'center', justifyContent:'center',alignSelf: 'center'}]} key="add-photo">
+                <View style={[styles.page, {
+                  marginLeft: 15,
+                  alignContent: 'center',
+                  alignItems:'center',
+                  justifyContent:'center',
+                  alignSelf: 'center',
+                  
+                  }]} key="add-photo">
                   <TouchableOpacity onPress={() => pickImage2(imageUris.length)}>
                     <View style={{ alignItems: "center", justifyContent: 'center', alignContent: 'center' }}>
                       <AntDesign name="pluscircleo" size={24} color="black" />
@@ -237,35 +268,25 @@ export default function NewPet(props) {
                   flexDirection:'row',
                   position:'absolute',
                   bottom:5,
-                  alignSelf: 'center'
+                  alignSelf: 'center',
+
                 }}>
                   {imageUris.map((uri, index) => (
-                    <Ionicons style={{marginLeft: 3, }} key={index} name={currentIndex==index?'ellipse':'ellipse-outline'} size={13} color="#000" />
+                    <View key={index}
+                      style={{                        
+                      alignSelf: 'center',
+                      backgroundColor: currentIndex==index?'#fff':'',                  
+                      borderRadius: 10,
+                      marginStart:3,
+                      }}
+                    >
+                      <Ionicons name={currentIndex==index?'ellipse':'ellipse-outline'} size={13} color={currentIndex==index?'#000':'#fff'} />
+                    </View>
                                        
                   ))}
           </View>
         }
-          {/* {image?<TouchableOpacity onPress={() => pickImage()}>
-                  <View style={{height: 300, borderWidth: 1}}>
-                    <ImageBackground
-                      source={{uri: image}}
-                      style={styles.childrenAnimais}
-                      resizeMode="cover"
-                      >                              
-                    </ImageBackground>                   
-                    
-                  </View>
-                  </TouchableOpacity>:
-                  <TouchableOpacity onPress={() => pickImage()}>
-                    <View style={styles.viewFoto}>
-                    <FontAwesome name="photo" size={48} color="black" />
-                      <Text style={[styles.actionText,{fontSize: 16, color: '#000'}]}>
-                        Adicionar foto
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
           
-          } */}
         </View>  
         
         {/* NOME */}        
@@ -277,16 +298,16 @@ export default function NewPet(props) {
             return <View>
               <Text style={[styles.title]}>Nome:</Text>
               <TextInput
-                style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                style={[styles.input, {borderColor: invalid? '#DC3545':'#000'}]}
                 placeholder='Nome'
                 keyboardType='default'
                 autoComplete='name'
-                placeholderTextColor= {invalid && 'red'}
+                placeholderTextColor= {invalid && '#DC3545'}
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'*Campo obrigatório':'':''}</Text>
+              <Text style={styles.errorMessage}>{errors.nome?errors.nome.type=='required'?'*Campo obrigatório':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -303,15 +324,15 @@ export default function NewPet(props) {
             return <View style={{marginBottom:0}}>
             <Text style={styles.title}>Espécie:</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Cão'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Cão')}>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Cão'? '#3ab6ff':'#fff', borderColor: error?'#DC3545':'#000'}]} onPress={() => onChange('Cão')}>
               <Text style={[styles.actionText,{color: value=='Cão'? '#fff':'#000'}]}>Cachorro</Text>
             </TouchableOpacity> 
-              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Gato'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Gato')}>
+              <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Gato'? '#3ab6ff':'#fff', borderColor: error?'#DC3545':'#000'}]} onPress={() => onChange('Gato')}>
               <Text style={[styles.actionText,{color: value=='Gato'? '#fff':'#000'}]}>Gato</Text>
             </TouchableOpacity>             
           </View>
-          {/* {errors.tipo&&errors.tipo.type=='required'?<Text style={{color: 'red',marginTop:-10}}>*Campo obrigatório</Text>:''} */}
-          <Text style={[{color: 'red',marginTop:-10}]}>{errors.tipo?errors.tipo.type=='required'?'*Campo obrigatório':'':''}</Text>
+          {/* {errors.tipo&&errors.tipo.type=='required'?<Text style={{color: '#DC3545',marginTop:-10}}>*Campo obrigatório</Text>:''} */}
+          <Text style={[{color: '#DC3545',marginTop:-10, fontWeight: 'bold'}]}>{errors.tipo?errors.tipo.type=='required'?'*Campo obrigatório':'':''}</Text>
           
           </View>
           }}
@@ -328,10 +349,10 @@ export default function NewPet(props) {
             return <View style={{marginBottom:0}}>
                     <Text style={styles.title}>Data de nascimento:</Text> 
                     <TouchableOpacity style={styles.date} onPress={() => showMode()} >
-                      <Feather name="calendar" size={30} color={errors.date? 'red':'#000'} />            
-                      <Text style={[styles.dateText, {borderColor: errors.date? 'red':'#000'}]}>{textDate}</Text>
+                      <Feather name="calendar" size={30} color={errors.date? '#DC3545':'#000'} />            
+                      <Text style={[styles.dateText, {borderColor: errors.date? '#DC3545':'#000'}]}>{textDate}</Text>
                     </TouchableOpacity> 
-                    <Text style={[{color: 'red',marginTop:0}]}>{errors.date?errors.date.type=='required'?'*Campo obrigatório':'':''}</Text>
+                    <Text style={styles.errorMessage}>{errors.date?errors.date.type=='required'?'*Campo obrigatório':'':''}</Text>
           
           </View>
           }}
@@ -349,10 +370,10 @@ export default function NewPet(props) {
             return <View>
             <Text style={styles.title}>Sexo:</Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
-                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Fêmea'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Fêmea')}>
+                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Fêmea'? '#3ab6ff':'#fff', borderColor: error?'#DC3545':'#000'}]} onPress={() => onChange('Fêmea')}>
                   <Text style={[styles.actionText,{color: value=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
                 </TouchableOpacity>  
-                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Macho'? '#3ab6ff':'#fff', borderColor: error?'red':'#000'}]} onPress={() => onChange('Macho')}>
+                <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: value=='Macho'? '#3ab6ff':'#fff', borderColor: error?'#DC3545':'#000'}]} onPress={() => onChange('Macho')}>
                   <Text style={[styles.actionText,{color: value=='Macho'? '#fff':'#000'}]}>Macho</Text>
                 </TouchableOpacity>  
               </View>
@@ -430,19 +451,19 @@ export default function NewPet(props) {
             return <View>
             <Text style={styles.title}>Descrição:</Text>
             <TextInput
-              style={[styles.input, {borderColor: invalid? 'red':'#000',minHeight:100}]}
+              style={[styles.input, {borderColor: invalid? '#DC3545':'#000',minHeight:100}]}
               multiline
               numberOfLines={4}
               textAlignVertical='top'
               maxLength={150}
               placeholder='Conte mais um pouco sobre o pet'
               keyboardType='default'
-              placeholderTextColor= {invalid && 'red'}
+              placeholderTextColor= {invalid && '#DC3545'}
               onBlur={onBlur}
               onChangeText={value => onChange(value)}
               value={value}
             />
-            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
+            <Text style={styles.errorMessage}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
           </View>
           }}
         name="desc"

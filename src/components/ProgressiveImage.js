@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, TouchableHighlight, ActivityIndicator,Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sendWhatsApp } from '../utils/sendWhatsapp';
-import { AntDesign, MaterialIcons, FontAwesome5  } from '@expo/vector-icons'
+import { AntDesign, MaterialIcons, Ionicons, FontAwesome5  } from '@expo/vector-icons'
 import { IsLogin } from '../utils/IsLogin'; 
 
 import { Flow  } from 'react-native-animated-spinkit'
@@ -14,20 +14,19 @@ const styles = StyleSheet.create({
     height: 'auto',
     width: '100%',
     position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgba(148, 148, 148, 0.5)',
     paddingLeft: 10,
     paddingTop: 5,
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8
   },
   descText: {
-    color: '#616161',
+    color: '#ccc',
     fontSize: 14,
   },
   descTitle: {
-    color: '#000',
+    color: '#ffff',
     fontSize: 20,
-    fontWeight: 'bold',
   },
   childrenAnimais: {
     flex: 1,    
@@ -103,6 +102,7 @@ export default function ProgressiveImage(props) {
     return (
       <TouchableHighlight style={styles.childrenAnimais} onPress={() => {navigateToDetail(item)}}>
         
+        
           {loading?<ActivityIndicator style={{display: loading?'flex':'none', marginTop: 50}} size="large" color="#3ab6ff" />:
           <ImageBackground
           imageStyle={{ borderRadius: 8}}
@@ -116,21 +116,34 @@ export default function ProgressiveImage(props) {
                     <Flow size={50} color="#3ab6ff"/>
                 </View>
               </Modal>
-              <Text style={styles.descTitle}> {item.Nome} </Text>
-              <Text style={styles.descText}> {item.Sexo} </Text>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between', marginEnd: 10, marginVertical: 5}}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={{flex: 1}}>
+                  <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.descTitle, {flex: 0.9}]}> {item.Nome} </Text>
+                  <Text style={styles.descText}> {item.Sexo} </Text>
+                </View>
+              </View>
+
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginEnd: 10, 
+                marginVertical: 5,
+                borderTopWidth: 1, 
+                borderTopColor: 'rgba(33 37 41 / 0.2)',
+                marginTop: 5, 
+                paddingTop: 5}}>
                 {favorite.includes(item.id) ? (
                   <TouchableOpacity onPressIn={() => {}} onPress={() => {
                     setFavoritePress(true) 
                     props.callbackParent?props.callbackParent(item):removeFavorito(item) } }>
                     {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                  <MaterialIcons name="favorite" size={25} color={'red'} />}
+                  <MaterialIcons name="favorite" size={25} color={'#DC3545'} />}
                   </TouchableOpacity>
                 ): (<TouchableOpacity onPressIn={() => {}} onPress={() => {
                   setFavoritePress(true)
                   signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
                   {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                  <MaterialIcons name="favorite-border" size={25} color={'black'} />}
+                  <MaterialIcons name="favorite-border" size={25} color={'rgba(0 0 0 / 0.6)'} />}
                 </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={() => {
@@ -139,10 +152,10 @@ export default function ProgressiveImage(props) {
                     setmodalVisible(false)
                   })
                 }}>
-                  <AntDesign name="sharealt" size={25} color="black" />
+                  <AntDesign name="sharealt" size={25} color="rgba(0 0 0 / 0.6)" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {signed?navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
-                  <AntDesign name="warning" size={25} color="black" />   
+                  <AntDesign name="warning" size={25} color="rgba(0 0 0 / 0.6)" />   
                 </TouchableOpacity>
               </View>
             </View>                                

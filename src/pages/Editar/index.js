@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Switch, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
+import { View, TextInput, Switch, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert, ToastAndroid } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form'
 import { TextInputMask} from 'react-native-masked-text'
@@ -49,7 +49,7 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
   }, [register])
 
   async function handleNewDoador(e) {
-    setModalVisible(true)
+    //setModalVisible(true)
     var nome = e.nome
     var email = e.email
     var telefone = e.telefone
@@ -117,6 +117,7 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
         "id_user": props.route.params.item.id_user   
       } 
     }
+
     const token = await AsyncStorage.getItem('@Profile:token')
     
     await api.post('/user/update', dados, {        
@@ -126,11 +127,14 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
       const doador = JSON.stringify(data.data.token)
       onSignIn(navigation,CommonActions,doador)  
     })
-    .catch(() => {
-      Alert.alert(
-        "Erro no cadastro",
-        "Não foi realizar alterações.\nVerifique sua conexão e tente novamente"
-      ) 
+    .catch((e) => {      
+          // Verifique se o erro tem a propriedade "response" (que é quando o erro é do servidor)
+          const errorMessage = e.response ? e.response.data.error : "Erro desconhecido";
+      
+          return Alert.alert(
+            "Erro no cadastro",
+            errorMessage || "Não foi possível comunicar com o servidor.\nTente novamente."
+          )
     })
     .finally(() => {
       setModalVisible(false)
@@ -168,30 +172,44 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                  return <View>
-                  <Text>Nome completo:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: isNomeEnabled&&invalid? 'red':'#000'}]}>
-                    <TextInput
-                      style={styles.input}
-                      placeholder='Fulano pereira costa'
-                      keyboardType='default'
-                      autoComplete='name'
-                      editable={isNomeEnabled}
-                      placeholderTextColor= {invalid && 'red'}
-                      onBlur={onBlur}
-                      onChangeText={value => onChange(value)}
-                      value={isNomeEnabled ? value : props.route.params.item.nome}
-                    />
+                  return <View style={styles.ViewFieldInput}>
+                  <Text style={styles.textMuted}>Nome completo:</Text>
+                  <TouchableOpacity  
+                  disabled={isNomeEnabled}                  
+                  onPress={() => {
+                        if(!isNomeEnabled){
+                          //ToastAndroid.show('Habilite a edição deste campo', ToastAndroid.LONG);                          
+                          setIsNomeEnabled(!isNomeEnabled)
+                        }
+                      }}
+                    >
+                  <View style={[styles.TextInputEditable, {borderColor: isNomeEnabled&&invalid&&'#DC3545', borderColor: isNomeEnabled?'#000':'#ccc'}]}>
+                    
+                      <TextInput
+                        style={[styles.input, {color: isNomeEnabled?'#000':'#ccc'}]}
+                        placeholder='Fulano pereira costa'
+                        keyboardType='default'
+                        autoComplete='name'
+                        editable={isNomeEnabled}
+                        placeholderTextColor= {invalid && '#DC3545'}
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={isNomeEnabled ? value : props.route.params.item.nome}
+                      />
+
                     <TouchableOpacity 
                       style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
                       onPress={() => {
-                        setIsNomeEnabled(!isNomeEnabled)
+                        setIsNomeEnabled(!isNomeEnabled)                        
+                        onChange(props.route.params.item.nome.toString())
                       }}
                     >
-                      <FontAwesome5 name="edit" size={20} color={isNomeEnabled?"#3ab6ff":"#000"} />
+                      <MaterialCommunityIcons name={isNomeEnabled?"toggle-switch-outline":"toggle-switch-off"} size={40} color={isNomeEnabled?"#3ab6ff":"#000"} />
                     </TouchableOpacity>   
                   </View>
-                  {isNomeEnabled&&errors.nome&&errors.nome.type=='required'?<Text style={[{color: 'red'}]}>Campo obrigatório</Text>:''}
+                  
+                  </TouchableOpacity>
+                  {isNomeEnabled&&errors.nome&&errors.nome.type=='required'?<Text style={styles.errorMessage}>Campo obrigatório</Text>:''}
                   
                 </View>
                 }
@@ -213,11 +231,21 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                  return <View>                    
-                  <Text>Telefone:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: isFoneEnabled&&invalid? 'red':'#000'}]}>                    
+                  return <View style={styles.ViewFieldInput}>                    
+                  <Text style={styles.textMuted}>Telefone:</Text>
+                  <TouchableOpacity  
+                  disabled={isFoneEnabled}                  
+                  onPress={() => {
+                        if(!isFoneEnabled){
+                          //ToastAndroid.show('Habilite a edição deste campo', ToastAndroid.LONG);                          
+                          setIsFoneEnable(!isFoneEnabled)
+
+                        }
+                      }}
+                    >
+                  <View style={[styles.TextInputEditable, {borderColor: isFoneEnabled&&invalid&&'#DC3545', borderColor: isFoneEnabled?'#000':'#ccc'}]}>                    
                     <TextInputMask                  
-                      style={[styles.input]}
+                      style={[styles.input, {color: isFoneEnabled?'#000':'#ccc'}]}
                       placeholder={'Telefone'}        
                       value={isFoneEnabled? value.toString() :props.route.params.item.telefone.toString()}                       
                       type={'cel-phone'}
@@ -230,17 +258,19 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                       }}                  
                       onChangeText={onChange}
                     />   
-                    <TouchableOpacity 
+                     <TouchableOpacity 
                       style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
                       onPress={() => {
-                        setIsFoneEnable(!isFoneEnabled)
+                        setIsFoneEnable(!isFoneEnabled)                       
+                        onChange(props.route.params.item.telefone.toString())
                       }}
                     >
-                      <FontAwesome5 name="edit" size={20} color={isFoneEnabled?"#3ab6ff":"#000"} />
-                    </TouchableOpacity >   
+                      <MaterialCommunityIcons name={isFoneEnabled?"toggle-switch-outline":"toggle-switch-off"} size={40} color={isFoneEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity>                       
                   </View>
-                    {isFoneEnabled&&errors.telefone&&errors.telefone.type=='required'?<Text style={[{color: 'red'}]}>Campo obrigatório</Text>:''}
-                    {isFoneEnabled&&errors.telefone&&errors.telefone.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Telefone deve conter 11 dígitos</Text>:''}
+                  </TouchableOpacity>
+                    {isFoneEnabled&&errors.telefone&&errors.telefone.type=='required'?<Text style={styles.errorMessage}>Campo obrigatório</Text>:''}
+                    {isFoneEnabled&&errors.telefone&&errors.telefone.message=='lowCaractere'?<Text style={styles.errorMessage}>Telefone deve conter 11 dígitos</Text>:''}
                 </View>
                 }
               }
@@ -261,31 +291,50 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
-                  return <View>
-                  <Text>E-mail:</Text>
-                  <View style={[styles.TextInputEditable, {borderColor: isEmailEnabled&&invalid? 'red':'#000'}]}>                    
+                  return <View style={styles.ViewFieldInput}>
+                  <Text style={styles.textMuted}>E-mail:</Text>
+                  <TouchableOpacity  
+                  disabled={isEmailEnabled}                  
+                  onPress={() => {
+                        if(!isEmailEnabled){
+                          //ToastAndroid.show('Habilite a edição deste campo', ToastAndroid.LONG);                          
+                          setIsEmailEnable(!isEmailEnabled)
+                        }
+                      }}
+                    >
+                  <View style={[styles.TextInputEditable, {borderColor: isEmailEnabled&&invalid&&'#DC3545', borderColor: isEmailEnabled?'#000':'#ccc'}]}>                    
                     <TextInput
-                      style={[styles.input, {borderColor: isEmailEnabled&&invalid? 'red':'#000',}]}                      
+                      style={[styles.input, {borderColor: isEmailEnabled&&invalid? '#DC3545':'#000',color: isEmailEnabled?'#000':'#ccc'}]}                      
                       value={isEmailEnabled?value:props.route.params.item.email}
                       placeholder='exemplo@gmail.com'
                       keyboardType='email-address'
                       autoComplete='email'                  
                       editable={isEmailEnabled}
-                      placeholderTextColor= {isEmailEnabled&&invalid?'':'red'}
+                      placeholderTextColor= {isEmailEnabled&&invalid?'':'#DC3545'}
                       onBlur={onBlur}
                       onChangeText={value => onChange(value)}                      
                     />
                     <TouchableOpacity 
                       style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
                       onPress={() => {
+                        setIsEmailEnable(!isEmailEnabled)                       
+                        onChange(props.route.params.item.email.toString())
+                      }}
+                    >
+                      <MaterialCommunityIcons name={isEmailEnabled?"toggle-switch-outline":"toggle-switch-off"} size={40} color={isEmailEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity>   
+                    {/* <TouchableOpacity 
+                      style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
+                      onPress={() => {
                         setIsEmailEnable(!isEmailEnabled)
                       }}
                     >
                       <FontAwesome5 name="edit" size={20} color={isEmailEnabled?"#3ab6ff":"#000"} />
+                    </TouchableOpacity> */}
+                  </View>
                     </TouchableOpacity>
-                    </View>
-                    {isEmailEnabled&&errors.email&&errors.email.message=='Invalid_email'?<Text style={[{color: 'red'}]}>Digite um e-mail correto: exemplo@gmail.com</Text>:''}
-                    {/* {isEmailEnabled&&errors.email&&errors.email.type=='required'?<Text style={[{color: 'red'}]}>E-mail obrigatório</Text>:''} */}
+                    {isEmailEnabled&&errors.email&&errors.email.message=='Invalid_email'?<Text style={styles.errorMessage}>Digite um e-mail correto: exemplo@gmail.com</Text>:''}
+                    {/* {isEmailEnabled&&errors.email&&errors.email.type=='required'?<Text style={styles.errorMessage}>E-mail obrigatório</Text>:''} */}
                 </View>
                 }
 
@@ -297,13 +346,14 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
           <View style={styles.containerTextField}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text>Alterar senha?</Text>
-              <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={isSenhaEnabled ? '#3ab6ff' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={() => {setIsSenhaEnabled(!isSenhaEnabled)}}
-                value={isSenhaEnabled}
-              />
+              <TouchableOpacity 
+                style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginStart: 5}} 
+                onPress={() => {
+                  setIsSenhaEnabled(!isSenhaEnabled)                  
+                }}
+              >
+                <MaterialCommunityIcons name={isSenhaEnabled?"toggle-switch-outline":"toggle-switch-off"} size={40} color={isSenhaEnabled?"#3ab6ff":"#000"} />
+              </TouchableOpacity>   
             </View>
             {
               isSenhaEnabled?
@@ -320,14 +370,14 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                     field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
-                      return <View>
-                        <Text>Nova senha:</Text>
-                        <View style={[styles.TextInputEditable, {borderColor: isSenhaEnabled&&invalid? 'red':'#000'}]}>                    
+                      return <View style={styles.ViewFieldInput}>
+                        <Text style={styles.textMuted}>Nova senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: isSenhaEnabled&&invalid? '#DC3545':'#000'}]}>                    
                           <TextInput
-                            style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                            style={[styles.input, {borderColor: invalid? '#DC3545':'#000'}]}
                             placeholder={isSenhaEnabled?'':'********'}
                             secureTextEntry={isViewSenha}
-                            placeholderTextColor= {isSenhaEnabled&&invalid?'red': '#bdbdbd'}
+                            placeholderTextColor= {isSenhaEnabled&&invalid?'#DC3545': '#bdbdbd'}
                             onBlur={onBlur}
                             onChangeText={value => onChange(value)}
                             value={isSenhaEnabled?value:'********'}       
@@ -342,8 +392,8 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                             <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
                           </TouchableOpacity>
                         </View>
-                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Senha deve conter no mínimo 8 caracteres</Text>:''}
-                        {errors.senha&&errors.senha.type=='required'?<Text style={[{color: 'red'}]}>Senha obrigatoria</Text>:''}
+                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={styles.errorMessage}>Senha deve conter no mínimo 8 caracteres</Text>:''}
+                        {errors.senha&&errors.senha.type=='required'?<Text style={styles.errorMessage}>Senha obrigatoria</Text>:''}
                     </View>                
                     }
                   }
@@ -365,14 +415,14 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                     field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
-                      return <View>
-                        <Text>Confirmar senha:</Text>
-                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
+                      return <View style={styles.ViewFieldInput}>
+                        <Text style={styles.textMuted}>Confirmar senha:</Text>
+                        <View style={[styles.TextInputEditable, {borderColor: invalid? '#DC3545':'#000'}]}>                    
                           <TextInput
-                            style={[styles.input, {borderColor: invalid? 'red':'#000'}]}
+                            style={[styles.input, {borderColor: invalid? '#DC3545':'#000'}]}
                             placeholder={''}
                             secureTextEntry={isViewConfirmSenha}
-                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
+                            placeholderTextColor= {invalid?'#DC3545': '#bdbdbd'}
                             onBlur={onBlur}
                             onChangeText={value => onChange(value)}
                             value={value}       
@@ -387,7 +437,7 @@ const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true)
                             <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
                           </TouchableOpacity>
                         </View>                     
-                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
+                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={styles.errorMessage}>{error.message}</Text>:''}
                     </View>                
                     }
                   }

@@ -199,10 +199,11 @@ export default function UpdatePet(props) {
         return;
       }
       let result = await ImagePicker.launchImageLibraryAsync({
-        allowsMultipleSelection: true, // Permitir múltiplas imagens
-        selectionLimit: 3, // Limite de 3 imagens      
-        aspect: [25, 31], 
-        quality: 1,
+        allowsMultipleSelection: false, // Permitir múltiplas imagens
+        selectionLimit: 1, // Limite de 3 imagens      
+        allowsEditing: true, // Permite recorte/edição
+        quality: 1, // Qualidade da imagem
+        aspect: [25, 31],
       });
       if (!result.canceled) {
         setImageUris(result.assets.map((asset) => asset.uri)); // Salvar URIs selecionadas
@@ -345,17 +346,17 @@ export default function UpdatePet(props) {
             return <View>
               <Text style={[styles.title]}>Nome:</Text>
               <TextInput
-                style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
+                style={[styles.input, {borderColor: invalid? '#DC3545':'#000',}]}
                 placeholder='Nome'
                 keyboardType='default'
                 autoComplete='name'
-                placeholderTextColor= {invalid && 'red'}
+                placeholderTextColor= {invalid && '#DC3545'}
                 defaultValue={props.route.params.item.Nome}
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}
                 value={value}
               />
-              <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
+              <Text style={styles.errorMessage}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
             </View>
           }}
           name="nome" 
@@ -379,8 +380,8 @@ export default function UpdatePet(props) {
           {/* Data de nascimento */}
         <Text style={styles.title}>Data de nascimento:</Text> 
           <TouchableOpacity style={styles.date} onPress={() => setShow(true)} >
-            <Feather name="calendar" size={30} color={dateError? 'red':'#000'} />
-            <Text style={[styles.dateText, {borderColor: dateError? 'red':'#000'}]}>{textDate}</Text>
+            <Feather name="calendar" size={30} color={dateError? '#DC3545':'#000'} />
+            <Text style={[styles.dateText, {borderColor: dateError? '#DC3545':'#000'}]}>{textDate}</Text>
           </TouchableOpacity>  
                          
         </View>
@@ -389,10 +390,10 @@ export default function UpdatePet(props) {
         <View>
           <Text style={styles.title}>Sexo</Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>                    
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Fêmea')}>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Fêmea'? '#3ab6ff':'#fff', borderColor: sexoError?'#DC3545':'#000'}]} onPress={() => setSexo('Fêmea')}>
               <Text style={[styles.actionText,{color: sexo=='Fêmea'? '#fff':'#000'}]}>Fêmea</Text>
             </TouchableOpacity>  
-            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', borderColor: sexoError?'red':'#000'}]} onPress={() => setSexo('Macho')}>
+            <TouchableOpacity style={[styles.action,{flex: 0.48, backgroundColor: sexo=='Macho'? '#3ab6ff':'#fff', borderColor: sexoError?'#DC3545':'#000'}]} onPress={() => setSexo('Macho')}>
               <Text style={[styles.actionText,{color: sexo=='Macho'? '#fff':'#000'}]}>Macho</Text>
             </TouchableOpacity>  
           </View>
@@ -401,7 +402,7 @@ export default function UpdatePet(props) {
           <Text style={styles.title}>Outras informações:</Text>
             <View style={{flex: 1}}>
               <TouchableOpacity style={[styles.action,{backgroundColor: castrado? '#3ab6ff': '#fff',flexDirection: 'row', paddingHorizontal: 20}]} onPress={() => castrado==1?setCastrado(0):setCastrado(1)}>
-                <Fontisto name="surgical-knife" size={30} color={castrado? '#fff': '#000'} />
+                <Ionicons name="cut" size={30} color={castrado? '#fff': '#000'} />
                 <Text style={[styles.actionText,{textAlign: 'center', marginStart: 20, color: castrado? '#fff': '#000'}]}>Castrado</Text>
               </TouchableOpacity>
             </View>
@@ -425,19 +426,19 @@ export default function UpdatePet(props) {
             return <View>
             <Text style={styles.title}>Descrição:</Text>
             <TextInput
-              style={[styles.input, {borderColor: invalid? 'red':'#000',minHeight:100}]}
+              style={[styles.input, {borderColor: invalid? '#DC3545':'#000',minHeight:100}]}
               multiline
               numberOfLines={4}
               textAlignVertical='top'
               maxLength={150}
               placeholder='Conte mais um pouco sobre o pet'
               keyboardType='default'
-              placeholderTextColor= {invalid && 'red'}
+              placeholderTextColor= {invalid && '#DC3545'}
               onBlur={onBlur}
               onChangeText={value => onChange(value)}
               value={value}
             />
-            <Text style={[{color: 'red'}]}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
+            <Text style={styles.errorMessage}>{errors.desc?errors.desc.type=='required'?'*Campo obrigatório':'':''}</Text>
           </View>
           }}
         name="desc"

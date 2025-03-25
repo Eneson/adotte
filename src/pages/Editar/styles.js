@@ -8,10 +8,21 @@ export default StyleSheet.create({
     alignItems: 'center', 
     flex: 1,
   },  
-  
+  errorMessage:{
+    color: '#DC3545'
+  },
+  textMuted: {
+    fontSize: 13,
+    color: 'rgba(33 37 41 / 0.6)'
+  },
+  ViewFieldInput: {
+    marginBottom: 15
+  },
   input:{
     borderColor: '#414757',
-    padding: 10, 
+    padding: 10,
+    flex: 1,
+
   },
   containerTextField:{
     marginVertical: 0,

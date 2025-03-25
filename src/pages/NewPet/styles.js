@@ -8,6 +8,11 @@ export default StyleSheet.create({
     flex: 1,
     
   },
+  errorMessage:{
+    color: '#DC3545', // Vermelho do Bootstrap (mais elegante)
+    fontSize: 14,      // Um tamanho bom para leitura
+    fontWeight: 'bold' // Destaca o erro
+  },  
   content: {     
     flex: 1,
     paddingHorizontal: 40,

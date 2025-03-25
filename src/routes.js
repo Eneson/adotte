@@ -215,6 +215,7 @@ function DenunciaScreen() {
 function WelcomeScreen(){  
     return (
       <AppStack.Navigator 
+      initialRouteName='Welcome2'
         screenOptions={{ 
                 headerStyle: { 
                   backgroundColor: '#3ab6ff',

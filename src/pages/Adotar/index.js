@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useRef} from 'react'
 import { useNavigation,useIsFocused } from '@react-navigation/native'
 import {  StyleSheet, SafeAreaView,Image, ScrollView, View, Text, TouchableOpacity,Modal, Linking, ImageBackground, ActivityIndicator } from 'react-native'
-import { FontAwesome, AntDesign, MaterialIcons, Ionicons} from '@expo/vector-icons';
+import { FontAwesome, AntDesign,Fontisto, FontAwesome5, MaterialIcons, Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Flow  } from 'react-native-animated-spinkit'
 import { useFonts, Roboto_500Medium, Roboto_400Regular, } from '@expo-google-fonts/roboto';
@@ -163,7 +163,13 @@ export default function Adotar(props) {
                   alignSelf: 'center'
                 }}>
                   {images.map((uri, index) => (
-                    <Ionicons style={{marginLeft: 3, }} key={index} name={currentIndex==index?'ellipse':'ellipse-outline'} size={13} color="#000" />
+                    <Ionicons 
+                      style={{marginLeft: 3, }}
+                      key={index}
+                      name={currentIndex==index?'ellipse':'ellipse-outline'}
+                      size={13}
+                      color="#000" 
+                    />
                                        
                   ))}
           </View>
@@ -179,78 +185,144 @@ export default function Adotar(props) {
         </View>
         <View style={styles.animaisDesc}>
                 <View>
-                  <View style={{
-                    flex:1,
-                    marginTop: 10, 
-                    flexDirection: 'row', 
-                    alignItems: 'center', 
-                  }}>   
-                  <View style={{
-                      justifyContent: 'center', alignItems: 'center',
-                      position: 'absolute', // Fazendo a posição do botão ser absoluta
-                      left: 0, // Ajuste a posição do botão a partir do lado direito
-                      top: '50%', // Centraliza verticalmente em relação ao contêiner
-                      transform: [{ translateY: -20 }] // Ajuste para centralizar verticalmente (metade do tamanho do ícone)                    
-                      }}>
-                        {favorite.includes(item.id) ? (
-                          <TouchableOpacity onPressIn={() => {}} onPress={() => {
-                              setFavoritePress(true) 
-                              props.callbackParent?props.callbackParent(item):removeFavorito(item) } }>
-                              {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                            <MaterialIcons name="favorite" size={25} color={'red'} />}
-                          </TouchableOpacity>
-                        ): (<TouchableOpacity onPressIn={() => {}} onPress={() => {
-                              setFavoritePress(true)
-                              signed?favoritar(item):navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' }})}} >
-                              {favoritePress?<ActivityIndicator style={{alignSelf: 'flex-start'}} size="small" color="#000" />:
-                              <MaterialIcons name="favorite-border" size={25} color={'black'} />}
-                            </TouchableOpacity>
-                        )}                  
-                      
-                      <Text>
-                        Favoritar
-                      </Text>
-                    </View> 
-                    <View style={{ flex: 1, alignItems: 'center' }}>
-                      <Text style={styles.textNome}>
-                        {item.Nome}
+                <View style={{
+        flex: 1,
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 10, // Adicionando padding para evitar que o conteúdo fique grudado nas bordas
+    }}>
+        {/* Botão de Favoritar */}
+        <View style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            left: 10, // Ajuste a posição do botão favoritar à esquerda
+            top: '50%',
+            transform: [{ translateY: -20 }],
+        }}>
+            {favorite.includes(item.id) ? (
+                <TouchableOpacity onPressIn={() => {}} onPress={() => {
+                    setFavoritePress(true);
+                    props.callbackParent ? props.callbackParent(item) : removeFavorito(item);
+                }}>
+                    {favoritePress ? <ActivityIndicator style={{ alignSelf: 'flex-start' }} size="small" color="#000" /> :
+                        <MaterialIcons name="favorite" size={25} color={'#DC3545'} />}
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity onPressIn={() => {}} onPress={() => {
+                    setFavoritePress(true);
+                    signed ? favoritar(item) : navigation.navigate('Welcome', { screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para favoritar um pet' } });
+                }}>
+                    {favoritePress ? <ActivityIndicator style={{ alignSelf: 'flex-start' }} size="small" color="#000" /> :
+                        <MaterialIcons name="favorite-border" size={25} color={'black'} />}
+                </TouchableOpacity>
+            )}
+            <Text style={{ fontSize: 12 }}>Favoritar</Text>
+        </View>
+
+        {/* Nome do Pet*/}
+        <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 10, // Garantir que o nome tenha espaço e não sobreponha os botões
+            width: '100%'
+        }}>
+            <Text style={styles.textNome}>
+                {item.Nome}
+            </Text>
+        </View>
+
+        {/* Botão de Denunciar */}
+        <View style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            right: 10, // Ajuste a posição do botão de denunciar à direita
+            top: '50%',
+            transform: [{ translateY: -20 }],
+        }}>
+            <TouchableOpacity onPress={() => {
+                signed ? props.navigation.navigate('Denuncia', { screen: 'Denuncia2', params: { item: item, source: source } }) :
+                    props.navigation.navigate('Welcome', { screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' } });
+            }}>
+                <AntDesign name="warning" size={25} color="black" />
+            </TouchableOpacity>
+            <Text style={{ fontSize: 12 }}>Denunciar</Text>
+        </View>
+    </View>      
+                   
                         
-                      </Text> 
-                    </View>                                     
-                    <View style={{
-                      justifyContent: 'center', alignItems: 'center',
-                      position: 'absolute', // Fazendo a posição do botão ser absoluta
-                      right: 0, // Ajuste a posição do botão a partir do lado direito
-                      top: '50%', // Centraliza verticalmente em relação ao contêiner
-                      transform: [{ translateY: -20 }] // Ajuste para centralizar verticalmente (metade do tamanho do ícone)
-                    
-                      }}>
-                      <TouchableOpacity onPress={() => {signed?props.navigation.navigate('Denuncia', {screen: 'Denuncia2', params: { item: item, source: source }}):props.navigation.navigate('Welcome', {screen: 'Welcome2', params: { Message: 'Entre ou Cadastre-se para denunciar um pet' }})}}>
-                        <AntDesign name="warning" size={25} color="black" />   
-                      </TouchableOpacity>
-                      <Text>
-                        Denunciar
-                      </Text>
-                    </View>
-                  </View>      
-                  <View style={{marginTop:5}}>    
-                    <Text style={[styles.descText, {textAlign: 'justify', marginTop: 10}]}>{item.Descricao}</Text>
-                  </View>       
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20, marginBottom:0}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20, marginBottom:10}}>
                     <View style={{flex: 1, height: 1, borderColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth}} />
-                    <View>
-                      <Text style={{width: 'auto', marginHorizontal: 10, textAlign: 'center', fontFamily: 'Roboto_400Regular'}}>Informações</Text>
+                  </View>      
+                  <View style={{marginHorizontal: 10}}>
+                      <Text style={[styles.textMuted,{fontSize: 17}]}>
+                        Sobre do pet:
+                      </Text>
+                    </View>   
+                  <View style={{marginTop: 15, marginHorizontal: 10}}> 
+                    {/* Seção data de nascimento e sexo */}
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={styles.descText}>
+                        <Text style={styles.textMuted}>Data de Nascimento:</Text>
+                        <View style={{flexDirection: 'row', alignItems:'center'}}>
+                          <AntDesign name="calendar" size={24} color="#0D6EFD" />
+                          <Text style={styles.textInformation}>{item.DataNasc}</Text>
+                        </View>
+                      </View>                      
+                      <View style={[styles.descText, {}]}>
+                        <Text style={styles.textMuted}> Sexo: </Text>
+                        <View style={{flexDirection: 'row', alignItems:'center'}}>                      
+                        <Ionicons name={item.Sexo=='Macho'?'male':'female'} size={24} color={item.Sexo=='Macho'?'#0D6EFD':'#9e07a3'} />
+                          <Text style={{fontSize: 16}}> {item.Sexo} </Text>
+                        </View>
+                      </View>
                     </View>
-                    <View style={{flex: 1, height: 1, borderColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth }} />
-                  </View>         
-                  <View style={{marginTop: 15}}>                   
-                  <Text style={styles.descText}><Text style={styles.textBold}>Sexo: </Text>{item.Sexo} </Text>  
-                    <Text style={styles.descText}><Text style={styles.textBold}>Nascimento:</Text> {item.DataNasc} </Text>
-                    <Text style={styles.descText}><Text style={styles.textBold}>Antirrábica:</Text> {item.Vacina?'Sim':'Não'}</Text>
-                    <Text style={styles.descText}><Text style={styles.textBold}>Vermifugado:</Text> {item.Vermifugado?'Sim':'Não'}</Text>     
-                    <Text style={styles.descText}><Text style={styles.textBold}>Castrado:</Text> {item.Castrado?'Sim':'Não'}</Text>                  
-                  
+                    {/* Seção informações de saúde */}
+                    <View style={{marginTop: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={styles.descTextInformation}>
+                          <Text style={styles.textMuted}>Antirrábica:</Text>
+                          <View style={styles.textContainer}>
+                            <FontAwesome5 name="syringe" size={24} color={item.Vacina ? 'green' : 'gray'} />
+                            <Text style={styles.textInformation}>{item.Vacina ? 'Sim' : 'Não'}</Text>
+                          </View>
+                      </View>
+
+                      {/* Vermifugado */}
+                      <View style={[styles.descTextInformation]}>
+                          <Text style={styles.textMuted}>Vermifugado:</Text>
+
+                          <View style={[styles.textContainer]}>
+                            <FontAwesome5 name="tablets" size={24} color={item.Vermifugado? 'green' : 'gray'} />
+                            <Text style={styles.textInformation}>{item.Vermifugado ? 'Sim' : 'Não'}</Text>
+                          </View>
+
+                      </View>
+
+                      {/* Castrado */}
+                      <View style={styles.descTextInformation}>
+                          <Text style={styles.textMuted}>Castrado:</Text>
+                        <View style={styles.textContainer}>                        
+                          <FontAwesome5 name="cut" size={24} color={item.castrado? 'green': 'gray'} />
+                          <Text style={styles.textInformation}>{item.Castrado ? 'Sim' : 'Não'}</Text>
+                        </View>
+                      </View>
+                    </View>
                   </View>  
+                  {/* DESCRIÇÃO */}
+
+                  <View style={{flexDirection: 'row', alignItems:'center',  marginHorizontal: 10, marginTop: 20,}}>
+                      <Text style={[styles.textMuted,{fontSize: 16}]}>
+                      Mais Informações
+                      </Text>
+                      <Ionicons name="information-circle-outline" size={15} color='rgba(33 37 41 / 0.75)' />
+                    </View>  
+                  <View style={{marginTop:5}}>    
+                    <Text style={[styles.textInformation, {textAlign: 'justify', marginTop: 10, marginHorizontal: 10}]}>{item.Descricao}</Text>
+                  </View> 
                 </View>
         </View> 
         <View style={styles.contactBox}>

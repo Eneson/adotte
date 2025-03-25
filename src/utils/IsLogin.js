@@ -31,15 +31,6 @@ export function onSignIn(navi,CommonActions,token) {
     }))    
 }
 
-export const IsLogin3 = async () => { 
-    const value = await AsyncStorage.getItem('@Profile:token')
-    if(value==null){
-        return false
-    } 
-    const decoded = jwtDecode(value);
-    return (value !== null) ? decoded : false;
-}
-
 export const IsLogin = (callback) => {
   AsyncStorage.getItem('@Profile:token')
     .then((value) => {

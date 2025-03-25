@@ -45,8 +45,7 @@ export default function CustomDrawer (props) {
                         {signed? <View>
                             <Text style={styles.headerName}>{nome}</Text>
                             <Text style={styles.headerNumber}>{telefone}</Text> 
-                        </View>:<View><Text style={styles.headerName}>Bem vindo!</Text></View>}
-                        
+                        </View>:<View><Text style={styles.headerName}>Bem-vindo!</Text></View>}
                     </View>
                 
             </View>

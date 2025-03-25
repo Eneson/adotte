@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native'
-import Constants from 'expo-constants'
 
 export default StyleSheet.create({
   TextInputEditable:{
@@ -8,7 +7,8 @@ export default StyleSheet.create({
     borderRadius: 2, 
     paddingStart: 15,
     flexDirection:'row', 
-  },input:{
+  },
+  input:{
     borderColor: 'blue',
     padding: 10, 
     width: '90%'

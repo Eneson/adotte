@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Image,StyleSheet, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
-import { FontAwesome5 } from '@expo/vector-icons'
-import { TextInputMask} from 'react-native-masked-text'
 import { onSignIn } from '../../utils/IsLogin' 
 import api from '../../services/api'
 import styles from './loginStyles'
+import stylesGeral from './styles'
 import { Flow  } from 'react-native-animated-spinkit'
+import InputSenhaForm from '../../components/InputSenhaForm'
+import InputForm from '../../components/InputForm'
 
-export default function Cadastrar(props) {
+
+export default function Cadastrar() {
   const { register, watch, handleSubmit, control, formState:{ errors }  } = useForm()
   const navigation = useNavigation()
   const [modalVisible, setmodalVisible] = useState(false)
-  const [isViewConfirmSenha, setIsViewConfirmSenha] = useState(true);
-  const [isViewSenha, setIsViewSenha] = useState(true);
 
   function navigateTo(Page) {
     navigation.navigate(Page)
@@ -67,8 +67,6 @@ export default function Cadastrar(props) {
     const doador = JSON.stringify(data.data.token)
     onSignIn(navigation, CommonActions, doador)
   }).catch((e) => {
-    console.log(e.response.data);
-
     // Verifique se o erro tem a propriedade "response" (que é quando o erro é do servidor)
     const errorMessage = e.response ? e.response.data.error : "Erro desconhecido";
 
@@ -84,41 +82,6 @@ export default function Cadastrar(props) {
       
 
   }
-
-  function phoneField(onChange, onBlur, value)  {  
-    
-    if(errors.telefone){
-      return <TextInputMask                  
-        style={[styles.input, {borderColor: errors.telefone.type=== "required"? 'red':''}]}
-        placeholder={'(99) 9 9999-9999'}
-        placeholderTextColor= {errors.telefone.type=== "required" && 'red'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }else {
-      return <TextInputMask                  
-        style={[styles.input]}
-        placeholder={'(99) 9 9999-9999'}
-        value={value}                  
-        type={'cel-phone'}
-        options={{
-          maskType: 'BRL',
-          withDDD: true,
-          dddMask: '(99) ',
-          
-        }}                  
-        onChangeText={onChange}
-      />
-    }
-  }
-
   
   return (
     <SafeAreaView style={styles.container}>      
@@ -134,7 +97,7 @@ export default function Cadastrar(props) {
           <Text style={styles.loginHeaderText}>Faça a diferença na vida de um animal. Registre-se agora e descubra seu próximo melhor amigo.</Text>
         </View>
         <View  style={styles.loginForm}>
-        <View style={styles.containerTextField}>
+          <View style={styles.containerTextField}>
             <Controller
               rules={{
                 required: 'true',                
@@ -142,21 +105,20 @@ export default function Cadastrar(props) {
               render={({ 
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error }
-              }) => {
-                
-                  return <View style={[{marginBottom: 10}]}>
-                  <Text>Nome completo:</Text>
-                  <TextInput
-                    style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                    placeholder='Fulano pereira costa'
-                    keyboardType='default'
-                    autoComplete='name'
-                    placeholderTextColor= {invalid && 'red'}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                  />
-                  <Text style={[{color: 'red'}]}>{errors.nome?errors.nome.type=='required'?'Campo obrigatório':'':''}</Text>
+              }) => {                
+                  return <View>
+                    <InputForm 
+                      placeholder='Nome completo:'
+                      inputPlaceholder='Fulano pereira costa'
+                      keyboardType='default'
+                      autoComplete='name'
+                      invalid={invalid} 
+                      onBlur={onBlur} 
+                      onChange={onChange} 
+                      value={value}
+                    />
+                  {errors.nome&&errors.nome.type=='required'?<Text style={stylesGeral.errorMessage}>(*) Campo obrigatório</Text>:''}
+                  
                 </View>
                 }
 
@@ -177,13 +139,25 @@ export default function Cadastrar(props) {
               }}
               render={({ 
                 field: { onChange, onBlur, value,},
+                fieldState: { invalid, isTouched, isDirty, error }
               }) => {
                 
-                  return <View style={[{marginBottom: 10}]}>
-                  <Text>Telefone:</Text>
-                  {phoneField(onChange, onBlur, value)}              
-                  <Text style={[{color: 'red'}]}>{errors.telefone?errors.telefone.message=='lowCaractere'?'Telefone deve conter 11 dígitos':'':''}
-                    {errors.telefone?errors.telefone.type=='required'?'Campo obrigatório':'':''}</Text>
+                  return <View>                    
+                  <InputForm
+                   placeholder='Telefone:'
+                   inputPlaceholder='(99) 9 9999-9999'
+                   keyboardType='phone-pad'
+                   autoComplete='telephoneNumber'
+                   invalid={invalid} 
+                   onBlur={onBlur} 
+                   onChange={onChange} 
+                   value={value}
+                  />
+                    
+
+                  {errors.telefone&&errors.telefone.message=='lowCaractere'?<Text style={stylesGeral.errorMessage}>(*) Telefone deve conter 11 dígitos</Text>:''}
+                  {errors.telefone&&errors.telefone.type=='required'?<Text style={stylesGeral.errorMessage}>(*) Campo obrigatório</Text>:''}    
+                 
                    
                 </View>
                 }
@@ -208,20 +182,20 @@ export default function Cadastrar(props) {
                 fieldState: { invalid, isTouched, isDirty, error }
               }) => {
                 
-                  return <View style={[{marginBottom: 10}]}>
-                  <Text>E-mail:</Text>
-                  <TextInput
-                    style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                    placeholder='exemplo@gmail.com'
-                    keyboardType='email-address'
-                    autoComplete='email'
-                    placeholderTextColor= {invalid && 'red'}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                  />
-                  <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
-                {errors.email?errors.email.type=='required'?'E-mail obrigatório':'':''}</Text>
+                  return <View>
+                    <InputForm 
+                      placeholder='E-mail:'
+                      inputPlaceholder='exemplo@gmail.com'
+                      keyboardType='email-address'
+                      autoComplete='email'
+                      invalid={invalid} 
+                      onBlur={onBlur} 
+                      onChange={onChange} 
+                      value={value}
+                    />
+                  {errors.email&&errors.email.message.includes('Invalid_email')?<Text style={stylesGeral.errorMessage}>(*) Digite um e-mail correto: exemplo@gmail.com</Text>:''}
+                  {errors.email&&errors.email.type=='required'?<Text style={stylesGeral.errorMessage}>(*) E-mail obrigatório</Text>:''}
+                 
                 </View>
                 }
 
@@ -246,32 +220,16 @@ export default function Cadastrar(props) {
                     field: { onChange, onBlur, value, name, ref },
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
-                      return <View>
-                        <Text>Senha:</Text>
-                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
-                          <TextInput
-                            style={{borderColor: invalid? 'red':'#000',
-                              paddingVertical: 10,
-                              width: 'auto',
-                              flex: 1}}
-                            placeholder='********'
-                            secureTextEntry={isViewSenha}
-                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
-                            onBlur={onBlur}
-                            onChangeText={value => onChange(value)}
-                            value={value}   
-                          />
-                          <TouchableOpacity 
-                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
-                            onPress={() => {                   
-                              setIsViewSenha(!isViewSenha)  
-                            }}
-                          >
-                            <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
-                          </TouchableOpacity>
-                        </View>
-                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={[{color: 'red'}]}>Senha deve conter no mínimo 8 caracteres</Text>:''}
-                        {errors.senha&&errors.senha.type=='required'?<Text style={[{color: 'red'}]}>Senha obrigatoria</Text>:''}
+                      return <View style={stylesGeral.FieldView }>
+                        <InputSenhaForm 
+                          placeholder='Senha:'
+                          invalid={invalid} 
+                          onBlur={onBlur} 
+                          onChange={onChange} 
+                          value={value}
+                        />
+                        {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={stylesGeral.errorMessage}>(*) Senha deve conter no mínimo 8 caracteres</Text>:''}
+                        {errors.senha&&errors.senha.type=='required'?<Text style={stylesGeral.errorMessage}>(*) Senha obrigatória</Text>:''}
                     </View>                
                     }
                   }
@@ -294,30 +252,14 @@ export default function Cadastrar(props) {
                     fieldState: { invalid, isTouched, isDirty, error }
                   }) => {
                       return <View>
-                        <Text>Confirmar Senha:</Text>
-                        <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>                    
-                          <TextInput
-                           style={{borderColor: invalid? 'red':'#000',
-                            paddingVertical: 10,
-                            width: 'auto',
-                            flex:1}}
-                            placeholder='********'
-                            secureTextEntry={isViewConfirmSenha}
-                            placeholderTextColor= {invalid?'red': '#bdbdbd'}
-                            onBlur={onBlur}
-                            onChangeText={value => onChange(value)}
-                            value={value}       
-                          />
-                          <TouchableOpacity 
-                            style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
-                            onPress={() => {                   
-                              setIsViewConfirmSenha(!isViewConfirmSenha)  
-                            }}
-                          >
-                            <FontAwesome5 name={isViewConfirmSenha?"eye-slash":"eye"} size={20} color={"#000"} />
-                          </TouchableOpacity>
-                        </View>                     
-                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={[{color: 'red'}]}>{error.message}</Text>:''}
+                        <InputSenhaForm 
+                          placeholder='Confirmar senha:'
+                          invalid={invalid} 
+                          onBlur={onBlur} 
+                          onChange={onChange} 
+                          value={value}
+                        />                   
+                        {errors.ConfirmSenha&&error.message=='As senhas digitadas não coincidem'?<Text style={stylesGeral.errorMessage}>(*) As senhas digitadas não coincidem</Text>:''}
                     </View>                
                     }
                   }

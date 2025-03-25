@@ -15,6 +15,7 @@ import { Montserrat_300Light, Montserrat_500Medium } from '@expo-google-fonts/mo
 import { OpenSans_400Regular, OpenSans_600SemiBold, OpenSans_700Bold } from '@expo-google-fonts/open-sans';
 
 import { onSignOut, IsLogin } from '../../utils/IsLogin'; 
+import { isLoaded } from 'expo-font';
 
 
 
@@ -69,6 +70,7 @@ export default function Initial(props) {
           var palavras = resultado.nome.split(' ');
           setNome(palavras.slice(0, 2).join(' '))                
           setTelefone(resultado.telefone)                
+          setUserEmail(resultado.email)
       }              
       setSigned(resultado)            
     })
@@ -129,7 +131,6 @@ export default function Initial(props) {
           
           
         } catch (err) {
-          console.log(err)
           alert('Erro ao deletar animal, tente novamente.')
           setmodalVisible(false)
         }
@@ -139,28 +140,30 @@ export default function Initial(props) {
     
   }
 
-  const createTwoButtonAlert = () =>
+ 
+
+  async function deleteDoador() { 
     Alert.alert('ATENÇÃO', 'Tem certeza que deseja apagar todos os seus dados?', [
       {
         text: 'Não',
         style: 'cancel',
       },
-      { text: 'Sim', onPress: () => deleteDoador() },
-  ]);
-
-  async function deleteDoador() {    
-    try {
-      await api.delete(`doador/${telefone}`, {
-        headers: {
-          Authorization: telefone,
+      { text: 'Sim', onPress: async () => {
+        setmodalVisible(true)
+        try {
+          await api.delete(`user/${signed.id_user}`, {
+            headers: { 'authorization':  'Bearer '+signed.Token.replace(/"/g, '')},
+          }).then(() => {
+            onSignOut(navigation,CommonActions)
+          })    
+        } catch (err) {
+          alert('Erro ao deletar usuário, tente novamente.')
         }
-      }).then(() => {
-        onSignOut(navigation)
-      })
-      
-    } catch (err) {
-      alert('Erro ao deletar usuário, tente novamente.')
-    }
+        setmodalVisible(false)
+        
+      } },
+  ]);  
+    
   }
 
   //Configuraçoes
@@ -172,7 +175,7 @@ export default function Initial(props) {
         <FontAwesome5 name="edit" size={20} color="black" />
         <Text style={styles.buttonText}>Editar Perfil</Text>
       </TouchableOpacity >
-      <TouchableOpacity style={styles.button} onPress={createTwoButtonAlert}>
+      <TouchableOpacity style={styles.button} onPress={() => deleteDoador() }>
         <AntDesign name="deleteuser" size={20} color="black" />
         <Text style={styles.buttonText}>Excluir Conta</Text>
       </TouchableOpacity>
@@ -283,7 +286,7 @@ export default function Initial(props) {
                 {item.Adotado?<FontAwesome name="check" size={20} color="#000" />:''}
                      
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.action, {backgroundColor: 'red'}]} onPress={() => deleteAnimal(item.id)}>
+              <TouchableOpacity style={[styles.action, {backgroundColor: '#DC3545'}]} onPress={() => deleteAnimal(item.id)}>
                 <Text style={styles.actionText}> Excluir </Text>
                 <AntDesign name="delete" size={20} color="#fff" />             
               </TouchableOpacity>

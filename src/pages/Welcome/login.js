@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { View, TextInput, Text, TouchableOpacity, Alert, StyleSheet, Modal, ScrollView, SafeAreaView  } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, Modal, ScrollView, SafeAreaView  } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
-import { TextInputMask} from 'react-native-masked-text';
-import { FontAwesome5 } from '@expo/vector-icons'
 import { onSignIn } from '../../utils/IsLogin'; 
 import { useFonts, Roboto_400Regular, Roboto_500Medium } from '@expo-google-fonts/roboto';
 import { Montserrat_300Light, Montserrat_700Bold, Montserrat_600SemiBold, Montserrat_800ExtraBold } from '@expo-google-fonts/montserrat';
@@ -12,12 +10,14 @@ import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
 import { Flow  } from 'react-native-animated-spinkit'
 
 import styles from './loginStyles'
+import stylesGeral from './styles'
 import api from '../../services/api'
+import InputForm from '../../components/InputForm';
+import InputSenhaForm from '../../components/InputSenhaForm';
  
-export default function Login(props) {
+export default function Login() {
   const { register, handleSubmit, control, formState:{ errors } } = useForm()
   const [modalVisible, setmodalVisible] = useState(false)
-  const [isViewSenha, setIsViewSenha] = useState(true);
   const navigation = useNavigation()
   
  function navigateTo(Page) {
@@ -106,8 +106,7 @@ export default function Login(props) {
             <Text style={styles.loginText}>Login</Text>
             <Text style={styles.loginHeaderText}>Entre com e-mail e senha cadastrados e continue fazendo a diferença!</Text>
           </View>
-          <View  style={styles.loginForm}>
-          
+          <View  style={styles.loginForm}>          
             <View style={styles.containerTextField}>
               <Controller
                 rules={{
@@ -122,20 +121,20 @@ export default function Login(props) {
                   fieldState: { invalid, isTouched, isDirty, error }
                 }) => {
                   
-                    return <View style={[{marginBottom: 10}]}>
-                    <Text>E-mail:</Text>
-                    <TextInput
-                      style={[styles.input, {borderColor: invalid? 'red':'#000',}]}
-                      placeholder='exemplo@gmail.com'
-                      keyboardType='email-address'
-                      autoComplete='email'
-                      placeholderTextColor= {invalid && 'red'}
-                      onBlur={onBlur}
-                      onChangeText={value => onChange(value)}
-                      value={value}
-                    />
-                    <Text style={[{color: 'red'}]}>{errors.email?errors.email.message=='Invalid_email'?'Digite um e-mail correto: exemplo@gmail.com':'':''}
-                  {errors.email?errors.email.type=='required'?'E-mail obrigatório':'':''}</Text>
+                    return <View>
+                      <InputForm 
+                        placeholder='E-mail:'
+                        inputPlaceholder='exemplo@gmail.com'
+                        keyboardType='email-address'
+                        autoComplete='email'
+                        invalid={invalid} 
+                        onBlur={onBlur} 
+                        onChange={onChange} 
+                        value={value}
+                      />
+                      
+                    {errors.email&&errors.email.message=='Invalid_email'?<Text style={stylesGeral.errorMessage}>(*) Digite um e-mail correto: exemplo@gmail.com</Text>:''}
+                    {errors.email&&errors.email.type=='required'?<Text style={stylesGeral.errorMessage}>(*) E-mail obrigatório</Text>:''}
                   </View>
                   }
 
@@ -160,30 +159,20 @@ export default function Login(props) {
                   fieldState: { invalid, isTouched, isDirty, error }
                 }) => {                  
                     return <View>
-                      <Text>Senha:</Text>
-                      <View style={[styles.TextInputEditable, {borderColor: invalid? 'red':'#000'}]}>
-                        <TextInput
-                          style={{borderColor: invalid? 'red':'#000',
-                            paddingVertical: 10,
-                            width: 'auto' }}
-                          placeholder='********'
-                          secureTextEntry={isViewSenha}
-                          placeholderTextColor= {invalid && 'red'}
-                          onBlur={onBlur}
-                          onChangeText={value => onChange(value)}
-                          value={value}
-                        />
-                        <TouchableOpacity 
-                          style={{justifyContent: 'center', alignItems: 'center', alignContent:'center', marginEnd:10}} 
-                          onPress={() => {                   
-                            setIsViewSenha(!isViewSenha)  
-                          }}
-                        >
-                          <FontAwesome5 name={isViewSenha?"eye-slash":"eye"} size={20} color={"#000"} />
-                        </TouchableOpacity>
-                      </View>
-                      <Text style={[{color: 'red'}]}>{errors.senha?errors.senha.message=='lowCaractere'?'Senha deve conter no mínimo 8 caracteres':'':''}
-                      {errors.senha?errors.senha.type=='required'?'Senha obrigatoria':'':''}</Text>
+                      <InputSenhaForm 
+                        placeholder='Senha:'
+                        inputPlaceholder='********'
+                        invalid={invalid} 
+                        onBlur={onBlur} 
+                        onChange={onChange} 
+                        value={value}
+                      />
+
+                      
+                      {errors.senha&&errors.senha.message=='lowCaractere'?<Text style={stylesGeral.errorMessage}>(*) Senha deve conter no mínimo 8 caracteres</Text>:''}
+                      {errors.senha&&errors.senha.type=='required'?<Text style={stylesGeral.errorMessage}>(*) Senha obrigatória</Text>:''}
+                      
+                      
                   </View>
                   
                   }
